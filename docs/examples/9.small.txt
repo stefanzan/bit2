@@ -1,0 +1,62 @@
+1. template program
+«var p = {name: “Paul”, sex: “Female”, age:18}»
+<p>«p.name», «p.sex»</p>
+
+2. core program
+seq(
+  declare(p,{name: “Paul”, sex: “Female”, age:18})
+ ,const("<p>")
+ ,exp(p.name)
+ ,const(",")
+ ,space(1)
+ ,exp(p.sex)
+ ,const("</p>")
+ ,end
+)
+
+3. evaluate to enhanced output
+seq(
+  declare(p,({name: “Paul”, sex: “Female”, age:18}, {name: “Paul”, sex: “Female”, age:18}))
+ ,const("<p>")
+ ,exp((p.name,"Paul"))
+ ,const(",")
+ ,space(1)
+ ,exp((p.sex,"Female"))
+ ,const("</p>")
+ ,end
+)
+
+4. lambdalize
+seq(
+  seq(\p.seq(const("<p>"),exp((p.name,"Paul")),const(","),space(1),exp((p.sex,"Female")),const("</p>")) ({name: “Paul”, sex: “Female”, age:18}, {name: “Paul”, sex: “Female”, age:18}))
+ ,end
+)
+
+5. flatten
+seq(
+  \p.seq(const("<p>"),exp((p.name,"Paul")),const(","),space(1),exp((p.sex,"Female")),const("</p>")) ({name: “Paul”, sex: “Female”, age:18}, {name: “Paul”, sex: “Female”, age:18})
+ ,end
+)
+
+6. evaluate
+seq(const("<p>"),exp((p.name,"Paul")),const(","),space(1),exp((p.sex,"Female")),const("</p>"),end)
+
+<p>Paul, Female</p>
+
+-----------------------------------------------------------------------
+Update 
+delete "Paul" at 3 |> seq(\p.seq(const("<p>"),exp((p.name,"Paul")),const(","),space(1),exp((p.sex,"Female")),const("</p>")) ({name: “Paul”, sex: “Female”, age:18}, {name: “Paul”, sex: “Female”, age:18}),end)
+--> delete "Paul" at 3 |> \p.seq(const("<p>"),exp((p.name,"Paul")),const(","),space(1),exp((p.sex,"Female")),const("</p>")) ({name: “Paul”, sex: “Female”, age:18}, {name: “Paul”, sex: “Female”, age:18})
+--> delete "Paul" at 3 |> {p->({name: “Paul”, sex: “Female”, age:18},[])} |- seq(const("<p>"),exp((p.name,"Paul")),const(","),space(1),exp((p.sex,"Female")),const("</p>")) 
+--> delete "Paul" at 3 |> {p->({name: “Paul”, sex: “Female”, age:18},[])} |- const("<p>")
+--> delete "Paul" at 0 |> {p->({name: “Paul”, sex: “Female”, age:18},[])} |- exp((p.name,"Paul"))
+    // null |> {p->({name: “Paul”, sex: “Female”, age:18},[name: (“Paul”,[]), sex: (“Female”,[]), age:(18,[])])} |- exp((p.sex,"Female")) -> {p->({sex: “Female”, age:18},[{sex: (“Female”,[]), age:(18,[])}])} |- bot;id
+    --> id |> {p->({sex: “Female”, age:18},[{sex: (“Female”,[]), age:(18,[])}])} |- const(","),space(1),exp((p.sex,"Female")),const("</p>")
+    --> id |> {p->({sex: “Female”, age:18},[{sex: (“Female”,[]), age:(18,[])}])} |- exp((p.sex,"Female"))
+    --> id |> {p->({sex: “Female”, age:18},[{sex: (“Female”,["Female"]), age:(18,[])}])} |- exp((p.sex,"Female"))
+
+For term \p.seq(const("<p>"),bot,const(","),space(1),exp((p.sex,"Female")),const("</p>")) ({sex: “Female”, age:18}, {sex: “Female”, age:18}), update e 
+{sex: “Female”, age:18} |> {} |- {name: “Paul”, sex: “Female”, age:18} -> {} |- {sex: “Female”, age:18}
+
+Finally,
+seq(\p.seq(const("<p>"),bot,const(","),space(1),exp((p.sex,"Female")),const("</p>")) ({sex: “Female”, age:18}, {sex: “Female”, age:18}),end)

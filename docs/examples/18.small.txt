@@ -1,0 +1,22 @@
+1. template program 
+var paragraphs = freeze([{head:"Hello", text:"Hello!"}, {head:"Farewell", text:"Good Bye!"}]) »
+<html>
+    <body>
+      «var no = 0»
+      «for p: paragraphs»
+        «if p.head != null»
+          «no = no + 1»
+          <h1>«no».«p.head.toUpperCase»</h1>
+        «endif»
+        <p>
+          «p.text»
+        </p>
+      «endfor»
+    </body>
+</html>
+
+
+-----------------------------------------
+update 
+(1)将 1.HELLO 改为 1.<b>HELLO</b>, 2.FAREWELL同时改为2.<b>FAREWELL</b>
+bulk(insert “<b>” at n1, insert “</b>” at n2, insert “<b>” at n3, insert “</b>” at n4) |> 

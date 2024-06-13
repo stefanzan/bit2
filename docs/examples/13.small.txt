@@ -1,0 +1,74 @@
+1. template program 
+«var time = 8 »
+«IF time < 12 »Good Afternoon«ENDIF»Good Morning
+
+2. core program 
+seq(
+  declare(time, 8)
+ ,ite(time<12,const("Good Afternoon"), nop)
+ ,const("Good Morning")
+ ,end
+)
+
+3. partial evaluation
+seq(
+  declare(time,(8,8))
+ ,seq(
+    branchstart(time<12,t1,t2)
+   ,const("Good Afternoon")
+   ,branchend
+  )
+ ,const("Good Morning")
+ ,end
+)
+
+4. flatten
+seq(
+  declare(time,(8,8))
+ ,branchstart(time<12,t1,t2)
+ ,const("Good Afternoon")
+ ,branchend
+ ,const("Good Morning")
+ ,end
+)
+
+5. lambdalize
+seq(
+  \time.seq(
+    branchstart(time<12,t1,t2)
+   ,const("Good Afternoon")
+   ,branchend
+   ,const("Good Morning")
+  ) (8,8) declare
+ ,end
+)
+
+6. evaluate 
+seq(
+  branchstart(time<12,t1,t2)
+ ,const("Good Afternoon")
+ ,branchend
+ ,const("Good Morning")
+ ,end
+)
+
+Good AfternoonGoodMorning
+
+-----------------------------------------------
+Update
+(1) 删除Good Afternoon
+delete "Good Afternoon" at 0 |> {} |- seq(\time.seq(branchstart(time<12,t1,t2),const("Good Afternoon"),branchend,const("Good Morning")) (8,8) declare,end)
+--> delete "Good Afternoon" at 0 |> {} |- \time.seq(branchstart(time<12,t1,t2),const("Good Afternoon"),branchend,const("Good Morning")) (8,8) declare
+--> delete "Good Afternoon" at 0 |> {time->(8,[])} |- seq(branchstart(time<12,t1,t2),const("Good Afternoon"),branchend,const("Good Morning"))
+--> delete "Good Afternoon" at 0 |> {time->(8,[])} |- branchstart(time<12,t1,t2)
+--> delete "Good Afternoon" at 0 |> {time->(8,[])} |- const("Good Afternoon") -> {time->(8,[])} |- bot;id
+or
+--> delete "Good Afternoon" at 0 |> {time->(8,[])} |- const("Good Afternoon") -> {time->(8,[])} |- const("");id
+Finaly result:
+{} |- seq(\time.seq(branchstart(time<12,t1,t2),bot,branchend,const("Good Morning")) (8,8) declare,end)
+or
+{} |- seq(\time.seq(branchstart(time<12,t1,t2),const(""),branchend,const("Good Morning")) (8,8) declare,end)
+
+
+
+

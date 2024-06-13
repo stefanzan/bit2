@@ -1,0 +1,79 @@
+1. template program
+«var lst= [{n: “Female”}, {n: “Male}]»
+«var n = 0»
+«FOR c: lst »
+«n = n+1»
+<p>«n».«c.n»</p>
+«ENDFOR»
+
+2. core program 
+seq(
+  declare(lst, [{n: “Female”}, {n: “Male}])
+ ,declare(n,0)
+ ,loop(lst,sep(""),front(""),rear(""),\c.seq(assign(n,n+1),const("<p>"),exp(n),const("."),exp(c.n),const("</p>"),const("\n")))
+ ,end
+)
+
+3. evaluate to enhanced output
+// loopfront中没有暂存front,rear的必要？
+seq(
+  declare(lst, ([{n: “Female”}, {n: “Male}], [{n: “Female”}, {n: “Male}]))
+ ,declare(n,(0,0))
+ ,loopfront((lst,sep(""),c,seq(assign(n,n+1),const("<p>"),exp(n),const("."),exp(c.n),const("</p>"),const("\n"))),"")
+ ,\c.seq(assign(n,(n+1,1)),const("<p>"),exp((n,1)),const("."),exp((c.n,"Female")),const("</p>"),const("\n")) () loopitem(lst)
+ ,sep("")
+ ,\c.seq(assign(n,(n+1,2)),const("<p>"),exp((n,2)),const("."),exp((c.n,"Male")),const("</p>"),const("\n")) () loopitem(lst)
+ ,looprear(lst,"")
+ ,end
+)
+
+4. unlambdalize
+seq(
+  \lst.seq(
+      \n.seq(
+        ,loopfront((lst,sep(""),c,seq(assign(n,n+1),const("<p>"),exp(n),const("."),exp(c.n),const("</p>"),const("\n"))),"")
+        ,\c.seq(assign(n,(n+1,1)),const("<p>"),exp((n,1)),const("."),exp((c.n,"Female")),const("</p>"),const("\n")) () loopitem(lst)
+        ,sep("")
+        ,\c.seq(assign(n,(n+1,2)),const("<p>"),exp((n,2)),const("."),exp((c.n,"Male")),const("</p>"),const("\n")) () loopitem(lst)
+        ,looprear(lst,"")
+      ) (0,0) declare
+  ) ([{n: “Female”}, {n: “Male}], [{n: “Female”}, {n: “Male}]) declare
+  ,end
+)
+
+5. evalute 
+
+seq(
+ loopfront((lst,sep(""),\c.seq(assign(n,(n+1,_)),const("<p>"),exp((n,_)),const("."),exp((c.n,_)),const("</p>"),const("\n")) () loopitem(lst)),"")
+,assign(n,(n+1,1)),const("<p>"),exp((n,1)),const("."),exp((c.n,"Female")),const("</p>"),const("\n")
+,sep("")
+,assign(n,(n+1,2)),const("<p>"),exp((n,2)),const("."),exp((c.n,"Male")),const("</p>"),const("\n")
+,looprear(lst,"")
+,end
+)
+
+<p>1.Female</p>
+<p>2.Male</p>
+
+----------------------------------------------------------------------------------
+update
+
+insert 0 “<p>0.Neutral</p>\n” |> {} |- seq(...)
+--> before the 1st declaration 
+--> before the 2nd declaration
+--> before loop
+--> modify loopfront's "" to “<p>0.Neutral</p>\n”
+--> insert 0 “<p>0.Neutral</p>\n” |> {lst->...} |- \c.seq(assign(n,(n+1,1)),const("<p>"),exp((n,1)),const("."),exp((c.n,"Female")),const("</p>"),const("\n")) () loopitem(lst)
+--> match(“<p>0.Neutral</p>\n”, seq(\c.seq(assign(n,(n+1,_)),const("<p>"),exp((n,_)),const("."),exp((c.n,_)),const("</p>"),const("\n")) () loopitem(lst), sep(""))) // 要不在partial evaluate的时候计算一个带hole的放在loopfront中存起来
+    --> replace _ with “<p>0.Neutral</p>\n” at 0 |> {} |- seq(\c.seq(assign(n,(n+1,_)),const("<p>"),exp((n,_)),const("."),exp((c.n,_)),const("</p>"),const("\n")) () loopitem(lst), sep(""))
+    // 因为n,c.n没有值，无法evaluate到文本来对齐，因此无法复用replace
+    --> 
+or 
+--> match(“<p>0.Neutral</p>\n”, seq(\c.seq(sep(""), assign(n,(n+1,_)),const("<p>"),exp((n,_)),const("."),exp((c.n,_)),const("</p>"),const("\n")) () loopitem(lst))) -> fail
+
+
+
+
+Question:
+1. 两种模式: sep,item; item,sep 
+2. 一次插入多条

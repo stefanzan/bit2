@@ -1,0 +1,15 @@
+1. template program 
+«var c={name:"Person", properties:[{typeName:"String",name:"name"},{typeName:"String",name:"tel"}]}»
+class «c.name» {
+  «for p: c.properties»
+  public «p.typeName» «p.name»;
+  «endfor»
+}
+
+2. core program 
+
+
+--------------------------------------------
+update 
+(1) 将public改为private
+bulk(delete “public” at n1, insert “private” at n1, delete “public” at n2, insert “private” at n2) |>

@@ -1,0 +1,11 @@
+Target: modify branch condition
+1. template program 
+«IF time < 12 »
+  Good Afternoon!  
+«ELSE»
+  Good Morning!
+«ENDIF»
+The time is «time».
+
+
+update: delete "Good Afternoon", insert "Good Morning"

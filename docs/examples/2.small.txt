@@ -1,0 +1,165 @@
+1. Simplified Template program: no assignment, no if-statement in the forloop.
+'''
+«var paragraphs = freeze([{head:"Hello", text:"Hello!"}, {head:"Farewell", text:"Good Bye!"}]) »
+<html>
+  <body>
+    «var no = 1»
+    «for p: paragraphs»
+      <h1>«no».«p.head.toUpperCase»</h1>
+      <p>
+        «p.text»
+      </p>
+    «endfor»
+  </body>
+</html> 
+'''
+
+2. core program
+seq(
+ declare(paragraphs, freeze([{head:"Hello", text:"Hello!"}, {head:"Farewell", text:"Good Bye!"}]))
+,const("<html>"), const("\n"), space(2), const("<body>"), const("\n")
+,declare(no,1)
+,loop(paragraphs,sep(""),front(""),rear(""),\p.seq(space(6), const("<h1>"), exp(no), const("."),exp(p.head.toUpperCase), const("</h1>"),const("\n"),space(6), const("<p>"),const("\n"),space(8),exp(p.text),const("\n"),space(6),const("</p>"),const("\n")))
+,space(2)
+,const("</body>")    
+,const("\n")
+,const("</html>")
+,end
+)
+
+3. evaluate to enhanced output
+seq(
+  declare(paragraphs,(freeze([{head:"Hello", text:"Hello!"}, {head:"Farewell", text:"Good Bye!"}]), [{head:"Hello", text:"Hello!"}, {head:"Farewell", text:"Good Bye!"}]))
+ ,const("<html>"), const("\n"), space(2), const("<body>"), const("\n")
+ ,declare(no,(1,1)) 
+ ,seq(
+    loopstart(paragraphs,....)
+   ,front("")
+   ,\p.seq(space(6), const("<h1>"), exp((no,1)), const("."), exp((p.head.toUpperCase,"HELLO")), const("</h1>"),const("\n"),space(6), const("<p>"),const("\n"),space(8),exp((p.text,"Hello!")),const("\n"),space(6),const("</p>"),const("\n")) ({head:"Hello", text:"Hello!"}, {head:"Hello", text:"Hello!"}) loopitem(paragraphs)
+   ,sep("")
+   ,\p.seq(space(6), const("<h1>"), exp((no,1)), const("."), exp((p.head.toUpperCase,"FAREWELL")), const("</h1>"),const("\n"),space(6), const("<p>"),const("\n"),space(8),exp((p.text,"Good Bye!")),const("\n"),space(6),const("</p>"),const("\n")) ({head:"Farewell", text:"Good Bye!"}, {head:"Farewell", text:"Good Bye!"}) loopitem(paragraphs)
+   ,rear("")
+   ,loopend(paragraphs)
+  )
+ ,space(2)
+ ,const("</body>")    
+ ,const("\n")
+ ,const("</html>")
+ ,end
+)
+4.Flatten
+seq(
+  declare(paragraphs,(freeze([{head:"Hello", text:"Hello!"}, {head:"Farewell", text:"Good Bye!"}]), [{head:"Hello", text:"Hello!"}, {head:"Farewell", text:"Good Bye!"}]))
+ ,const("<html>"), const("\n"), space(2), const("<body>"), const("\n")
+ ,declare(no,(1,1)) 
+ ,loopstart(paragraphs,....)
+ ,front("")
+ ,\p.seq(space(6), const("<h1>"), exp((no,1)), const("."), exp((p.head.toUpperCase,"HELLO")), const("</h1>"),const("\n"),space(6), const("<p>"),const("\n"),space(8),exp((p.text,"Hello!")),const("\n"),space(6),const("</p>"),const("\n")) ({head:"Hello", text:"Hello!"}, {head:"Hello", text:"Hello!"}) loopitem(paragraphs)
+ ,sep("")
+ ,\p.seq(space(6), const("<h1>"), exp((no,1)), const("."), exp((p.head.toUpperCase,"FAREWELL")), const("</h1>"),const("\n"),space(6), const("<p>"),const("\n"),space(8),exp((p.text,"Good Bye!")),const("\n"),space(6),const("</p>"),const("\n")) ({head:"Farewell", text:"Good Bye!"}, {head:"Farewell", text:"Good Bye!"}) loopitem(paragraphs)
+ ,rear("")
+ ,loopend(paragraphs)
+ ,space(2)
+ ,const("</body>")    
+ ,const("\n")
+ ,const("</html>")
+ ,end
+)
+
+5. Translation
+seq(
+  seq(\paragraphs.seq(
+    const("<html>"), const("\n"), space(2), const("<body>"), const("\n")
+   ,\no.seq(
+     loopstart(paragraphs,...),front(""),
+    ,\p.seq(space(6), const("<h1>"), exp((no,1)), const("."), exp((p.head.toUpperCase,"HELLO")), const("</h1>"),const("\n"),space(6), const("<p>"),const("\n"),space(8),exp((p.text,"Hello!")),const("\n"),space(6),const("</p>"),const("\n")) ({head:"Hello", text:"Hello!"}, {head:"Hello", text:"Hello!"}) loopitem(paragraphs)
+    ,sep("")
+    ,\p.seq(space(6), const("<h1>"), exp((no,1)), const("."), exp((p.head.toUpperCase,"FAREWELL")), const("</h1>"),const("\n"),space(6), const("<p>"),const("\n"),space(8),exp((p.text,"Good Bye!")),const("\n"),space(6),const("</p>"),const("\n")) ({head:"Farewell", text:"Good Bye!"}, {head:"Farewell", text:"Good Bye!"}) loopitem(paragraphs)
+    ,rear("")
+    ,loopend(paragraphs)
+    ,space(2)
+    ,const("</body>")    
+    ,const("\n")
+    ,const("</html>")
+   ) (1,1) declare
+  ) (freeze([{head:"Hello", text:"Hello!"}, {head:"Farewell", text:"Good Bye!"}]), [{head:"Hello", text:"Hello!"}, {head:"Farewell", text:"Good Bye!"}]) declare)
+ ,end
+)
+
+5.1 Flatten
+seq(
+  \paragraphs.seq(
+    const("<html>"), const("\n"), space(2), const("<body>"), const("\n")
+   ,\no.seq(
+     loopstart(paragraphs,...),front(""),
+    ,\p.seq(space(6), const("<h1>"), exp((no,1)), const("."), exp((p.head.toUpperCase,"HELLO")), const("</h1>"),const("\n"),space(6), const("<p>"),const("\n"),space(8),exp((p.text,"Hello!")),const("\n"),space(6),const("</p>"),const("\n")) ({head:"Hello", text:"Hello!"}, {head:"Hello", text:"Hello!"}) loopitem(paragraphs)
+    ,sep("")
+    ,\p.seq(space(6), const("<h1>"), exp((no,1)), const("."), exp((p.head.toUpperCase,"FAREWELL")), const("</h1>"),const("\n"),space(6), const("<p>"),const("\n"),space(8),exp((p.text,"Good Bye!")),const("\n"),space(6),const("</p>"),const("\n")) ({head:"Farewell", text:"Good Bye!"}, {head:"Farewell", text:"Good Bye!"}) loopitem(paragraphs)
+    ,rear("")
+    ,loopend(paragraphs)
+    ,space(2)
+    ,const("</body>")    
+    ,const("\n")
+    ,const("</html>")
+   ) (1,1) declare
+  ) (freeze([{head:"Hello", text:"Hello!"}, {head:"Farewell", text:"Good Bye!"}]), [{head:"Hello", text:"Hello!"}, {head:"Farewell", text:"Good Bye!"}]) declare
+ ,end
+)
+
+6. Evaluation
+seq(const("<html>"), const("\n"), space(2), const("<body>"), const("\n"), loopstart(paragraphs,...),front(""), space(6), const("<h1>"), exp((no,1)), const("."), exp((p.head.toUpperCase,"HELLO")), const("</h1>"),const("\n"),space(6), const("<p>"),const("\n"),space(8),exp((p.text,"Hello!")),const("\n"),space(6),const("</p>"),const("\n"), sep(""), space(6), const("<h1>"), exp((no,1)), const("."), exp((p.head.toUpperCase,"FAREWELL")), const("</h1>"),const("\n"),space(6), const("<p>"),const("\n"),space(8),exp((p.text,"Good Bye!")),const("\n"),space(6),const("</p>"),const("\n"), rear(""),loopend(paragraphs),space(2),const("</body>"),const("\n"),const("</html>"),end)
+
+<html>
+  <body>
+      <h1>1.HELLO</h1>
+      <p>
+        Hello!
+      </p>
+      <h1>1.FAREWELL</h1>
+      <p>
+        Good Bye!
+      </p>
+  </body>
+</html>
+
+-----------------------------------------------------
+Test with different updates 
+
+1. 在<body>后面插入一行"\n<h1>Test</h1>"
+insert "\n<h1>Test</h1>" at 15 |> seq(\paragraphs.seq(const("<html>"), const("\n"), space(2), const("<body>"), const("\n"),...) (e,v) declare, end)
+--> insert "\n<h1>Test</h1>" at 15 |> \paragraphs.seq(const("<html>"), const("\n"), space(2), const("<body>"), const("\n"),...) (e,v) declare
+--> insert "\n<h1>Test</h1>" at 15 |> {paragraphs -> ...} |- seq(const("<html>"), const("\n"), space(2), const("<body>"), const("\n"),...)
+--> insert "\n<h1>Test</h1>" at 15 |> {paragraphs -> ...} |- const("<html>")
+--> insert "\n<h1>Test</h1>" at 9 |> {paragraphs -> ...} |- const("\n")
+--> insert "\n<h1>Test</h1>" at 8 |> {paragraphs -> ...} |- space(2)
+--> insert "\n<h1>Test</h1>" at 6 |> {paragraphs -> ...} |- const("<body>")
+    --> {paragraphs -> ...} |- const("<body>\n<h1>Test</h1>"); id // solution 1
+    --> {paragraphs -> ...} |- const("<body>"); insert "\n<h1>Test</h1>" at 0 // solution 2
+        --> insert "\n<h1>Test</h1>" at 0 |> {paragraphs -> ...} |- const("\n")
+            --> {paragraphs -> ...} |- seq(const("\n<h1>Test</h1>"),const("\n"));id
+            --> {paragraphs -> ...} |- const("\n<h1>Test</h1>\n"); id
+
+2. 在"<body>\n"后面插入一行"<h1>Test</h1>\n"
+insert "<h1>Test</h1>\n" at 16 |> seq(\paragraphs.seq(const("<html>"), const("\n"), space(2), const("<body>"), const("\n"),...) (e,v) declare, end)
+--> insert "<h1>Test</h1>\n" at 7 |> {paragraphs -> ...} |- const("<body>")
+--> insert "<h1>Test</h1>\n" at 1 |> {paragraphs -> ...} |- const("\n")
+    --> {paragraphs -> ...} |- const("\n<h1>Test</h1>\n");id // solution 1: 拼接到\n后面
+    --> {paragraphs -> ...} |- const("\n"); insert "<h1>Test</h1>\n" at 0 // solution 2
+        --> insert "<h1>Test</h1>\n" at 0 |> {paragraphs -> ...} |- \no.seq(loopstart(...), front(""),\p.seq(space(6),...) (e,v) loopitem) (1,1) declare
+          --> {paragraphs -> ...} |- seq(const("<h1>Test</h1>\n"), \no.seq(loopstart(...), front(""),\p.seq(space(6),...) (e,v) loopitem) (1,1) declare) // solution 2.1 放到declare前面
+          --> insert "<h1>Test</h1>\n" at 0 |> {paragraphs -> ..., no -> (1,[])} |- seq(loopstart(...), front(""),\p.seq(space(6),...) (e,v) loopitem)
+          --> insert "<h1>Test</h1>\n" at 0 |> {paragraphs -> ..., no -> (1,[])} |- loopstart(...)
+            --> {paragraphs -> ..., no -> (1,[])} |- seq(const("<h1>Test</h1>\n"), loopstart(...)); id // solution 2.2 单独const，放到for前面
+            --> {paragraphs -> ..., no -> (1,[])} |- loopstart(...); insert "<h1>Test</h1>\n" at 0 // solution 2.3
+                --> insert "<h1>Test</h1>\n" at 0 |> {paragraphs -> ..., no -> (1,[])} |- front("")
+                    -->  {paragraphs -> ..., no -> (1,[])} |- front("<h1>Test</h1>\n") // solution 2.3.1 插入到front()中
+                    -->  {paragraphs -> ..., no -> (1,[])} |- seq(const("<h1>Test</h1>\n"),front("")) // solution 2.3.2 放到front前面
+                    -->  {paragraphs -> ..., no -> (1,[])} |- front(""); insert "<h1>Test</h1>\n" at 0 // solution 3 因为front evalute to "", 可插入到后面
+                         --> insert "<h1>Test</h1>\n" at 0 |> {paragraphs -> ..., no -> (1,[])} |- \p.seq(space(6),...) (e,v) loopitem
+                         --> insert "<h1>Test</h1>\n" at 0 |> {paragraphs -> ..., no -> (1,[]), p -> ...} |- seq(space(6),...)
+                         --> {paragraphs -> ..., no -> (1,[]), p -> ...} |- seq(const("<h1>Test</h1>\n"),space(6));id 2.3.3 front后，space前；space中不可放入非space。
+
+总共有6个候选插入位置，最终1、2.1、2.2可backward translate to core program. 这三种都是合理的程序，因为得到同样的输出结果。
+
+3. bulk更新
+bulk(insert “ ” at 29, insert "" at 86) |> ...

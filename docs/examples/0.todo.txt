@@ -1,0 +1,65 @@
+[√] declare, assign 不再wrap t, 增加declareend(x) 到core
+
+[√] T-Assign is not correct
+
+[√] propagation rule for seq(t1, ...tn) based on another rule  id |> E |- t -> E |- t; id
+
+[√] uneval correct assign, declare rule, miss exp rule
+
+[√] 因为uneval会处理loop列表的合并问题，这里涉及到数据的处理，需要Env。
+   如果这个列表在一个loop用完后，在另一个loop中继续使用，则涉及到合并更新的问题，需要分析variable binding, 作用域
+   or     var lst = e_arr 
+          for e_arr loop 
+   在update propagation的时候，并不会把e_arr的更新推送到var lst = e_arr,还是需要改进update semantics，在for的时候就能够更新最好？
+
+   \x.t (e,v) loopitem 会计算出一个更新后的x，这里把它加入到了Env,要不在loopend(e_arr)
+   去env中抓取并重构出来？
+   loopstart(e_arr)的时候建立索引，存Env, 
+   { ne_arr -> ([], [])}
+   \x.t (e,v) loopitem(e_arr) 计算后更新ne_arr  // 06.05 万一是删除呢，这里如何加入？对象呢，空对象
+   ne_arr -> ([v'],[v'])
+   loopend的时候取出来并消除索引
+   e_arr' = merge(E[e_arr],E[ne_arr]), E[e_arr]=e_arr'
+
+[x] bulk(u1, u2) 针对\x.t b m 是否单独设置rule?因为可以先构建环境, 不用，环境共享的
+[√] bulk(u1, u2) 针对 seq(t1,t2)也是可以同时作用到t1, 确实少了seq的规则
+
+[√] using space(n) instead of space("  ")
+[√] forloop中的sep("")从某种角度等于bot，可以在uneval的时候起到和bot一样的作用 10.small.txt
+[√] simplify loopstart, loopend to loopfront(), looprear() ?
+
+[] surface to core，当这一行是if for endif endfor 这样的关键字，该行包括换行不计入程序输出，但是如果是《expr》则需要考虑前后空格以及换行
+
+[] 是否需要类型信息？template name(name1,name2) or template name(name1:type1, name2:type2)
+
+[] partial evaluation propagate freeze to related e
+   要么先简化，所有需要freeze的地方，都!marked
+
+[] freeze如何传导，如何消除，不影响反向最终结果的呈现，即不会出现很多的freeze
+   如果简化，则假定用户在surface把每一个不可改的地方都用!name标记，就不用计算传导了
+
+[] 既然const 前两个rules等价，何不选择一个即可？类似的还有好些个
+   sep(s)不能变成bot?只能变成sep("")?同理loopfront, looprear也是
+
+[] propagation rule, space cannot add non space characters: insert s at 0 |> space("")
+
+
+[] forloop中insert newitem，together with separator; perhaps insert more than one item.
+   Now, only can support term that has no if, nested for
+
+[] Example 15, 15-2 有涉及到complement of If （即将If的条件放到outptu中）, 变量output可见等等，用户可见，可改。可考虑列为extension, furture work?
+
+
+[√] Previously, the condition e in branchstart() is different from current design.
+   time < 12 
+    previsouly => branchstart((time,10)<12, t1, t2) 这个设计好像就导致整体不够统一了，因为格式为(e,v),time<12也是e
+                  在之前的设计下，甚至用再来一次null upate更新time在branchstart中的绑定的值 Example 16
+    currently  => branchstart((time<12,true), t1,t2)
+
+
+[-] **PPT 36** , count值的更新，影响branch condition,之前为true的，现在可能就为false了，但是这个值没有更新。
+   而且可能在branch前、后更新了count的值
+   这个要考虑清楚怎么处理
+   再来一次id更新？貌似这个目前只会对branch condition产生切换的影响，在当前策略下会把t1给更新了，也不算错，先跳过吧
+   id |> {count -> (18,[])} |- seq(branchstart((count>=18,true),t1,t2),const("Hi! A little boy!"),branchend,exp((count,17)))
+   06.12: 会报错，因为第一个replacement， count->(n,[n]),第二个replacement尝试改动count的值，从而失败。

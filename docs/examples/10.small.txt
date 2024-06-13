@@ -1,0 +1,166 @@
+1. template program 
+«var cList = [{i: 1, n: “Female”}, {i:2, n: “Male}]»
+«FOR c: cList »
+<p>«c.i».«c.n»</p>
+«ENDFOR»
+
+2. core program 
+seq(
+  declare(cList,[{i: 1, n: “Female”}, {i:2, n: “Male}])
+ ,loop(cList,sep(""),front(""),rear(""),\c.seq(const("<p>"),exp(c.i),const("."),exp(c.n),const("</p>"),const("\n")))
+ ,end
+)
+
+3. evaluate to enhanced output
+seq(
+  declare(cList,([{i: 1, n: “Female”}, {i:2, n: “Male}],[{i: 1, n: “Female”}, {i:2, n: “Male}]))
+ ,seq(
+    loopstart(...)
+   ,front("")
+   ,\c.seq(const("<p>"),exp((c.i,1)),const("."),exp((c.n,"Female")),const("</p>"),const("\n")) ({i: 1, n: “Female”}, {i: 1, n: “Female”}) loopitem(cList)
+   ,sep("")
+   ,\c.seq(const("<p>"),exp((c.i,2)),const("."),exp((c.n,"Male")),const("</p>"),const("\n")) ({i:2, n: “Male}, {i:2, n: “Male}) loopitem(cList)
+   ,rear("")
+   ,loopend(clist)
+  )
+ ,end
+)
+
+4. flatten
+seq(
+  declare(cList,([{i: 1, n: “Female”}, {i:2, n: “Male}],[{i: 1, n: “Female”}, {i:2, n: “Male}]))
+ ,loopstart(...)
+ ,front("")
+ ,\c.seq(const("<p>"),exp((c.i,1)),const("."),exp((c.n,"Female")),const("</p>"),const("\n")) ({i: 1, n: “Female”}, {i: 1, n: “Female”}) loopitem(cList)
+ ,sep("")
+ ,\c.seq(const("<p>"),exp((c.i,2)),const("."),exp((c.n,"Male")),const("</p>"),const("\n")) ({i:2, n: “Male}, {i:2, n: “Male}) loopitem(cList)
+ ,rear("")
+ ,loopend(clist)
+ ,end
+)
+
+5. lambdalize
+seq(
+  seq(\cList.seq(
+    loopstart(...)
+    ,front("")
+    ,\c.seq(const("<p>"),exp((c.i,1)),const("."),exp((c.n,"Female")),const("</p>"),const("\n")) ({i: 1, n: “Female”}, {i: 1, n: “Female”}) loopitem(cList)
+    ,sep("")
+    ,\c.seq(const("<p>"),exp((c.i,2)),const("."),exp((c.n,"Male")),const("</p>"),const("\n")) ({i:2, n: “Male}, {i:2, n: “Male}) loopitem(cList)
+    ,rear("")
+    ,loopend(clist)
+  ) ([{i: 1, n: “Female”}, {i:2, n: “Male}],[{i: 1, n: “Female”}, {i:2, n: “Male}]) declare)
+ ,end
+)
+
+6. flatten
+seq(
+  \cList.seq(
+    loopstart(...)
+    ,front("")
+    ,\c.seq(const("<p>"),exp((c.i,1)),const("."),exp((c.n,"Female")),const("</p>"),const("\n")) ({i: 1, n: “Female”}, {i: 1, n: “Female”}) loopitem(cList)
+    ,sep("")
+    ,\c.seq(const("<p>"),exp((c.i,2)),const("."),exp((c.n,"Male")),const("</p>"),const("\n")) ({i:2, n: “Male}, {i:2, n: “Male}) loopitem(cList)
+    ,rear("")
+    ,loopend(clist)
+  ) ([{i: 1, n: “Female”}, {i:2, n: “Male}],[{i: 1, n: “Female”}, {i:2, n: “Male}]) declare
+ ,end
+)
+
+7. evaluate
+seq(loopstart(...),front(""),const("<p>"),exp((c.i,1)),const("."),exp((c.n,"Female")),const("</p>"),const("\n"),sep(""),const("<p>"),exp((c.i,2)),const("."),exp((c.n,"Male")),const("</p>"),const("\n"),rear(""),loopend(clist),end)
+
+<p>1.Female</p>
+<p>2.Male</p>
+
+--------------------------------------------------------------
+Update 
+(1) 删掉第一行
+delete 0 "<p>1.Female</p>\n" |> {} |- seq(\cList.seq(loopstart(...),front(""),\c.seq(const("<p>"),exp((c.i,1)),const("."),exp((c.n,"Female")),const("</p>"),const("\n")) ({i: 1, n: “Female”}, {i: 1, n: “Female”}) loopitem(cList),sep(""),\c.seq(const("<p>"),exp((c.i,2)),const("."),exp((c.n,"Male")),const("</p>"),const("\n")) ({i:2, n: “Male}, {i:2, n: “Male}) loopitem(cList),rear(""),loopend(clist)) ([{i: 1, n: “Female”}, {i:2, n: “Male}],[{i: 1, n: “Female”}, {i:2, n: “Male}]) declare,end)
+--> delete 0 "<p>1.Female</p>\n" |> {} |- \cList.seq(loopstart(...),front(""),\c.seq(const("<p>"),exp((c.i,1)),const("."),exp((c.n,"Female")),const("</p>"),const("\n")) ({i: 1, n: “Female”}, {i: 1, n: “Female”}) loopitem(cList),sep(""),\c.seq(const("<p>"),exp((c.i,2)),const("."),exp((c.n,"Male")),const("</p>"),const("\n")) ({i:2, n: “Male}, {i:2, n: “Male}) loopitem(cList),rear(""),loopend(clist)) ([{i: 1, n: “Female”}, {i:2, n: “Male}],[{i: 1, n: “Female”}, {i:2, n: “Male}]) declare
+--> delete 0 "<p>1.Female</p>\n" |> {cList -> ([{i: 1, n: “Female”}, {i:2, n: “Male}],[])} |- seq(loopstart(...),front(""),\c.seq(const("<p>"),exp((c.i,1)),const("."),exp((c.n,"Female")),const("</p>"),const("\n")) ({i: 1, n: “Female”}, {i: 1, n: “Female”}) loopitem(cList),sep(""),\c.seq(const("<p>"),exp((c.i,2)),const("."),exp((c.n,"Male")),const("</p>"),const("\n")) ({i:2, n: “Male}, {i:2, n: “Male}) loopitem(cList),rear(""),loopend(clist)) 
+--> delete 0 "<p>1.Female</p>\n" |> {cList -> ([{i: 1, n: “Female”}, {i:2, n: “Male}],[])} |- front(""),\c.seq(const("<p>"),exp((c.i,1)),const("."),exp((c.n,"Female")),const("</p>"),const("\n")) ({i: 1, n: “Female”}, {i: 1, n: “Female”}) loopitem(cList),sep(""),\c.seq(const("<p>"),exp((c.i,2)),const("."),exp((c.n,"Male")),const("</p>"),const("\n")) ({i:2, n: “Male}, {i:2, n: “Male}) loopitem(cList),rear(""),loopend(clist) // bot
+
+--> delete 0 "<p>1.Female</p>\n" |> {cList -> ([{i: 1, n: “Female”}, {i:2, n: “Male}],[])} |- \c.seq(const("<p>"),exp((c.i,1)),const("."),exp((c.n,"Female")),const("</p>"),const("\n")) ({i: 1, n: “Female”}, {i: 1, n: “Female”}) loopitem(cList),sep(""),\c.seq(const("<p>"),exp((c.i,2)),const("."),exp((c.n,"Male")),const("</p>"),const("\n")) ({i:2, n: “Male}, {i:2, n: “Male}) loopitem(cList),rear(""),loopend(clist) // seq(bot,bot)
+--> delete 0 "<p>1.Female</p>\n" |> {cList -> ([{i: 1, n: “Female”}, {i:2, n: “Male}],[]), c->({i: 1, n: “Female”},[])} |-seq(const("<p>"),exp((c.i,1)),const("."),exp((c.n,"Female")),const("</p>"),const("\n"))
+--> delete 0 "<p>1.Female</p>\n" |> {cList -> ([{i: 1, n: “Female”}, {i:2, n: “Male}],[]), c->({i: 1, n: “Female”},[])} |-const("<p>")
+--> delete 0 "1.Female</p>\n" |> {cList -> ([{i: 1, n: “Female”}, {i:2, n: “Male}],[]), c->({i: 1, n: “Female”},[])} |-exp((c.i,1))
+--> delete 0 ".Female</p>\n" |> {cList -> ([{i: 1, n: “Female”}, {i:2, n: “Male}],[]), c->({i: 1, n: “Female”},[])} |- const(".")
+--> delete 0 "Female</p>\n" |> {cList -> ([{i: 1, n: “Female”}, {i:2, n: “Male}],[]), c->({i: 1, n: “Female”},[])} |- exp((c.n,"Female"))
+--> delete 0 "</p>\n" |> {cList -> ([{i: 1, n: “Female”}, {i:2, n: “Male}],[]), c->({i: 1, n: “Female”},[])} |- const("</p>")
+--> delete 0 "\n" |> {cList -> ([{i: 1, n: “Female”}, {i:2, n: “Male}],[]), c->({i: 1, n: “Female”},[])} |- const("\n")
+--> id |> {cList -> ([{i: 1, n: “Female”}, {i:2, n: “Male}],[]), c->({i: 1, n: “Female”},[])} |- 
+for term \x.t b m 
+\c.seq(const("<p>"),exp((c.i,1)),const("."),exp((c.n,"Female")),const("</p>"),const("\n")) ({i: 1, n: “Female”}, {i: 1, n: “Female”}) loopitem(cList)
+\c.seq(bot,bot,bot,bot,bot,bot) ({i: 1, n: “Female”}, {i: 1, n: “Female”}) loopitem(cList)
+
+Or another choice
+\c.seq(bot,bot,bot,bot,bot,bot) ({}, {}) loopitem(cList)
+
+--> id |> {cList -> ([{i: 1, n: “Female”}, {i:2, n: “Male}],[]), neCList -> [{},]} |- sep(""),\c.seq(const("<p>"),exp((c.i,2)),const("."),exp((c.n,"Male")),const("</p>"),const("\n")) ({i:2, n: “Male}, {i:2, n: “Male}) loopitem(cList),rear(""),loopend(clist)
+--> id |> {cList -> ([{i: 1, n: “Female”}, {i:2, n: “Male}],[]), neCList -> [{},]} |- \c.seq(const("<p>"),exp((c.i,2)),const("."),exp((c.n,"Male")),const("</p>"),const("\n")) ({i:2, n: “Male}, {i:2, n: “Male}) loopitem(cList),rear(""),loopend(clist)
+--> id |> {cList -> ([{i: 1, n: “Female”}, {i:2, n: “Male}],[]), neCList -> [{},], c -> ({i:2, n: “Male},[{i:(2,[]),n:("Male",[])}])} |- seq(const("<p>"),exp((c.i,2)),const("."),exp((c.n,"Male")),const("</p>"),const("\n")) 
+--> id |> {cList -> ([{i: 1, n: “Female”}, {i:2, n: “Male}],[]), neCList -> [{},], c -> ({i:2, n: “Male},[{i:(2,[]),n:("Male",[])}])} |- const("<p>")
+--> id |> {cList -> ([{i: 1, n: “Female”}, {i:2, n: “Male}],[]), neCList -> [{},], c -> ({i:2, n: “Male},[{i:(2,[]),n:("Male",[])}])} |- exp((c.i,2))
+--> id |> {cList -> ([{i: 1, n: “Female”}, {i:2, n: “Male}],[]), neCList -> [{},], c -> ({i:2, n: “Male},[{i:(2,[2]),n:("Male",[])}])} |- const(".")
+--> id |> {cList -> ([{i: 1, n: “Female”}, {i:2, n: “Male}],[]), neCList -> [{},], c -> ({i:2, n: “Male},[{i:(2,[2]),n:("Male",[])}])} |- exp((c.n,"Male"))
+--> id |> {cList -> ([{i: 1, n: “Female”}, {i:2, n: “Male}],[]), neCList -> [{},], c -> ({i:2, n: “Male},[{i:(2,[2]),n:("Male",["Male"])}])} |- const("</p>")
+--> id |> {cList -> ([{i: 1, n: “Female”}, {i:2, n: “Male}],[]), neCList -> [{},], c -> ({i:2, n: “Male},[{i:(2,[2]),n:("Male",["Male"])}])} |- const("\n")
+for term \x.t b m 
+\c.seq(const("<p>"),exp((c.i,2)),const("."),exp((c.n,"Male")),const("</p>"),const("\n")) ({i:2, n: “Male}, {i:2, n: “Male}) loopitem(cList)
+\c.seq(const("<p>"),exp((c.i,2)),const("."),exp((c.n,"Male")),const("</p>"),const("\n")) ({i:2, n: “Male}, {i:2, n: “Male}) loopitem(cList)
+
+--> id |> {cList -> ([{i: 1, n: “Female”}, {i:2, n: “Male}],[]), neCList -> [{},{i:2, n: “Male}]} |- rear(""),loopend(clist)
+--> id |> {cList -> ([{i: 1, n: “Female”}, {i:2, n: “Male}],[]), neCList -> [{},{i:2, n: “Male}]} |- loopend(clist)
+--> id |> {cList -> [{i:2, n: “Male}]} 
+更新declare的e
+seq(
+  \cList.seq(
+    loopstart(...)
+    ,front("")
+    ,\c.seq(bot,bot,bot,bot,bot,bot) ({}, {}) loopitem(cList)
+    ,sep("") // 等价于bot
+    ,\c.seq(const("<p>"),exp((c.i,2)),const("."),exp((c.n,"Male")),const("</p>"),const("\n")) ({i:2, n: “Male}, {i:2, n: “Male}) loopitem(cList)
+    ,rear("")
+    ,loopend(clist)
+  ) ([{i:2, n: “Male}],[{i:2, n: “Male}]) declare
+ ,end
+)
+
+问题: seq("")没有删掉....,除非我们认可sep("")等价于bot
+seq(
+  \cList.seq(
+    loopstart(...)
+    ,front("")
+    ,\c.seq(const("<p>"),exp((c.i,2)),const("."),exp((c.n,"Male")),const("</p>"),const("\n")) ({i:2, n: “Male}, {i:2, n: “Male}) loopitem(cList)
+    ,rear("")
+    ,loopend(clist)
+  ) ([{i:2, n: “Male}],[{i:2, n: “Male}]) declare
+ ,end
+)
+
+
+(2) 插入一整条
+Note: loopstart()front()之间不能插入内容； rear和loopend之间不能插入内容。要不把他们合并为一个符号？
+首先，加上改进了for的partial evaluated core language，没有loopstart, loopend，只有loopfront((e_arr,sep(s),fron(s),rear(s),x,t),s), loopend(e_arr,s)
+Q: t是什么？t中间也可能需要partial evaluaiton，万一t中间有if呢，实例化为then还是else？如果有assignment呢
+   只能用现有的loopitem的展开去匹配，但是值的binding也许会出问题？
+   还是根据原始term来假想展开?
+
+insert 0 “<p>0.Neutral</p>\n” |> {} |- seq(\cList.seq(loopfront(,""),\c.seq(const("<p>"),exp((c.i,1)),const("."),exp((c.n,"Female")),const("</p>"),const("\n")) ({i: 1, n: “Female”}, {i: 1, n: “Female”}) loopitem(cList),sep(""),\c.seq(const("<p>"),exp((c.i,2)),const("."),exp((c.n,"Male")),const("</p>"),const("\n")) ({i:2, n: “Male}, {i:2, n: “Male}) loopitem(cList),looprear(clist,"")) ([{i: 1, n: “Female”}, {i:2, n: “Male}],[{i: 1, n: “Female”}, {i:2, n: “Male}]) declare,end)
+--> insert 0 “<p>0.Neutral</p>\n” |> {} |- \cList.seq(loopfront(,""),\c.seq(const("<p>"),exp((c.i,1)),const("."),exp((c.n,"Female")),const("</p>"),const("\n")) ({i: 1, n: “Female”}, {i: 1, n: “Female”}) loopitem(cList),sep(""),\c.seq(const("<p>"),exp((c.i,2)),const("."),exp((c.n,"Male")),const("</p>"),const("\n")) ({i:2, n: “Male}, {i:2, n: “Male}) loopitem(cList),looprear(clist,"")) ([{i: 1, n: “Female”}, {i:2, n: “Male}],[{i: 1, n: “Female”}, {i:2, n: “Male}]) declare
+    --> seq(const("<p>0.Neutral</p>\n"), ...) // solution 1
+    --> insert 0 “<p>0.Neutral</p>\n” |> {cList->...} |- seq(loopfront(,""),\c.seq(const("<p>"),exp((c.i,1)),const("."),exp((c.n,"Female")),const("</p>"),const("\n")) ({i: 1, n: “Female”}, {i: 1, n: “Female”}) loopitem(cList),sep(""),\c.seq(const("<p>"),exp((c.i,2)),const("."),exp((c.n,"Male")),const("</p>"),const("\n")) ({i:2, n: “Male}, {i:2, n: “Male}) loopitem(cList),looprear(clist,""))
+    --> insert 0 “<p>0.Neutral</p>\n” |> {cList->...} |- loopfront(,"")
+        --> seq(const("<p>0.Neutral</p>\n"),loopfront(,""));id // solution 2
+        --> loopfront(,"<p>0.Neutral</p>\n");id // solution 3
+    --> insert 0 “<p>0.Neutral</p>\n” |> {cList->...} |- \c.seq(const("<p>"),exp((c.i,1)),const("."),exp((c.n,"Female")),const("</p>"),const("\n")) ({i: 1, n: “Female”}, {i: 1, n: “Female”}) loopitem(cList)
+        --> match(“<p>0.Neutral</p>\n”, termlize(seq(\c.seq(const("<p>"),exp(c.i),const("."),exp(c.n),const("</p>"),const("\n"))),sep(""))) // 整个env是未知的，如果有用到其它变量，没办法预判其值，目前只能针对简单的不带if/assign的loopbody
+        --> replace _ with “<p>0.Neutral</p>\n” at 0 |> {} |- seq(\c.seq(const("<p>"),exp((c.i,_)),const("."),exp((c.n,_)),const("</p>"),const("\n"))) ({},{}) loopitem(cList),sep("") 
+        --> replace _ with “<p>0.Neutral</p>\n” at 0 |> {c->{}} |- seq(const("<p>"),exp((c.i,_)),const("."),exp((c.n,_)),const("</p>"),const("\n"))
+        --> {c->{i:(0,[0]),n:("Neutral",["Neutral"])}} |- seq(const("<p>"),exp((c.i,0)),const("."),exp((c.n,"Neutral")),const("</p>"),const("\n"));id  // solution 4
+  
+    --> 如果不用match，则会插入到第一条之前，将\x.t的t更新为t' // solution 4
+
+  最终backward uneval的时候 solution1,2,3都成功，4失败  
+

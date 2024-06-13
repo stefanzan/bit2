@@ -1,0 +1,111 @@
+1. template program 
+«var age = 19 »
+«var count = 1 »
+«IF age  >= 18 »
+  Wow! An adult! «count» 
+«ELSE»
+  Hi! A little boy! «count»
+«ENDIF»
+«count»
+
+2. core program
+seq(
+  declare(age,19)
+ ,declare(count,1)
+ ,ite(age>=18
+     ,seq(space(2),const("Wow!"),space(1),const("An"),space(1),const("adult!"),space(1),exp(count),const("\n"))
+     ,seq(space(2),const("Hi!"),space(1),const("A"),space(1),const("little"),space(1),const("boy!),space(1),exp(count),const("\n"))
+     )
+ ,exp(count)
+ ,end
+)
+
+3. evaluate to enhanced output
+seq(
+  declare(age,(19,19))
+ ,declare(count,(1,1))
+ ,seq(
+    branchstart((age>=18,true),t1,t2)
+   ,seq(space(2),const("Wow!"),space(1),const("An"),space(1),const("adult!"),space(1),exp((count,1)),const("\n"))
+   ,branchend
+ )
+ ,exp((count,1))
+ ,end
+)
+
+4. flatten
+seq(
+  declare(age,(19,19))
+ ,declare(count,(1,1))
+ ,branchstart((age>=18,true),t1,t2)
+ ,seq(space(2),const("Wow!"),space(1),const("An"),space(1),const("adult!"),space(1),exp((count,1)),const("\n"))
+ ,branchend
+ ,exp((count,1))
+ ,end
+)
+
+5. lambdalize
+seq(
+  seq(\age.seq(
+    seq(\count.seq(
+      branchstart((age>=18,true),t1,t2)
+     ,seq(space(2),const("Wow!"),space(1),const("An"),space(1),const("adult!"),space(1),exp((count,1)),const("\n"))
+     ,branchend
+     ,exp((count,1))
+    ) (1,1) declare)
+  ) (19,19) declare)
+,end
+)
+
+6. flatten
+seq(
+  \age.seq(
+    \count.seq(
+      branchstart((age>=18,true),t1,t2)
+     ,space(2),const("Wow!"),space(1),const("An"),space(1),const("adult!"),space(1),exp((count,1)),const("\n")
+     ,branchend
+     ,exp((count,1))
+    ) (1,1) declare
+  ) (19,19) declare
+,end
+)
+
+In one line:
+seq(\age.seq(\count.seq(branchstart((age>=18,true),t1,t2),space(2),const("Wow!"),space(1),const("An"),space(1),const("adult!"),space(1),exp((count,1)),const("\n"),branchend,exp((count,1))) (1,1) declare) (19,19) declare,end)
+
+7. evaluate 
+seq(branchstart((age>=18,true),t1,t2),space(2),const("Wow!"),space(1),const("An"),space(1),const("adult!"),space(1),exp((count,1)),const("\n"),branchend,exp((count,1)),end)
+
+  Wow! An adult! 1
+1
+
+-----------------------------------------------------
+update 
+(1) 同时更新两个count值
+bulk(replace "1" with "3" at 17, replace "1" with "3" at 20) |> seq(\age.seq(\count.seq(branchstart((age>=18,true),t1,t2),space(2),const("Wow!"),space(1),const("An"),space(1),const("adult!"),space(1),exp((count,1)),const("\n"),branchend,exp((count,1))) (1,1) declare) (19,19) declare,end)
+--> bulk(replace "1" with "3" at 17, replace "1" with "3" at 20) |> \age.seq(\count.seq(branchstart((age>=18,true),t1,t2),space(2),const("Wow!"),space(1),const("An"),space(1),const("adult!"),space(1),exp((count,1)),const("\n"),branchend,exp((count,1))) (1,1) declare) (19,19) declare
+--> bulk(replace "1" with "3" at 17, replace "1" with "3" at 20) |> {age -> 19} |- seq(\count.seq(branchstart((age>=18,true),t1,t2),space(2),const("Wow!"),space(1),const("An"),space(1),const("adult!"),space(1),exp((count,1)),const("\n"),branchend,exp((count,1))) (1,1) declare)
+--> bulk(replace "1" with "3" at 17, replace "1" with "3" at 10) |> {age -> 19, count -> 1} |- seq(branchstart((age>=18,true),t1,t2),space(2),const("Wow!"),space(1),const("An"),space(1),const("adult!"),space(1),exp((count,1)),const("\n"),branchend,exp((count,1)))
+--> bulk(replace "1" with "3" at 17, replace "1" with "3" at 10) |> {age -> 19, count -> 1} |- branchstart((age>=18,true),t1,t2)
+--> bulk(replace "1" with "3" at 17, replace "1" with "3" at 10) |> {age -> 19, count -> 1} |- space(2)
+--> bulk(replace "1" with "3" at 15, replace "1" with "3" at 18) |> {age -> 19, count -> 1} |- const("Wow!")
+--> bulk(replace "1" with "3" at 11, replace "1" with "3" at 14) |> {age -> 19, count -> 1} |- space(1)
+--> bulk(replace "1" with "3" at 10, replace "1" with "3" at 12) |> {age -> 19, count -> 1} |- const("An")
+--> bulk(replace "1" with "3" at 8, replace "1" with "3" at 10) |> {age -> 19, count -> 1} |- space(1)
+--> bulk(replace "1" with "3" at 7, replace "1" with "3" at 9) |> {age -> 19, count -> 1} |- const("adult!")
+--> bulk(replace "1" with "3" at 1, replace "1" with "3" at 3) |> {age -> 19, count -> 1} |- space(1)
+--> bulk(replace "1" with "3" at 0, replace "1" with "3" at 2) |> {age -> 19, count -> 1} |- exp((count,1))
+    // sv=str(1)="1"==s1, vs2=strtoval("3")=3, 3 |> {age -> (19,[]), count -> (1,[])} |- count -> {age -> (19,[]), count -> (3,[3])} |- count
+--> bulk(id, replace "1" with "3" at 1) |> {age -> (19,[]), count -> (3,[3])} |- const("\n")
+--> bulk(id, replace "1" with "3" at 0) |> {age -> (19,[]), count -> (3,[3])} |- branchend
+--> bulk(id, replace "1" with "3" at 0) |> {age -> (19,[]), count -> (3,[3])} |- exp((count,1))
+    // sv=str(1)="1"==s1, vs2=strtoval("3")=3, 3 |> {age -> (19,[]), count -> (3,[3])} |- count -> {age -> (19,[]), count -> (3,[3])} |- count
+a. 更新lambda term的e
+\count.seq(branchstart((age>=18,true),t1,t2),space(2),const("Wow!"),space(1),const("An"),space(1),const("adult!"),space(1),exp((count,1)),const("\n"),branchend,exp((count,1))) (1,1) declare
+3 |> {age -> (19,[])} |- 1  ->  {age -> (19,[])} |- 3
+b. 更新外层lambda term的 e
+\age.seq(\count.seq(branchstart((age>=18,true),t1,t2),space(2),const("Wow!"),space(1),const("An"),space(1),const("adult!"),space(1),exp((count,1)),const("\n"),branchend,exp((count,1))) (1,1) declare) (19,19) declare
+19 |> {} |- 19 -> {} |- 19
+
+最终结果：
+seq(\age.seq(\count.seq(branchstart((age>=18,true),t1,t2),space(2),const("Wow!"),space(1),const("An"),space(1),const("adult!"),space(1),exp((count,3)),const("\n"),branchend,exp((count,3))) (3,3) declare) (19,19) declare,end)

@@ -1,0 +1,398 @@
+1. Template program:
+'''
+«var paragraphs = freeze([{head:"Hello", text:"Hello!"}, {head:"Farewell", text:"Good Bye!"}]) »
+<html>
+    <body>
+      «var no = 0»
+      «for p: paragraphs»
+        «if p.head != null»
+          «no = no + 1»
+          <h1>«no».«p.head.toUpperCase»</h1>
+        «endif»
+        <p>
+          «p.text»
+        </p>
+      «endfor»
+    </body>
+</html>
+'''
+
+2. Core proram:
+seq(
+  declare(paragraphs, freeze([{head:"Hello", text:"Hello!"}, {head:"Farewell", text:"Good Bye!"}]))
+ ,const("<html>"), const("\n"), space("    "), const("<body>"), const("\n") // why segmentting in this way ? more structured, better for updating.
+ ,declare(no, 0)
+  loop(paragraphs, sep(""), front(""), rear(""),
+       \p.seq(ite(p.head!=null, seq(assign(no, no+1), space("         "), const("<h1>"), exp(no), const("."), exp(p.head.toUpperCase), const("</h1>"), const("\n")), nop), space("          "), const("<p>"), const("\n"), space("            "), exp(p.text), const("\n"), space("          "), const("</p>"), const("\n")
+      ))
+ ,space("     ")
+ ,const("</body>")
+ ,const("\n")
+ ,const("</html>")
+ ,end
+)
+
+3. Partial evaluation/evaluation with enhanced output
+seq(
+  declare(paragraphs, (freeze([{head:"Hello", text:"Hello!"}, {head:"Farewell", text:"Good Bye!"}]), [{head:"Hello", text:"Hello!"}, {head:"Farewell", text:"Good Bye!"}]))
+ ,const("<html>"), const("\n"), space("    "), const("<body>"), const("\n")
+ ,declare(no, (0,0))
+ ,seq(loopstart(freeze(paragraphs), ...), front("")
+     ,\p.seq(seq(branchstart(..., true), seq(assign(no, (no+1,1)), space("         "), const("<h1>"), exp((no,1)), const("."), exp((freeze(p.head.toUpperCase),"HELLO")), const("</h1>", const("\n"))), branchend), space("          "), const("<p>"), const("\n"), space("            "), exp((freeze(p.text), "Hello!")), const("\n"), space("          "), const("</p>"), const("\n"))
+      ({head:"Hello", text:"Hello!"}, {head:"Hello", text:"Hello!"}) loopitem(e_arr)
+     ,sep("") 
+     ,\p.seq(seq(branchstart(...),seq(assign(no,(no+1,2)),space("         "), const("<h1>"), exp(no,2), const("."), exp(freeze(p.head.toUpperCase),"FAREWELL"), const("</h1>", const("\n"))),branchend), space("          "), const("<p>"), const("\n"), space("            "),exp(freeze(p.text), "Good Bye!"), const("\n"), space("          "), const("</p>"), const("\n"))
+      ({head:"Farewell", text:"Good Bye!"}, {head:"Farewell", text:"Good Bye!"}) loopitem(e_arr)
+     ,rear("")
+     ,loopend(e_arr))
+ ,space("     ")
+ ,const("</body>")
+ ,const("\n")
+ ,const("</html>")
+ ,end
+)
+
+4. Flatten:
+seq(
+  declare(paragraphs, (freeze([{head:"Hello", text:"Hello!"}, {head:"Farewell", text:"Good Bye!"}]), [{head:"Hello", text:"Hello!"}, {head:"Farewell", text:"Good Bye!"}]))
+ ,const("<html>"), const("\n"), space("    "), const("<body>"), const("\n")
+ ,declare(no, (0,0))
+ ,loopstart(freeze(paragraphs), ...), front("")
+ ,\p.seq(branchstart(..., true), assign(no, (no+1,1)), space("         "), const("<h1>"), exp((no,1)), const("."), exp((freeze(p.head.toUpperCase),"HELLO")), const("</h1>", const("\n")), branchend, space("          "), const("<p>"), const("\n"), space("            "), exp((freeze(p.text), "Hello!")), const("\n"), space("          "), const("</p>"), const("\n"))
+  ({head:"Hello", text:"Hello!"}, {head:"Hello", text:"Hello!"}) loopitem(e_arr)
+ ,sep("") 
+ ,\p.seq(branchstart(...),assign(no,(no+1,2)),space("         "), const("<h1>"), exp(no,2), const("."), exp(freeze(p.head.toUpperCase),"FAREWELL"), const("</h1>", const("\n")),branchend, space("          "), const("<p>"), const("\n"), space("            "), exp(freeze(p.text), "Good Bye!"), const("\n"), space("          "), const("</p>"), const("\n"))
+  ({head:"Farewell", text:"Good Bye!"}, {head:"Farewell", text:"Good Bye!"}) loopitem(e_arr)
+ ,rear("")
+ ,loopend(e_arr)
+ ,space("     ")
+ ,const("</body>")
+ ,const("\n")
+ ,const("</html>")
+ ,end
+)
+
+5. Lambda translation 
+
+seq(
+  \paragraphs.seq(const("<html>"), const("\n"), space("    "), const("<body>"), const("\n"), 
+      \no.seq(
+        loopstart(freeze(paragraphs), ...)
+       ,front("")
+       ,\p.seq(branchstart(..., true) 
+           ,\no.seq(space("         "), const("<h1>"), exp((no,1)), const("."), exp((freeze(p.head.toUpperCase),"HELLO")), const("</h1>", const("\n"))) 
+              (no+1,1) assign)
+           ,branchend, space("          "), const("<p>"), const("\n"), space("            "), exp((freeze(p.text), "Hello!")), const("\n"), space("          "), const("</p>"), const("\n")
+           ({head:"Hello", text:"Hello!"}, {head:"Hello", text:"Hello!"}) loopitem(e_arr)
+       ,sep("")
+       ,\p.seq(branchstart(..., true) 
+           ,\no.seq(space("         "), const("<h1>"), exp((no,2)), const("."), exp((freeze(p.head.toUpperCase),"FAREWELL")), const("</h1>"), const("\n")) 
+              (no+1,2) assign)
+           ,branchend, space("          "), const("<p>"), const("\n"), space("            "), exp((freeze(p.text), "Good Bye!")), const("\n"), space("          "), const("</p>"), const("\n")
+         ({head:"Farewell", text:"Good Bye!"}, {head:"Farewell", text:"Good Bye!"}) loopitem(e_arr)
+       ,rear("") 
+       ,loopend(e_arr)
+       ,space("     ")
+       ,const("</body>")
+       ,const("\n")
+       ,const("</html>")
+      ) (0,0) declare
+  ) (freeze([{head:"Hello", text:"Hello!"}, {head:"Farewell", text:"Good Bye!"}]), [{head:"Hello", text:"Hello!"}, {head:"Farewell", text:"Good Bye!"}]) declare
+ ,end
+)
+
+
+6. Evaluation
+const("<html>"), const("\n"), space(4), const("<body>"), const("\n"), front(""), branchstart(..., true), space(6), const("<h1>"), exp((no,1)), const("."), exp((freeze(p.head.toUpperCase),"HELLO")), const("</h1>"), const("\n"), branchend, space(6), const("<p>"), const("\n"), space(8), exp((freeze(p.text), "Hello!")), const("\n"), space(6), const("</p>"), const("\n"), ,sep(""), branchstart(..., true), space(6), const("<h1>"), exp((no,2)), const("."), exp((freeze(p.head.toUpperCase),"FAREWELL")), const("</h1>"),const("\n"), branchend, space(6), const("<p>"), const("\n"), space(8), exp((freeze(p.text), "Good Bye!")), const("\n"), space(6), const("</p>"), const("\n"), ,rear(""), loopend(e_arr), space(4), const("</body>"), const("</html>"), end
+
+<html>
+    <body>
+      <h1>1.HELLO</h1>
+      <p>
+        Hello!
+      </p>
+      <h1>2.FAREWELL</h1>
+      <p>
+        Good Bye!
+      </p>
+    </body>
+</html>
+
+
+7. translating lambda to declaration/assignment and flatten:
+
+seq(
+  declare(paragraphs, (freeze([{head:"Hello", text:"Hello!"}, {head:"Farewell", text:"Good Bye!"}]), [{head:"Hello", text:"Hello!"}, {head:"Farewell", text:"Good Bye!"}]))
+ ,const("<html>"), const("\n"), space("    "), const("<body>"), const("\n"), 
+ ,declare(no, (0,0))
+ ,loopstart(freeze(paragraphs), ...),front("")
+ ,\p.seq(branchstart(..., true), assign(no,(no+1,1)), space("         "), const("<h1>"), exp((no,1)), const("."), exp((freeze(p.head.toUpperCase),"HELLO")), const("</h1>", const("\n")),branchend, space("          "), const("<p>"), const("\n"), space("            "), exp((freeze(p.text), "Hello!")), const("\n"), space("          "), const("</p>"), const("\n"))
+    ({head:"Hello", text:"Hello!"}, {head:"Hello", text:"Hello!"}) loopitem(e_arr)
+ ,sep("")
+ ,\p.seq(branchstart(..., true), assign(no,(no+1,2)), space("         "), const("<h1>"), exp((no,2)), const("."), exp((freeze(p.head.toUpperCase),"FAREWELL")), const("</h1>"), const("\n"), branchend, space("          "), const("<p>"), const("\n"), space("            "), exp((freeze(p.text), "Good Bye!")), const("\n"), space("          "), const("</p>"), const("\n"))
+    ({head:"Farewell", text:"Good Bye!"}, {head:"Farewell", text:"Good Bye!"}) loopitem(e_arr)
+ ,rear("") 
+ ,loopend(e_arr)
+ ,space("     ")
+ ,const("</body>")
+ ,const("\n")
+ ,const("</html>")
+ ,end
+)
+
+
+8. uneval to core 
+
+8.1 branch
+seq(
+  declare(paragraphs, freeze([{head:"Hello", text:"Hello!"}, {head:"Farewell", text:"Good Bye!"}]))
+ ,const("<html>"), const("\n"), space("    "), const("<body>"), const("\n"), 
+ ,declare(no, 0)
+ ,loopstart(freeze(paragraphs), ...)
+ ,front("")
+ ,\p.seq(
+     ite(e, seq(assign(no,no+1), space("         "), const("<h1>"), exp(no), const("."), exp(freeze(p.head.toUpperCase)), const("</h1>"), const("\n")), t2)
+     ,space("          "), const("<p>"), const("\n"), space("            "), exp(freeze(p.text)), const("\n"), space("          "), const("</p>"), const("\n")) 
+    ({head:"Hello", text:"Hello!"}, {head:"Hello", text:"Hello!"}) loopitem(e_arr)
+ ,sep("")
+ ,\p.seq(
+     ite(e, seq(assign(no,no+1), space("         "), const("<h1>"), exp(no), const("."), exp(freeze(p.head.toUpperCase)), const("</h1>"), const("\n")), t2)
+     ,space("          "), const("<p>"), const("\n"), space("            "), exp(freeze(p.text)), const("\n"), space("          "), const("</p>"), const("\n"))
+    ({head:"Farewell", text:"Good Bye!"}, {head:"Farewell", text:"Good Bye!"}) loopitem(e_arr)
+ ,rear("") 
+ ,loopend(e_arr)
+ ,space("     ")
+ ,const("</body>")
+ ,const("\n")
+ ,const("</html>")
+ ,end
+)
+
+8.2 forloop
+
+seq(
+  declare(paragraphs, freeze([{head:"Hello", text:"Hello!"}, {head:"Farewell", text:"Good Bye!"}]))
+ ,const("<html>"), const("\n"), space("    "), const("<body>"), const("\n"), 
+ ,declare(no, 0)
+ ,loop(freeze(paragraphs),sep(""),front(""),rear(""),\p.seq(
+     ite(p.head!=null, seq(assign(no,no+1), space("         "), const("<h1>"), exp(no), const("."), exp(freeze(p.head.toUpperCase)), const("</h1>"), const("\n")), t2), space("          "), const("<p>"), const("\n"), space("            "), exp(freeze(p.text)), const("\n"), space("          "), const("</p>"), const("\n")))
+ ,space("     ")
+ ,const("</body>")
+ ,const("\n")
+ ,const("</html>")
+ ,end
+)
+
+
+-----------------------------------------------------------------------------------------------------------------------------
+-- Test with different updates 
+-- Code:
+
+seq(
+  \paragraphs.seq(const("<html>"), const("\n"), space("    "), const("<body>"), const("\n"), 
+      \no.seq(
+        loopstart(freeze(paragraphs), ...)
+       ,front("")
+       ,\p.seq(branchstart(..., true) 
+           ,\no.seq(space("         "), const("<h1>"), exp((no,1)), const("."), exp((freeze(p.head.toUpperCase),"HELLO")), const("</h1>", const("\n"))) 
+              (no+1,1) assign)
+           ,branchend, space("          "), const("<p>"), const("\n"), space("            "), exp((freeze(p.text), "Hello!")), const("\n"), space("          "), const("</p>"), const("\n")
+           ({head:"Hello", text:"Hello!"}, {head:"Hello", text:"Hello!"}) loopitem(e_arr)
+       ,sep("")
+       ,\p.seq(branchstart(..., true) 
+           ,\no.seq(space("         "), const("<h1>"), exp((no,2)), const("."), exp((freeze(p.head.toUpperCase),"FAREWELL")), const("</h1>"), const("\n")) 
+              (no+1,2) assign)
+           ,branchend, space("          "), const("<p>"), const("\n"), space("            "), exp((freeze(p.text), "Good Bye!")), const("\n"), space("          "), const("</p>"), const("\n")
+         ({head:"Farewell", text:"Good Bye!"}, {head:"Farewell", text:"Good Bye!"}) loopitem(e_arr)
+       ,rear("") 
+       ,loopend(e_arr)
+       ,space("     ")
+       ,const("</body>")
+       ,const("\n")
+       ,const("</html>")
+      ) (0,0) declare
+  ) (freeze([{head:"Hello", text:"Hello!"}, {head:"Farewell", text:"Good Bye!"}]), [{head:"Hello", text:"Hello!"}, {head:"Farewell", text:"Good Bye!"}]) declare
+ ,end
+)
+
+1. 在"<html>"前面插入"<!DOCTYPE html>\n"
+insert "<!DOCTYPE html>\n" at 0 |> {} |- seq(\paragraphs.seq(const("<html>"), const("\n"), space("    ")...) (e,v) declare, end)
+-> insert "<!DOCTYPE html>\n" at 0 |> {} |-\paragraphs.seq(const("<html>"), const("\n"), space("    ")...) (e,v) declare
+-> insert "<!DOCTYPE html>\n" at 0 |> {} U {paragraphs -> (v,[])} |- seq(const("<html>"), const("\n"), space("    ")...)
+-> insert "<!DOCTYPE html>\n" at 0 |> {} U {paragraphs -> (v,[])} |- const("<html>")
+1--> {} U {paragraphs -> (v,[])} |- seq(const("<!DOCTYPE html>\n"),const("<html>")); id 
+2--> {} U {paragraphs -> (v,[])} |- seq(const("<!DOCTYPE html>\n<html>")); id 
+
+2. 在第二行插入“<head></head>\n”
+insert “<head></head>\n” at 7 |> {} |- seq(\paragraphs.seq(const("<html>"), const("\n"), space("    ")...) (e,v) declare, end)
+-> insert “<head></head>\n” at 7 |> {} |- \paragraphs.seq(const("<html>"), const("\n"), space("    ")...) (e,v) declare
+-> insert “<head></head>\n” at 7 |> {} U {paragraphs -> (v,[])} |- seq(const("<html>"), const("\n"), space("    ")...)
+--> insert “<head></head>\n” at 7 |> {} U {paragraphs -> (v,[])} |- const("<html>")
+// len("<html>)=6, 7 > 6, n' = 7-6 = 1
+--> {} U {paragraphs -> (v,[])} |- const("<html>");insert “<head></head>\n” at 1
+--> insert “<head></head>\n” at 1 |> {paragraphs -> (v,[])} |- const("\n")
+// len("\n") = 1, 1==1,
+1--> {paragraphs -> (v,[])} |- const("\n<head></head>\n"); id
+2--> {paragraphs -> (v,[])} |- const("\n"); insert “<head></head>\n” at 0
+  --> insert “<head></head>\n” at 0 |> {paragraphs -> (v,[])} |- space("    ")
+  2.1--> {paragraphs -> (v,[])} |- seq(const("<head></head>\n"),space("    "));id
+  2.2--> {paragraphs -> (v,[])} |- space("<head></head>\n    ");id // No, space cannot add non space characters.
+Final result:
+-> seq(\paragraphs.seq(const("<html>"), const("\n<head></head>\n"), space("    ")...) (e,v) declare, end)
+-> seq(\paragraphs.seq(const("<html>"), const("\n"), const("<head></head>\n"), space("    ")...) (e,v) declare, end)
+
+3. 在"1.HELLO"的"1"后面插入1个空格
+insert “ ” at 29 |> {} |- seq(\paragraphs.seq(const("<html>"), const("\n"), space("    ")...) (e,v) declare, end)
+-> insert “ ” at 29 |> {} |- \paragraphs.seq(const("<html>"), const("\n"), space("    ")...) (e,v) declare
+-> insert “ ” at 29 |> {} U {paragraphs -> (v,[])} |- seq(const("<html>"), const("\n"), space("    ")...)
+--> insert “ ” at 29 |> {paragraphs -> (v,[])} |- const("<html>") -> {paragraphs -> (v,[])} |- const("<html>"); insert “ ” at 22
+--> insert “ ” at 22 |> {paragraphs -> (v,[])} |- const("\n") -> {paragraphs -> (v,[])} |- const("\n"); insert " " at 22
+--> insert “ ” at 22 |> {paragraphs -> (v,[])} |- space(4) -> {paragraphs -> (v,[])} |- space(4); insert " " at 18
+--> insert “ ” at 18 |> {paragraphs -> (v,[])} |- const("<body>") -> {paragraphs -> (v,[])} |- const("<body>"); insert " " at 12
+--> insert “ ” at 12 |> {paragraphs -> (v,[])} |- const("\n") -> {paragraphs -> (v,[])} |- const("\n"); insert " " at 11
+--> insert “ ” at 11 |> {paragraphs -> (v,[])} |- \no.seq(loopstart(...),front(""),\p.seq(branchstart(),\no.seq(space(6), const("<h1>"), exp(no,1), const("."), exp(freeze(p.head.toUpperCase), "HELLO"), ...) (no+1,1) assign) (e,v) loopitem, sep("")) (e, v) declare
+--> insert “ ” at 11 |> {paragraphs -> (v,[])} u {no -> (0,[])} |- seq(loopstart(...),front(""),\p.seq(branchstart(),\no.seq(space(6), const("<h1>"), exp(no,1), const("."), exp(freeze(p.head.toUpperCase), "HELLO"), ...) (no+1,1) assign) (e,v) loopitem, sep("")) 
+--> insert “ ” at 11 |> {paragraphs -> (v,[]), no -> (0,[])} |- loopstart(...) -> {paragraphs -> (v,[]), no -> (0,[])} |- loopstart(...) --> insert “ ” at 10 
+--> insert “ ” at 11 |> {paragraphs -> (v,[]), no -> (0,[])} |- front("") -> {paragraphs -> (v,[]), no -> (0,[])} |- front("") --> insert “ ” at 10
+--> insert “ ” at 11 |> {paragraphs -> (v,[]), no -> (0,[])} |- \p.seq(branchstart(),\no.seq(space(6), const("<h1>"), exp(no,1), const("."), exp(freeze(p.head.toUpperCase), "HELLO"), ...) (no+1,1) assign) (e,v) loopitem(paragraphs)
+  --> insert “ ” at 11 |> {paragraphs -> (v,[]), no -> (0,[]), p -> {head:"Hello", text:"Hello!"}} |- seq(branchstart(),\no.seq(space(6), const("<h1>"), exp(no,1), const("."), exp(freeze(p.head.toUpperCase), "HELLO"), ...) (no+1,1) assign)
+  --> insert “ ” at 11 |> {paragraphs -> (v,[]), no -> (0,[]), p -> {head:"Hello", text:"Hello!"}} |- branchstart(),\no.seq(space(6), const("<h1>"), exp(no,1), const("."), exp(freeze(p.head.toUpperCase), "HELLO"), ...) (no+1,1) assign
+  --> insert “ ” at 11 |> {paragraphs -> (v,[]), no -> (0,[]), p -> {head:"Hello", text:"Hello!"}} |- \no.seq(space(6), const("<h1>"), exp(no,1), const("."), exp(freeze(p.head.toUpperCase), "HELLO"), ...) (no+1,1) assign
+  --> insert “ ” at 11 |> {paragraphs -> (v,[]), no -> (1,[]), p -> {head:"Hello", text:"Hello!"}} |- seq(space(6), const("<h1>"), exp(no,1), const("."), exp(freeze(p.head.toUpperCase), "HELLO"), ...)
+  --> insert “ ” at 11 |> {paragraphs -> (v,[]), no -> (1,[]), p -> {head:"Hello", text:"Hello!"}} |- space(6)
+  --> insert “ ” at 5 |> {paragraphs -> (v,[]), no -> (1,[]), p -> {head:"Hello", text:"Hello!"}} |- const("<h1>")
+  --> insert “ ” at 1 |> {paragraphs -> (v,[]), no -> (1,[]), p -> {head:"Hello", text:"Hello!"}} |- exp(no,1)
+      // len("1") = 1, 1 <= len("1"), sv' = "1 ", v' = strtoval("1 "), then fail.
+      --> Fail
+      // len("1") = 1, 1 >= len("1"), n' = 0
+  --> insert “ ” at 0 |> {paragraphs -> (v,[]), no -> (1,[]), p -> {head:"Hello", text:"Hello!"}} |- const(".")
+      --> {paragraphs -> (v,[]), no -> (1,[]), p -> {head:"Hello", text:"Hello!"}} |- seq(const(" "), const("."));id
+      --> {paragraphs -> (v,[]), no -> (1,[]), p -> {head:"Hello", text:"Hello!"}} |- const(" .");id
+
+4. 在"1.HELLO"的"."后面插入1个空格, 接3，省略大部分计算
+--> insert “ ” at 1 |> {paragraphs -> (v,[]), no -> (1,[]), p -> {head:"Hello", text:"Hello!"}} |- const(".")
+  --> {paragraphs -> (v,[]), no -> (1,[]), p -> {head:"Hello", text:"Hello!"}} |- const(". ");id  // solution 1
+  --> {paragraphs -> (v,[]), no -> (1,[]), p -> {head:"Hello", text:"Hello!"}} |- const("."); insert " " at 0
+  --> insert “ ” at 0 |> {paragraphs -> (v,[]), no -> (1,[]), p -> {head:"Hello", text:"Hello!"}} |- exp(freeze(p.head.toUpperCase), "HELLO")
+    --> {paragraphs ->(v,[]), no ->(1,[]), p -> {head:"Hello", text:"Hello!"}} |- seq(const(" "), exp(freeze(p.head.toUpperCase), "HELLO")) // solution 2
+      // sv="HELLO", sv' = " HELLO", v' = " HELLO"  
+        --> " HELLO" |> {paragraphs -> (v,[]), no -> (1,[]), p -> {head:"Hello", text:"Hello!"}} |- freeze(p.head.toUpperCase)
+        --> Fail // solution 3
+
+注意：solution1和solution2最终都会失败，因为forloop back to core的时候，两个loopitem的t不一致。
+
+5. 在"1.HELLO"的"."后面插入" Greeting"，同4.
+6. 在"1.HELLO"的"O"后面插入1个空格
+--> insert “ ” at 5 |> {paragraphs -> (v,[]), no -> (1,[]), p -> {head:"Hello", text:"Hello!"}} |- exp((freeze(p.head.toUpperCase),"HELLO"))
+  --> sv' = "HELLO ", v'="HELLO "
+  --> "HELLO " |> {paragraphs -> (v,[]), no -> (1,[]), p -> {head:"Hello", text:"Hello!"}} |- freeze(p.head.toUpperCase)
+  --> Fail // solution 1
+  --> insert “ ” at 0 |> {paragraphs -> (v,[]), no -> (1,[]), p -> {head:"Hello", text:"Hello!"}} |- const("</h1>")
+  --> {paragraphs -> (v,[]), no -> (1,[]), p -> {head:"Hello", text:"Hello!"}} |- seq(const(" "), const("</h1>")) // or even check and using space(1)
+  --> {paragraphs -> (v,[]), no -> (1,[]), p -> {head:"Hello", text:"Hello!"}} |- const(" </h1>") // or even check and using space(1)
+
+7. 删除"<html>"中的"t"
+delete "t" at 2 |> {} |- seq(\paragraphs.seq(const("<html>"), const("\n"), space("    ")...) (e,v) declare, end)
+--> delete "t" at 2 |> {} |- \paragraphs.seq(const("<html>"), const("\n"), space("    ")...) (e,v) declare
+--> delete "t" at 2 |> {} U {paragraphs->(v,[])} |- seq(const("<html>"), const("\n"), space("    ")...)
+--> delete "t" at 2 |> {paragraphs->(v,[])} |- const("<html>")
+// 2 + len("t") = 3 < len("<html>"). sc' = remove("<html>", "t", 2) = "<hml>"
+--> {paragraphs->(v,[])} |- const("<hml>"); id
+
+8. 删除"<html>\n"
+delete "<html>\n" at 0 |> {} |- seq(\paragraphs.seq(const("<html>"), const("\n"), space("    ")...) (e,v) declare, end)
+--> delete "<html>\n" at 0 |> {} |- \paragraphs.seq(const("<html>"), const("\n"), space("    ")...) (e,v) declare
+--> delete "<html>\n" at 0 |> {paragraphs->(v,[])} |- seq(const("<html>"), const("\n"), space("    ")...)
+--> delete "<html>\n" at 0 |> {paragraphs->(v,[])} |- const("<html>")
+    // len("<html>\n") > len("<html>"), s'=revmove("<html>\n", "<html>",0)="\n"
+    --> bot; delete "\n" at 0 
+--> delete "\n" at 0 |> {paragraphs->(v,[])} |- const("\n")
+    // len("\n") = len("\n")
+    --> bot; id
+--> {} |- seq(\paragraphs.seq(bot, bot, space("    ")...) (e,v) declare, end)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+(2) 为了可以flatten，loopitem不能用\x.t (v,v) loopitem的形式；要么用这个形式，可能不会产生影响？
+
+seq(
+  const("<html>"), const("\n"), space("    "), const("<body>"), const("\n"),
+  declare(no,(0,0)), 
+  loopstart(paragraphs,...), front("")
+ ,\p.seq(seq(branchstart(...),seq(assign(no,(no+1,1)),space("         "), const("<h1>"), exp(no,1), const("."), exp(p.head.toUpperCase,"HELLO"), const("</h1>")),branchend), space("          "), const("<p>"), const("\n"), space("            "),exp(p.text, "Hello!"), const("\n"), space("          "),const("\n"))
+  ({head:"Hello", text:"Hello!"}, {head:"Hello", text:"Hello!"}) loopitem
+ ,sep("") 
+ ,\p.seq(seq(branchstart(...),seq(assign(no,(no+1,2)),space("         "), const("<h1>"), exp(no,2), const("."), exp(p.head.toUpperCase,"FAREWELL"), const("</h1>")),branchend), space("          "), const("<p>"), const("\n"), space("            "),exp(p.text, "Good Bye!"), const("\n"), space("          "),const("\n"))
+  ({head:"Farewell", text:"Good Bye!"}, {head:"Farewell", text:"Good Bye!"}) loopitem
+ ,rear("")
+ ,loopend
+ ,declareend(no)
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+下面的例子，问题来了，怎么翻译：
+
+declare(n0,(0,0))
+branchstart 
+declare(n2,(2,2))
+exp(n2,2)
+assign(n0,(no+1,1))
+declareend(n2)
+branchend 
+exp(no,1)
+declarenend(no)
+
+因为n2会把no=no+1包起来
+先想一想，有没有解法
+\no.(branchstart,
+     \n2.(exp(n2,2), \n0.(declareend(n2)) (no+1,1)) (2,2),
+     branchend, 
+     exp(no,1), 
+     declarenend(no)) (0,0)
+待进一步验证，可能也没问题
+(1) partial evaluation已经将里层外层的no的值都已经计算出来了，因为不再需要考虑正向evaluation
+(2) lambda translation主要用于方向更新，不影响正向因为已经不需要计算正向了。反向更新的时候，内层no=n0+1更新了no的值，然后no的值能够传递到外层的no就行
+
+
+

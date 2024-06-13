@@ -1,0 +1,185 @@
+1. template program:
+«var count = 1»
+Before: «count»
+«count = count + 1»
+After: «count»
+
+2. core program 
+seq(
+  declare(count,1)
+ ,const("Before:")
+ ,space(1)
+ ,exp(count)
+ ,const("\n")
+ ,assign(count,count+1)
+ ,const("After:")
+ ,space(1)
+ ,exp(count)
+ ,end
+)
+
+3. evaluate to enhanced output
+seq(
+  declare(count,(1,1))
+ ,const("Before:")
+ ,space(1)
+ ,exp((count,1))
+ ,const("\n")
+ ,assign(count,(count+1,2))
+ ,const("After:")
+ ,space(1)
+ ,exp((count,2))
+ ,end
+)
+
+4. lambdalize
+seq(
+  seq(\count.seq(const("Before:"),space(1), exp((count,1)),const("\n"),
+                 \count.seq(const("After:"),space(1),exp((count,2))) (count+1,2) assign
+     ) (1,1) declare)
+ ,end
+)
+
+5. flatten
+seq(
+  \count.seq(const("Before:"),space(1), exp((count,1)),const("\n"), \count.seq(const("After:"),space(1),exp((count,2))) (count+1,2) assign) (1,1) declare
+ ,end
+)
+
+6. evaluation
+seq(const("Before:"),space(1), exp((count,1)),const("\n"),const("After:"),space(1),exp((count,2)),end)
+
+Before: 1
+After: 2
+
+-------------------------------------------------------------
+update 
+(1). 同时更新两个输出的值
+bulk(replace "1" with "0" at 8, replace "2" with "1" at 16) |> {} |- seq(\count.seq(const("Before:"),space(1), exp((count,1)),const("\n"), \count.seq(const("After:"),space(1),exp((count,2))) (count+1,2) assign) (1,1) declare,end)
+--> bulk(replace "1" with "0" at 8, replace "2" with "1" at 16) |> {} |- \count.seq(const("Before:"),space(1), exp((count,1)),const("\n"), \count.seq(const("After:"),space(1),exp((count,2))) (count+1,2) assign) (1,1) declare
+--> bulk(replace "1" with "0" at 8, replace "2" with "1" at 16) |> {count -> (1,[])} |- seq(const("Before:"),space(1), exp((count,1)),const("\n"), \count.seq(const("After:"),space(1),exp((count,2))) (count+1,2) assign)
+--> bulk(replace "1" with "0" at 8, replace "2" with "1" at 16) |> {count -> (1,[])} |- const("Before:")
+    --> replace "1" with "0" at 8 |> {count -> (1,[])} |- const("Before:") -> {count -> (1,[])} |- const("Before:"); replace "1" with "0" at 1
+        // n2' = 16 - (8-1) = 9
+--> bulk(replace "1" with "0" at 1, replace "2" with "1" at 9) |> {count -> (1,[])} |- space(1)
+    --> replace "1" with "0" at 1 |> {count -> (1,[])} |- space(1) -> {count -> (1,[])} |- space(1); replace "1" with "0" at 0
+--> bulk(replace "1" with "0" at 0, replace "2" with "1" at 8) |> {count -> (1,[])} |- exp((count,1))
+        // sv=str(v)="1", sv=="1", vs2=strtoval("0")=0, 0 |> {count -> (1,[])} |- count -> {count -> (0,[0])} |- count
+    --> replace "1" with "0" at 0 |> {count -> (1,[])} |- exp((count,1)) -> {count -> (0,[0])} |- exp((count,0));id
+-> {count -> (0,[0])} |- exp((count,0));bulk(id;replace "2" with "1" at 8)
+bulk(id;replace "2" with "1" at 8) |> {count -> (0,[0])} |- const("\n") 
+--> replace "2" with "1" at 8 |> {count -> (0,[0])} |- const("\n")
+--> replace "2" with "1" at 7 |> {count -> (0,[0])} |- \count.seq(const("After:"),space(1),exp((count,2))) (count+1,2) assign
+--> replace "2" with "1" at 7 |> {count -> (0,[0])} Um {count -> (2,[])} |- seq(const("After:"),space(1),exp((count,2)))
+--> replace "2" with "1" at 7 |> {count -> (2,[])} |- seq(const("After:"),space(1),exp((count,2)))
+--> replace "2" with "1" at 7 |> {count -> (2,[])} |- const("After:")
+--> replace "2" with "1" at 1 |> {count -> (2,[])} |- space(1)
+--> replace "2" with "1" at 0 |> {count -> (2,[])} |- exp((count,2)) 
+    // sv=str(v)="2", sv=="2", vs2=strtoval("1")=1, 1 |> {count -> (2,[])} |- count ->  {count -> (1,[1])} |- count
+--> {count -> (1,[1])} |- exp((count,1));id
+For term \count.seq(const("After:"),space(1),exp((count,2))) (count+1,2) assign, 
+1 |> {count -> (0,[0])} |- count + 1 -> {count -> (0,[0])} |- count + 1
+
+For term \count.seq(const("Before:"),space(1), exp((count,1)),const("\n"), \count.seq(const("After:"),space(1),exp((count,2))) (count+1,2) assign) (1,1) declare 
+0 |> {} |- 1 -> {} |- 0
+
+The final output:
+seq(
+  \count.seq(const("Before:"),space(1), exp((count,0)),const("\n"), \count.seq(const("After:"),space(1),exp((count,1))) (count+1,1) assign) (0,0) declare
+ ,end
+)
+
+
+7. unLamdalize 
+seq(
+  seq(declare(count,(0,0)),
+      seq(const("Before:"),space(1), exp((count,0)),const("\n"), 
+         seq(declare(count,(count+1,1)), seq(const("After:"),space(1),exp((count,1))))
+        ) 
+   )
+ ,end
+)
+
+8. flatten
+seq(
+  declare(count,(0,0))
+ ,const("Before:")
+ ,space(1)
+ ,exp((count,0))
+ ,const("\n")
+ ,declare(count,(count+1,1))
+ const("After:")
+ ,space(1)
+ ,exp((count,1))
+ ,end
+)
+
+9. uneval
+seq(
+  declare(count,0)
+ ,const("Before:")
+ ,space(1)
+ ,exp(count)
+ ,const("\n")
+ ,declare(count,count+1)
+ ,const("After:")
+ ,space(1)
+ ,exp(count)
+ ,end
+)
+
+
+(2) 只是将1改为0
+
+replace "1" with "0" at 8 |> {} |- seq(\count.seq(const("Before:"),space(1), exp((count,1)),const("\n"), \count.seq(const("After:"),space(1),exp((count,2))) (count+1,2) assign) (1,1) declare,end)
+--> replace "1" with "0" at 8 |> {} |- \count.seq(const("Before:"),space(1), exp((count,1)),const("\n"), \count.seq(const("After:"),space(1),exp((count,2))) (count+1,2) assign) (1,1) declare
+--> replace "1" with "0" at 8 |> {count -> (1,[])} |- seq(const("Before:"),space(1), exp((count,1)),const("\n"), \count.seq(const("After:"),space(1),exp((count,2))) (count+1,2) assign)
+--> replace "1" with "0" at 8 |> {count -> (1,[])} |- const("Before:")
+--> replace "1" with "0" at 1 |> {count -> (1,[])} |- space(1)
+--> replace "1" with "0" at 0 |> {count -> (1,[])} |- exp((count,1))
+    // sv=str(1)="1"==s1, vs2=strtoval("0")=0, 0 |> {count -> (1,[])} |- count -> {count -> (0,[0])} |- count
+--> {count -> (0,[0])} |- exp((count,0));id
+--> id |> {count -> (0,[0])} |- const("\n")
+--> id |> {count -> (0,[0])} |- \count.seq(const("After:"),space(1),exp((count,2))) (count+1,2) assign
+--> id |> {count -> (0,[0])} Um {count -> (2,[])} |- seq(const("After:"),space(1),exp((count,2))) // e = count+1
+--> id |> {count -> (2,[])} |- const("After:")
+--> id |> {count -> (2,[])} |- space(1)
+--> id |> {count -> (2,[])} |- exp((count,2))
+For term \count.seq(const("After:"),space(1),exp((count,2))) (count+1,2) assign, the \x.t b m, the t part has done, now the b part. 
+2 |> {count -> (0,[0])} Um {} |- count+1 -> {count -> (0,[0])} |- count+2
+
+For term \count.seq(const("Before:"),space(1), exp((count,1)),const("\n"), \count.seq(const("After:"),space(1),exp((count,2))) (count+1,2) assign) (1,1) declare, the b part.
+0 |> {} Um {} |- 1 -> {} |- 0
+
+Finally, the output is :
+seq(\count.seq(const("Before:"),space(1), exp((count,0)),const("\n"), \count.seq(const("After:"),space(1),exp((count,2))) (count+2,2) assign) (0,0) declare,end)
+
+(3) 只将2改为1
+Note: an important example
+
+replace "2" with "1" at 16 |> {} |- seq(\count.seq(const("Before:"),space(1), exp((count,1)),const("\n"), \count.seq(const("After:"),space(1),exp((count,2))) (count+1,2) assign) (1,1) declare,end)
+--> replace "2" with "1" at 16 |> {} |- \count.seq(const("Before:"),space(1), exp((count,1)),const("\n"), \count.seq(const("After:"),space(1),exp((count,2))) (count+1,2) assign) (1,1) declare
+--> replace "2" with "1" at 16 |> {count->(1,[])} |- seq(const("Before:"),space(1), exp((count,1)),const("\n"), \count.seq(const("After:"),space(1),exp((count,2))) (count+1,2) assign)
+--> replace "2" with "1" at 16 |> {count->(1,[])} |- const("Before:")
+--> replace "2" with "1" at 9 |> {count->(1,[])} |- space(1)
+--> replace "2" with "1" at 8 |> {count->(1,[])} |- exp((count,1))
+--> replace "2" with "1" at 7 |> {count->(1,[1])} |- const("\n")
+--> replace "2" with "1" at 6 |> {count->(1,[1])} |- \count.seq(const("After:"),space(1),exp((count,2))) (count+1,2) assign
+--> replace "2" with "1" at 6 |> {count->(1,[1])} Um {count->(2,[])} |- seq(const("After:"),space(1),exp((count,2)))
+--> replace "2" with "1" at 6 |> {count->(2,[])} |- const("After:")
+--> replace "2" with "1" at 1 |> {count->(2,[])} |- space(1)
+--> replace "2" with "1" at 0 |> {count->(2,[])} |- exp((count,2))
+    // sv=str(2)="2", sv==s1, vs2=strtoval("1")=1, 1 |> {count->(2,[])} |- count -> {count->(1,[1])} |- count
+--> {count->(1,[1])} |- exp((count,1)); id
+For term, \count.seq(const("After:"),space(1),exp((count,2))) (count+1,2) assign
+1 |> {count->(1,[1])} Um {} |- count+1 ->  {count->(1,[1])} Um {} |- count+0 
+For term, \count.seq(const("Before:"),space(1), exp((count,1)),const("\n"), \count.seq(const("After:"),space(1),exp((count,2))) (count+1,2) assign) (1,1) declare
+1 |> {} |- 1 -> {} |- 1
+Finally, 
+seq(\count.seq(const("Before:"),space(1), exp((count,1)),const("\n"), \count.seq(const("After:"),space(1),exp((count,2))) (count+0,2) assign) (1,1) declare,end)
+
+
+
+
+
+

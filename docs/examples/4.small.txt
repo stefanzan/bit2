@@ -1,0 +1,19 @@
+1. template program: no if, has assignment in the loop
+«var paragraphs = freeze([{head:"Hello", text:"Hello!"}, {head:"Farewell", text:"Good Bye!"}]) »
+<html>
+    <body>
+      «var no = 0»
+      «for p: paragraphs»
+        «no = no + 1»
+        <h1>«no».«p.head.toUpperCase»</h1>
+        <p>
+          «p.text»
+        </p>
+      «endfor»
+    </body>
+</html>
+
+
+---------------------------------------------------------
+update 
+1. 在"<body>\n"后面插入一行"<h1>Test</h1>\n"
