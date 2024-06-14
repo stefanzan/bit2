@@ -1,7 +1,7 @@
-import { TermNode, Expr, ConstNode, SpaceNode, DeclareNode, AssignNode, ExpNode, SeqNode, IfThenElseNode, LoopNode, CallNode, NopNode, BotNode, EndNode, Constant, Variable, BinaryOperation, UnaryOperation, FieldAccess, ArrayLiteral, FreezeExp, Lambda } from '../../src/core/AST';
+import { TermNode, ConstNode, SpaceNode, DeclareNode, AssignNode, ExpNode, SeqNode, IfThenElseNode, LoopNode, CallNode, NopNode, BotNode, EndNode, Lambda } from '../../src/core/AST';
 import * as Print from "../../src/core/Print";
 
-const assignment: TermNode = {
+export const assignmentExample: TermNode = {
   type: 'seq',
   nodes: [
     {type:'declare', name:{type:'variable', name:'v'}, value:{type:'constant',value:0}},
@@ -13,31 +13,50 @@ const assignment: TermNode = {
   ]
 }
 
-const branch: TermNode = {
-  type:'ite',
-  condition:{type:'binary', operator:">", left:{type:'field', object:{type:'variable', name:'v'}, field:'length'}, right:{type:'constant', value:10}},
-  trueBranch:{type:'seq', nodes:[
-      {type:'exp', expression:{type:'field', object:{type:'variable', name:'v'}, field:'substring(0,10)'}},
-      {type:'const', value:{type:"constant", value:'...'}},
-    ]},
-  falseBranch: {type:'exp', expression:{type:'variable', name:'v'}}
+export const branchExample: TermNode = {
+  type:'seq',
+  nodes:[
+    {type:'declare', name:{type:'variable', name:'v'}, value:{type:'constant',value:"stefanzantao"}},
+    {
+      type:'ite',
+      condition:{type:'binary', operator:">", left:{type:'field', object:{type:'variable', name:'v'}, field:'length'}, right:{type:'constant', value:10}},
+      trueBranch:{type:'seq', nodes:[
+          // {type:'exp', expression:{type:'field', object:{type:'variable', name:'v'}, field:'substring(0,10)'}},
+          {type:'exp', expression:{type:'variable', name:'v'}},
+          {type:'const', value:{type:"constant", value:'...'}},
+        ]},
+      falseBranch: {type:'exp', expression:{type:'variable', name:'v'}}
+    }
+  ]
 }
 
-const loop: TermNode = {
-  type:'loop',
-  lst:{type:'variable', name:'lst'},
-  separator: {type:'sep', value:','},
-  front:{type:'front', value:'['},
-  rear:{type:'rear', value:']'},
-  body:{type:'lambda', variable:{type:'variable', name:'item'}, body:{type:'exp', expression:{type:'variable', name:'item'}}}
+export const loopExample: TermNode = {
+  type:'seq',
+  nodes: [
+    {
+      type:'declare', name:{type:'variable', name:'lst'}, 
+      value:{type:'array',elements:[
+        { type: 'object', fields: { head: {type:"constant", value: "Hello"}, text: {type:"constant", value: "Hello!" } } },
+        { type: 'object', fields: { head: {type:"constant", value: "Farewell"}, text: {type:"constant", value: "Good Bye!"} } }
+      ]}
+    },
+    {
+      type:'loop',
+      lst:{type:'variable', name:'lst'},
+      separator: {type:'sep', value:','},
+      front:{type:'front', value:'['},
+      rear:{type:'rear', value:']'},
+      body:{type:'lambda', variable:{type:'variable', name:'item'}, body:{type:'exp', expression:{type:'variable', name:'item'}}}
+    }
+  ]
 }
 
-console.log("--------assignment-----------");
-Print.printAST(assignment);
+// console.log("--------assignment-----------");
+// Print.printAST(assignmentExample);
 
-console.log("--------branch-----------");
-Print.printAST(branch);
+// console.log("--------branch-----------");
+// Print.printAST(branchExample);
 
 
-console.log("--------forloop-----------");
-Print.printAST(loop);
+// console.log("--------forloop-----------");
+// Print.printAST(loopExample);

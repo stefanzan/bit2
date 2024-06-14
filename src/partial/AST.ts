@@ -1,8 +1,9 @@
 import * as CoreAST from "../core/AST";
+import {Expr, Constant, Variable, ObjectLiteral} from "../common/Exp";
 
 export type TermNode = ConstNode | SpaceNode | DeclareNode | AssignNode | ExpNode
-    | NopNode | SeqNode | BranchStartNode | BranchEndNode | SepNode | LoopFrontNode
-    | LoopRearNode | EndNode | BotNode | CallStartNode | CallEndNode | LambdaAppNode;
+    | NopNode | SeqNode | BranchStartNode | BranchEndNode | SepNode | LambdaAppNode
+    | LoopFrontNode | LoopRearNode | EndNode | BotNode | CallStartNode | CallEndNode;
 
 export interface ConstNode {
     type: 'const';
@@ -56,6 +57,19 @@ export interface SepNode {
     value: string;
 }
 
+export interface LambdaAppNode {
+  type: 'lambda';
+  variable: Variable;
+  body: TermNode;
+  binding: Binding;
+  marker: LoopItem;
+}
+
+export interface LoopItem {
+  type: 'loopitem';
+  lst: Expr;
+}
+
 export interface LoopFrontNode {
     type: 'loopfront';
     lst: Expr;
@@ -85,75 +99,14 @@ export interface CallEndNode {
     type: 'callend';
 }
 
-export interface LambdaAppNode {
-    type: 'lambda';
-    variable: Variable;
-    body: TermNode;
-    binding: Binding;
-    marker: LoopItem;
-}
-
-export interface LoopItem {
-    type: 'loopitem';
-    lst: Expr;
-}
-
 // Expressions
 export type Binding = [Expr, Value];
 
-export type Expr = Constant | Variable | BinaryOperation | UnaryOperation
-    | FieldAccess | ArrayLiteral | ObjectLiteral | FreezeExp;
-
-export interface Constant {
-    type: 'constant';
-    value: number | boolean | string | null | ObjectLiteral | [];
-}
-
-export interface Variable {
-    type: 'variable';
-    name: string;
-}
-
-export interface BinaryOperation {
-    type: 'binary';
-    operator: BinaryOperator;
-    left: Expr;
-    right: Expr;
-}
-
-export interface UnaryOperation {
-    type: 'unary';
-    operator: UnaryOperator;
-    operand: Expr;
-}
-
-// e.f
-export interface FieldAccess {
-    type: 'field';
-    object: Expr;
-    field: string;
-}
-
-// array
-export interface ArrayLiteral {
-    type: 'array';
-    elements: Expr[];
-}
+// Value
+export type Value = number | boolean | string | null | ObjectValue;
 
 // object
-export interface ObjectLiteral {
-    type: 'object';
-    fields: { [key: string]: Constant };
+export interface ObjectValue {
+  type: 'object';
+  fields: { [key: string]: any };
 }
-
-export interface FreezeExp {
-    type: 'freeze';
-    expression: Expr;
-}
-
-// Value
-export type Value = number | boolean | string | null;
-
-// Operators
-export type BinaryOperator = '+' | '-' | '*' | '/' | '&&' | '||' | '>' | '<' | '>=' | '<=' | '!=';
-export type UnaryOperator = 'not';

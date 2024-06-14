@@ -1,8 +1,9 @@
 import * as CoreAST from "../core/AST";
 import * as PartialAST from "../partial/AST";
+import * as Expr from "../common/Exp";
 
 // Function to partially evaluate a CoreAST.TermNode
-export function partialEval(environment: Map<CoreAST.Variable, any>, termNode: CoreAST.TermNode): [Map<CoreAST.Variable, any>, PartialAST.TermNode] {
+export function partialEval(environment: Map<string, any>, termNode: CoreAST.TermNode): [Map<string, any>, PartialAST.TermNode] {
     switch (termNode.type) {
         case 'const':
             // For constants, return the same term node in PartialAST
@@ -16,17 +17,17 @@ export function partialEval(environment: Map<CoreAST.Variable, any>, termNode: C
             // Partially evaluate the value expression
             const [updatedEnvDeclare, evaluatedValueDeclare] = evaluateExpr(environment, termNode.value);
             // Update environment with the evaluated value
-            updatedEnvDeclare.set(termNode.name, evaluatedValueDeclare);
+            updatedEnvDeclare.set(termNode.name.name, evaluatedValueDeclare);
             // Return updated environment and PartialAST declare node
-            return [updatedEnvDeclare, { type: 'declare', name: termNode.name, value: evaluatedValueDeclare }];
+            return [updatedEnvDeclare, { type: 'declare', name: termNode.name, value: [termNode.value, evaluatedValueDeclare] }];
 
         case 'assign':
             // Partially evaluate the value expression
             const [updatedEnvAssign, evaluatedValueAssign] = evaluateExpr(environment, termNode.value);
             // Update environment with the evaluated value
-            updatedEnvAssign.set(termNode.name, evaluatedValueAssign);
+            updatedEnvAssign.set(termNode.name.name, evaluatedValueAssign);
             // Return updated environment and PartialAST assign node
-            return [updatedEnvAssign, { type: 'assign', name: termNode.name, value: evaluatedValueAssign }];
+            return [updatedEnvAssign, { type: 'assign', name: termNode.name, value: [termNode.value, evaluatedValueAssign] }];
 
         case 'exp':
             // Partially evaluate the expression
@@ -112,7 +113,7 @@ export function partialEval(environment: Map<CoreAST.Variable, any>, termNode: C
           // Case 2: e_arr 有一个元素
           else if (Array.isArray(e_arr_value) && e_arr_value.length === 1) {
               const element = e_arr_value[0];
-              const variableName = body.variable; // Assuming lambda has a variable with a name
+              const variableName = body.variable.name; // Assuming lambda has a variable with a name
               const updatedEnvironment = new Map(environment);
               updatedEnvironment.set(variableName, element);
       
@@ -143,7 +144,7 @@ export function partialEval(environment: Map<CoreAST.Variable, any>, termNode: C
       
               for (let i = 0; i < e_arr_value.length; i++) {
                   const element = e_arr_value[i];
-                  const variableName = body.variable; // Assuming lambda has a variable with a name
+                  const variableName = body.variable.name; // Assuming lambda has a variable with a name
                   updatedEnv.set(variableName, element);
       
                   const [updatedEnv2, evaluatedBody] = partialEval(updatedEnv, body.body); // Evaluate t1 to t1'
@@ -216,7 +217,7 @@ export function partialEval(environment: Map<CoreAST.Variable, any>, termNode: C
 }
 
 // Function to evaluate expressions (Expr) and return updated environment and value
-function evaluateExpr(environment: Map<CoreAST.Variable, any>, expr: CoreAST.Expr): [Map<CoreAST.Variable, any>, any] {
+function evaluateExpr(environment: Map<string, any>, expr: Expr.Expr): [Map<string, any>, any] {
     switch (expr.type) {
         case 'constant':
             // Return the unchanged environment and the constant value
@@ -224,7 +225,7 @@ function evaluateExpr(environment: Map<CoreAST.Variable, any>, expr: CoreAST.Exp
 
         case 'variable':
             // Lookup the variable value in the environment
-            const varValue = environment.get(expr);
+            const varValue = environment.get(expr.name);
             if (varValue === undefined) {
                 throw new Error(`Variable '${expr.name}' not found in environment`);
             }
@@ -279,7 +280,7 @@ function evaluateExpr(environment: Map<CoreAST.Variable, any>, expr: CoreAST.Exp
             let [envObject, objectValue] = evaluateExpr(environment, expr.object);
 
             // Access the field in the object
-            if (typeof objectValue !== 'object' || objectValue === null) {
+            if (typeof objectValue !== 'string' && (typeof objectValue !== 'object' || objectValue === null)) {
                 throw new Error(`Cannot access field '${expr.field}' from non-object`);
             }
             const fieldValue = objectValue[expr.field];

@@ -1,4 +1,6 @@
-import { TermNode, ConstNode, SpaceNode, DeclareNode, AssignNode, ExpNode, NopNode, SeqNode, BranchStartNode, BranchEndNode, SepNode, LoopFrontNode, LoopRearNode, EndNode, BotNode, CallStartNode, CallEndNode, LambdaAppNode, LoopItem, Variable, Constant, BinaryOperation, UnaryOperation, FieldAccess, ArrayLiteral, ObjectLiteral, FreezeExp, Expr, Value } from '../../src/partial/AST';
+import { TermNode, ConstNode, SpaceNode, DeclareNode, AssignNode, ExpNode, NopNode, SeqNode, BranchStartNode, BranchEndNode, SepNode, LoopFrontNode, LoopRearNode, EndNode, BotNode, CallStartNode, CallEndNode, LambdaAppNode, LoopItem, Value, ObjectValue } from '../../src/partial/AST';
+import {Expr, Constant, Variable, BinaryOperation, UnaryOperation, FieldAccess, ArrayLiteral, FreezeExp, ObjectLiteral, FunctionCall, BinaryOperator, UnaryOperator} from "../common/Exp";
+import { printExpression } from '../common/Print';
 
 // Function to print the AST nodes for testing purposes
 export function printNode(node: TermNode, indent: string = ''): void {
@@ -52,51 +54,38 @@ export function printNode(node: TermNode, indent: string = ''): void {
 }
 
 export function printBinding(binding: [Expr, Value], indent: string): void {
-    printExpr(binding[0], indent);
-    console.log(indent + '  Value: ' + binding[1]);
+  printExpression(binding[0], indent);
+  printValue(binding[1], indent);
 }
+
+
+
+// Function to print Value with indent
+export function printValue(value: Value, indent: string): void {
+    if (value === null) {
+        console.log(`${indent}null`);
+    } else if (typeof value === 'number' || typeof value === 'boolean' || typeof value === 'string') {
+        console.log(`${indent}${value}`);
+    } else if (typeof value === 'object') {
+        // Assume value is an ObjectLiteral
+        console.log(`${indent}{`);
+        const objectValue = value as ObjectValue; // Type assertion to ensure correct indexing
+        for (const key in objectValue) {
+            if (objectValue.hasOwnProperty(key)) {
+                const newIndent = indent + "  ";
+                console.log(`${newIndent}${key}:`);
+                //@ts-ignore
+                printValue(objectValue[key], newIndent + "  ");
+            }
+        }
+        console.log(`${indent}}`);
+    } else {
+        throw new Error(`Unhandled value type: ${typeof value}`);
+    }
+}
+
+
 
 export function printLoopItem(node: LoopItem, indent: string = ''): void {
   console.log(indent + node.type);
-}
-
-export function printExpr(expr: Expr, indent: string): void {
-    switch (expr.type) {
-        case 'constant':
-            console.log(indent + 'Constant: ' + expr.value);
-            break;
-        case 'variable':
-            console.log(indent + 'Variable: ' + expr.name);
-            break;
-        case 'binary':
-            console.log(indent + 'Binary Operation: ' + expr.operator);
-            printExpr(expr.left, indent + '  ');
-            printExpr(expr.right, indent + '  ');
-            break;
-        case 'unary':
-            console.log(indent + 'Unary Operation: ' + expr.operator);
-            printExpr(expr.operand, indent + '  ');
-            break;
-        case 'field':
-            console.log(indent + 'Field Access: ' + expr.field);
-            printExpr(expr.object, indent + '  ');
-            break;
-        case 'array':
-            console.log(indent + 'Array:');
-            expr.elements.forEach(e => printExpr(e, indent + '  '));
-            break;
-        case 'object':
-            console.log(indent + 'Object:');
-            Object.keys(expr.fields).forEach(key => {
-                console.log(indent + '  ' + key + ':');
-                printExpr(expr.fields[key], indent + '    ');
-            });
-            break;
-        case 'freeze':
-            console.log(indent + 'Freeze:');
-            printExpr(expr.expression, indent + '  ');
-            break;
-        default:
-            break;
-    }
 }
