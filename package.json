@@ -11,6 +11,7 @@
     "peval": "node dist/test/partialEval/peval.test.js",
     "lambda": "node dist/test/lambda/lambda.test.js",
     "evaluation": "node dist/test/lambda/evaluation.test.js",
-    "lambdalize": "node dist/test/lambdalize/lambdalize.test.js"
+    "lambdalize": "node dist/test/lambdalize/lambdalize.test.js",
+    "update": "node dist/test/fuse/update.test.js"
   }
 }
