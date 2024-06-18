@@ -99,12 +99,12 @@ export function partialEval(environment: Map<string, any>, termNode: CoreAST.Ter
                       {
                           type: 'loopfront',
                           lst: lst,
-                          separator: separator.value
+                          separator: front.value
                       },
                       {
                           type: 'looprear',
                           lst: lst,
-                          separator: separator.value
+                          separator: rear.value
                       }
                   ]
               }];
@@ -125,13 +125,13 @@ export function partialEval(environment: Map<string, any>, termNode: CoreAST.Ter
                       {
                           type: 'loopfront',
                           lst: lst,
-                          separator: separator.value
+                          separator: front.value
                       },
                       evaluatedBody,
                       {
                           type: 'looprear',
                           lst: lst,
-                          separator: separator.value
+                          separator: rear.value
                       }
                   ]
               }];
@@ -171,13 +171,13 @@ export function partialEval(environment: Map<string, any>, termNode: CoreAST.Ter
                       {
                           type: 'loopfront',
                           lst: lst,
-                          separator: separator.value
+                          separator: front.value
                       },
                       ...currentNodes,
                       {
                           type: 'looprear',
                           lst: lst,
-                          separator: separator.value
+                          separator: rear.value
                       }
                   ]
               }];

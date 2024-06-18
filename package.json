@@ -10,6 +10,7 @@
     "partial": "node dist/test/partial/partial.test.js",
     "peval": "node dist/test/partialEval/peval.test.js",
     "lambda": "node dist/test/lambda/lambda.test.js",
+    "evaluation": "node dist/test/lambda/evaluation.test.js",
     "lambdalize": "node dist/test/lambdalize/lambdalize.test.js"
   }
 }

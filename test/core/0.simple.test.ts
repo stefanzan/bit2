@@ -48,7 +48,15 @@ export const loopExample: TermNode = {
       separator: {type:'sep', value:','},
       front:{type:'front', value:'['},
       rear:{type:'rear', value:']'},
-      body:{type:'lambda', variable:{type:'variable', name:'item'}, body:{type:'exp', expression:{type:'variable', name:'item'}}}
+      body:{type:'lambda', variable:{type:'variable', name:'item'}, 
+            body: {
+              type:'seq',
+              nodes:[
+                {type:'exp', expression:{type:'field', object:{type:'variable', name:'item'}, field:'head'}},
+                {type: 'const', value: { type: 'constant', value: ":" }},
+                {type:'exp', expression:{type:'field', object:{type:'variable', name:'item'}, field:'text'}},
+              ]}
+            }
     },
     {type:'end'}
   ]
