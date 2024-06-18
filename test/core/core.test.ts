@@ -14,7 +14,8 @@ const exampleAST: TermNode = {
             condition: { type: 'binary', operator: '>', left: { type: 'variable', name: 'x' }, right: { type: 'constant', value: 10 } },
             trueBranch: { type: 'assign', name: {type:"variable", name: "x"}, value: { type: 'constant', value: 10 } },
             falseBranch: { type: 'assign', name: {type:"variable", name: "x"}, value: { type: 'constant', value: 0 } }
-        }
+        },
+        {type:'end'}
     ]
 };
 

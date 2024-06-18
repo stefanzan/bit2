@@ -1,4 +1,4 @@
-import { TermNode, ConstNode, SpaceNode, DeclareNode, AssignNode, ExpNode, NopNode, SeqNode, BranchStartNode, BranchEndNode, SepNode, LoopFrontNode, LoopRearNode, EndNode, BotNode, CallStartNode, CallEndNode, LambdaAppNode, LoopItem, Value, ObjectValue } from '../../src/partial/AST';
+import { TermNode, ConstNode, SpaceNode, DeclareNode, AssignNode, ExpNode, NopNode, SeqNode, BranchStartNode, BranchEndNode, SepNode, LoopFrontNode, LoopRearNode, EndNode, BotNode, CallStartNode, CallEndNode, LambdaAppNode, Marker, Value, ObjectValue } from '../../src/partial/AST';
 import {Expr, Constant, Variable, BinaryOperation, UnaryOperation, FieldAccess, ArrayLiteral, FreezeExp, ObjectLiteral, FunctionCall, BinaryOperator, UnaryOperator} from "../common/Exp";
 import { printExpression } from '../common/Print';
 
@@ -43,10 +43,13 @@ export function printNode(node: TermNode, indent: string = ''): void {
             console.log(indent + '  Variable: ' + node.variable.name);
             printNode(node.body, indent + '  ');
             printBinding(node.binding, indent + '  ');
-            printLoopItem(node.marker, indent + '  ');
+            printMarker(node.marker, indent + '  ');
             break;
         case 'callstart':
             console.log(indent + '  Name: ' + node.name);
+            break;
+        case 'end':
+            console.log(`${indent}  End`);
             break;
         default:
             break;
@@ -86,6 +89,6 @@ export function printValue(value: Value, indent: string): void {
 
 
 
-export function printLoopItem(node: LoopItem, indent: string = ''): void {
-  console.log(indent + node.type);
+export function printMarker(marker: Marker, indent: string = ''): void {
+  console.log(indent + marker.type);
 }

@@ -62,10 +62,13 @@ export interface LambdaAppNode {
   variable: Variable;
   body: TermNode;
   binding: Binding;
-  marker: LoopItem;
+  marker: Marker;
 }
 
-export interface LoopItem {
+export type Marker = LoopItemMarker;
+
+// Marker types
+export interface LoopItemMarker {
   type: 'loopitem';
   lst: Expr;
 }

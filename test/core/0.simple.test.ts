@@ -9,7 +9,8 @@ export const assignmentExample: TermNode = {
     {type:'space', width:1},
     {type:'assign',name:{type:'variable', name:'v'}, value:{type:'binary', operator:'+',left:{type:'variable',name:'v'},right:{type:'constant', value:1}}},
     {type:'space', width:1},
-    {type:'exp', expression:{type:'variable', name:'v'}}
+    {type:'exp', expression:{type:'variable', name:'v'}},
+    {type:'end'}
   ]
 }
 
@@ -26,7 +27,8 @@ export const branchExample: TermNode = {
           {type:'const', value:{type:"constant", value:'...'}},
         ]},
       falseBranch: {type:'exp', expression:{type:'variable', name:'v'}}
-    }
+    },
+    {type:'end'}
   ]
 }
 
@@ -47,7 +49,8 @@ export const loopExample: TermNode = {
       front:{type:'front', value:'['},
       rear:{type:'rear', value:']'},
       body:{type:'lambda', variable:{type:'variable', name:'item'}, body:{type:'exp', expression:{type:'variable', name:'item'}}}
-    }
+    },
+    {type:'end'}
   ]
 }
 

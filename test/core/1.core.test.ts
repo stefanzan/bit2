@@ -46,7 +46,7 @@ const paragraphs = declare({ type: 'variable', name: 'paragraphs' }, { type: 'fr
 });
 
 // Define sequence of commands
-const documentStructure: SeqNode = seq(
+export const documentStructure: SeqNode = seq(
   paragraphs,
   htmlStart, constNode("\\n"), space(4), bodyStart, constNode("\\n"),
   declare({ type: 'variable', name: 'no' }, { type:'constant', value:0} ),
