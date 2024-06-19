@@ -4,7 +4,7 @@ import * as Print from "../../src/partial/Print"
 // Example test cases
 const testConstNode: ConstNode = {
     type: 'const',
-    value: { type: 'constant', value: 42 }
+    value: "42" 
 };
 
 const testDeclareNode: DeclareNode = {

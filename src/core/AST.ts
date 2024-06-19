@@ -7,7 +7,7 @@ export type TermNode = ConstNode | SpaceNode | DeclareNode | AssignNode
 
 export interface ConstNode {
     type: 'const';
-    value: Constant;
+    value: string;
 }
 
 export interface SpaceNode {
@@ -101,7 +101,7 @@ export function seq(...nodes: TermNode[]): SeqNode {
 }
 
 export function constNode(value: string): ConstNode {
-  return { type: 'const', value:{type:'constant', value:value} };
+  return { type: 'const', value:value };
 }
 
 export function space(width: number): SpaceNode {

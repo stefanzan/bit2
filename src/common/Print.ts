@@ -1,5 +1,4 @@
-import {Expr, Constant, Variable, BinaryOperation, UnaryOperation, FieldAccess, ArrayLiteral, FreezeExp, ObjectLiteral, FunctionCall, BinaryOperator, UnaryOperator} from "./Exp";
-
+import {Expr, Constant, ObjectLiteral} from "./Exp";
 
 export function printExpression(expr: Expr, indent: string = ''): void {
   switch (expr.type) {

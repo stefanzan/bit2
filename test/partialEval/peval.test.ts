@@ -12,10 +12,7 @@ const initialEnvironment = new Map<string, any>();
 // Example AST node from CoreAST to partially evaluate
 const coreNode: CoreAST.TermNode = {
     type: 'const',
-    value: {
-        type: 'constant',
-        value: 42
-    }
+    value: '42'
 };
 
 // Perform partial evaluation

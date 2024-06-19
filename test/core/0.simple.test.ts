@@ -24,7 +24,7 @@ export const branchExample: TermNode = {
       trueBranch:{type:'seq', nodes:[
           // {type:'exp', expression:{type:'field', object:{type:'variable', name:'v'}, field:'substring(0,10)'}},
           {type:'exp', expression:{type:'variable', name:'v'}},
-          {type:'const', value:{type:"constant", value:'...'}},
+          {type:'const', value:'...'},
         ]},
       falseBranch: {type:'exp', expression:{type:'variable', name:'v'}}
     },
@@ -53,7 +53,7 @@ export const loopExample: TermNode = {
               type:'seq',
               nodes:[
                 {type:'exp', expression:{type:'field', object:{type:'variable', name:'item'}, field:'head'}},
-                {type: 'const', value: { type: 'constant', value: ":" }},
+                {type: 'const', value: ":"},
                 {type:'exp', expression:{type:'field', object:{type:'variable', name:'item'}, field:'text'}},
               ]}
             }

@@ -7,7 +7,7 @@ export type TermNode = ConstNode | SpaceNode | DeclareNode | AssignNode | ExpNod
 
 export interface ConstNode {
     type: 'const';
-    value: Constant;
+    value: string;
 }
 
 export interface SpaceNode {

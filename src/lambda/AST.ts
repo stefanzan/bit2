@@ -1,5 +1,5 @@
 import * as PartilAST from "../partial/AST";
-import {Expr, Constant, Variable, ObjectLiteral} from "../common/Exp";
+import { Variable } from "../common/Exp";
 
 // Complete TermNode type
 export type TermNode = PartilAST.ConstNode | PartilAST.SpaceNode | PartilAST.SepNode | PartilAST.ExpNode | SeqNode

@@ -5,7 +5,7 @@ import * as LambdaAST from "./AST";
 export function evaluateTermNode(node: LambdaAST.TermNode): string {
   switch (node.type) {
     case 'const':
-      return evaluateConstant(node.value);
+      return node.value;
     case 'sep':
       return node.value;
     case 'space':

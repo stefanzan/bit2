@@ -1,28 +1,11 @@
-import {
-  TermNode,
-  ConstNode,
-  SpaceNode,
-  DeclareNode,
-  ExpNode,
-  SeqNode,
-  IfThenElseNode,
-  LoopNode,
-  NopNode,
-  BotNode,
-  EndNode,
-  FrontNode,
-  RearNode,
-  SepNode,
-  Lambda,
-  AssignNode
-} from "./AST";
+import { TermNode, Lambda } from "./AST";
 import * as Print from "../common/Print";
 
 // 测试函数，递归打印AST节点
 export function printAST(node: TermNode, indent: string = ''): void {
   switch (node.type) {
       case 'const':
-          console.log(`${indent}Const: ${node.value.value}`);
+          console.log(`${indent}Const: ${node.value}`);
           break;
       case 'space':
           console.log(`${indent}Space: ${node.width}`);

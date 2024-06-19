@@ -1,5 +1,5 @@
-import { TermNode, ConstNode, SpaceNode, DeclareNode, AssignNode, ExpNode, NopNode, SeqNode, BranchStartNode, BranchEndNode, SepNode, LoopFrontNode, LoopRearNode, EndNode, BotNode, CallStartNode, CallEndNode, LambdaAppNode, Marker, Value, ObjectValue } from '../../src/partial/AST';
-import {Expr, Constant, Variable, BinaryOperation, UnaryOperation, FieldAccess, ArrayLiteral, FreezeExp, ObjectLiteral, FunctionCall, BinaryOperator, UnaryOperator} from "../common/Exp";
+import { TermNode, Marker, Value, ObjectValue } from '../../src/partial/AST';
+import {Expr} from "../common/Exp";
 import { printExpression } from '../common/Print';
 
 // Function to print the AST nodes for testing purposes
@@ -8,7 +8,7 @@ export function printNode(node: TermNode, indent: string = ''): void {
 
     switch (node.type) {
         case 'const':
-            console.log(indent + '  Value: ' + node.value.value);
+            console.log(indent + '  Value: ' + node.value);
             break;
         case 'space':
             console.log(indent + '  Width: ' + node.width);
