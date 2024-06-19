@@ -12,6 +12,6 @@
     "lambda": "node dist/test/lambda/lambda.test.js",
     "evaluation": "node dist/test/lambda/evaluation.test.js",
     "lambdalize": "node dist/test/lambdalize/lambdalize.test.js",
-    "update": "node dist/test/fuse/update.test.js"
+    "fuse": "node dist/test/fuse/update.test.js"
   }
 }

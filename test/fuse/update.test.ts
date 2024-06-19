@@ -1,24 +1,35 @@
 //@ts-ignore
 import { UpdateOperation } from "../../src/fuse/Update";
-import { printOperation } from "../../src/fuse/Print";
+import { operationToStr } from "../../src/fuse/Print";
+import { Environment, fuse } from "../../src/fuse/Fuse";
+import { TermNode } from "../../src/lambda/AST";
+import { printNode } from "../../src/lambda/Print";
 
-// Example usage
-const operation: UpdateOperation = {
-  type: "bulk",
-  operations: [
-    {
-      type: "replace",
-      str1: "1",
-      str2: "0",
-      position: 7,
-    },
-    {
-      type: "replace",
-      str1: "2",
-      str2: "1",
-      position: 16,
-    }
-  ],
-};
+const env: Environment = {};
+const ins1 : UpdateOperation = {type:'insert',str: "hello",position:0}
+const term1 : TermNode = { type:'const', value:" world!" }
+console.log('===================================')
+fuse(env, ins1, term1).forEach(({newTermNode: newTerm, remainingOperation: newOp}) => {
+  console.log('------')
+  printNode(newTerm);
+  console.log('U: ' + operationToStr(newOp));
+});
 
-console.log(printOperation(operation)); // Output: replace foo with bar at 10;
+const ins2: UpdateOperation = {type:'insert', str:' ', position: 3}
+const term2 : TermNode = { type:'const', value:"Hi!Stefan" }
+console.log('===================================')
+fuse(env, ins2, term2).forEach(({newTermNode: newTerm, remainingOperation: newOp}) => {
+  console.log('------')
+  printNode(newTerm);
+  console.log('U: ' + operationToStr(newOp));
+});
+
+
+const ins3: UpdateOperation = {type:'insert', str:' Zan', position: 3}
+const term3 : TermNode = { type:'const', value:"Hi!" }
+console.log('===================================')
+fuse(env, ins3, term3).forEach(({newTermNode: newTerm, remainingOperation: newOp}) => {
+  console.log('------')
+  printNode(newTerm);
+  console.log('U: ' + operationToStr(newOp));
+})
