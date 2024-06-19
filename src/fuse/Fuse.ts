@@ -29,6 +29,11 @@ export function fuse(
         if (s_c.length === 0) {
           return [
             { newEnv: env, newTermNode: term, remainingOperation: operation },
+            {
+              newEnv: env,
+              newTermNode: { ...term, value: str },
+              remainingOperation: { type: "id" },
+            }
           ];
         } else if (position === 0) {
           // 两种更新策略
@@ -76,18 +81,21 @@ export function fuse(
           if (s_c.startsWith(delStr) && delStr.length <= s_c.length) {
             // 如果delStr===s_c，那么 newStr=""; 还有一个策略，即bot
             const newStr = s_c.slice(delStr.length);
-            return [
-              {
+            let result = [{
                 newEnv: env,
                 newTermNode: { ...term, value: newStr },
                 remainingOperation: { type: "id" },
-              },
-              {
+              }];
+            if(delStr.length === s_c.length){
+              result.push({
                 newEnv: env,
+                //@ts-ignore
                 newTermNode: {type:'bot'},
                 remainingOperation: { type: "id" },
-              },
-            ];
+              })
+            }
+            //@ts-ignore
+            return result;
           } else if (delStr.startsWith(s_c) && delStr.length > s_c.length) {
             const remainingStr = delStr.slice(s_c.length);
             return [
