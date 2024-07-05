@@ -59,3 +59,77 @@ fuse(env
   printNode(newTerm);
   console.log('U: ' + operationToStr(newOp));
 })
+
+/**
+ * space(n), Delete
+ */
+console.log('==============Space(n), Deletion=====================')
+fuse(env
+  , {type:'delete', str:' ', position: 0}
+  , { type:'space', width:3 }
+).forEach(({newTermNode: newTerm, remainingOperation: newOp}) => {
+  console.log('------')
+  printNode(newTerm);
+  console.log('U: ' + operationToStr(newOp));
+})
+
+console.log('===================================')
+fuse(env
+  , {type:'delete', str:'   ', position: 0}
+  , { type:'space', width:3 }
+).forEach(({newTermNode: newTerm, remainingOperation: newOp}) => {
+  console.log('------')
+  printNode(newTerm);
+  console.log('U: ' + operationToStr(newOp));
+})
+
+console.log('===================================')
+fuse(env
+  , {type:'delete', str:'   Everyone', position: 0}
+  , { type:'space', width:3 }
+).forEach(({newTermNode: newTerm, remainingOperation: newOp}) => {
+  console.log('------')
+  printNode(newTerm);
+  console.log('U: ' + operationToStr(newOp));
+})
+
+console.log('===================================')
+fuse(env
+  , {type:'delete', str:' ', position: 5}
+  , { type:'space', width:8 }
+).forEach(({newTermNode: newTerm, remainingOperation: newOp}) => {
+  console.log('------')
+  printNode(newTerm);
+  console.log('U: ' + operationToStr(newOp));
+})
+
+console.log('===================================')
+fuse(env
+  , {type:'delete', str:'  ', position: 2}
+  , { type:'space', width:4 }
+).forEach(({newTermNode: newTerm, remainingOperation: newOp}) => {
+  console.log('------')
+  printNode(newTerm);
+  console.log('U: ' + operationToStr(newOp));
+})
+
+
+console.log('===================================')
+fuse(env
+  , {type:'delete', str:'  Nice to meet you!', position: 2}
+  , { type:'space', width:4 }
+).forEach(({newTermNode: newTerm, remainingOperation: newOp}) => {
+  console.log('------')
+  printNode(newTerm);
+  console.log('U: ' + operationToStr(newOp));
+})
+
+console.log('===================================')
+fuse(env
+  , {type:'delete', str:'Nice to meet you!', position: 14}
+  , { type:'space', width:4 }
+).forEach(({newTermNode: newTerm, remainingOperation: newOp}) => {
+  console.log('------')
+  printNode(newTerm);
+  console.log('U: ' + operationToStr(newOp));
+})

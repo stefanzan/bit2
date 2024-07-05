@@ -344,6 +344,91 @@ export function fuse(
           ];
         }
       case "delete":
+        const { str: delStr, position: delPos } = operation;
+        if (delPos === 0) {
+          if (isWhitespace(delStr) && delStr.length <= term.width) {
+            // 如果delStr===s_c，还有一个策略, 即bot
+            const newWidth = term.width - delStr.length;
+            let result = [
+              {
+                newEnv: env,
+                newTermNode: { ...term, width: newWidth },
+                remainingOperation: { type: "id" },
+              },
+            ];
+            if (delStr.length === term.width) {
+              result.push({
+                newEnv: env,
+                //@ts-ignore
+                newTermNode: { type: "bot" },
+                remainingOperation: { type: "id" },
+              });
+            }
+            //@ts-ignore
+            return result;
+          } else if (delStr.length > term.width) {
+            const remainingStr = delStr.slice(term.width);
+            return [
+              {
+                newEnv: env,
+                newTermNode: { type: "bot" },
+                remainingOperation: {
+                  type: "delete",
+                  str: remainingStr,
+                  position: 0,
+                },
+              },
+              {
+                newEnv: env,
+                newTermNode: { ...term, width: 0 },
+                remainingOperation: {
+                  type: "delete",
+                  str: remainingStr,
+                  position: 0,
+                },
+              },
+            ];
+          } 
+        } else if (
+          delPos < term.width &&
+          delPos + delStr.length <= term.width
+        ) {
+          const newWidth =term.width - delStr.length;
+          return [
+            {
+              newEnv: env,
+              newTermNode: { ...term, width: newWidth },
+              remainingOperation: { type: "id" },
+            },
+          ];
+        } else if (delPos < term.width && delPos + delStr.length > term.width) {
+          const remainingWidth = delPos;
+          const remainingDelStr = delStr.substring(term.width - delPos); // 剩余需要删除的字符串
+          return [
+            {
+              newEnv: env,
+              newTermNode: { type: "space", width: remainingWidth },
+              remainingOperation: {
+                type: "delete",
+                str: remainingDelStr,
+                position: 0,
+              },
+            },
+          ];
+        } else {
+          const newPos = delPos - term.width;
+          return [
+            {
+              newEnv: env,
+              newTermNode: term,
+              remainingOperation: {
+                type: "delete",
+                str: delStr,
+                position: newPos,
+              },
+            },
+          ];
+        }
       case "replace":
       case "bulk":
       default:
