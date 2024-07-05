@@ -3,6 +3,7 @@ import { SeqNode, TermNode } from "../lambda/AST";
 //@ts-ignore
 import { UpdateOperation } from "./Update";
 import { isWhitespace } from "../utils/Utils";
+import { Expr, Variable } from "../common/Exp";
 
 // Environment 类型定义
 export interface Environment {
@@ -20,9 +21,29 @@ export function fuse(
   remainingOperation: UpdateOperation;
 }[] {
   // Check if the term is a ConstNode
-  if ((term.type === "const") && typeof term.value === "string") {
-    const s_c = term.value;
+  if ((term.type === 'const' || term.type === 'sep' || term.type === 'loopfront' || term.type === 'looprear') 
+      && typeof term.value === 'string'){
 
+    // add a new arr to env
+    if(term.type === "loopfront") {
+      let exp = term.lst as Expr
+      if ((exp as Variable).name) { // Ensure exp is a Variable and has a name property
+        let expName = (exp as Variable).name;
+        env[expName+"_new"] = [[], []]; // Set env[expName_new] to [[], []]
+      } else {
+        throw new Error("exp is not a Variable with a name property in loopfront");
+      }
+    } else if (term.type === "looprear") {
+      let exp = term.lst as Expr
+      if ((exp as Variable).name) {
+        let expName = (exp as Variable).name;
+        env[expName] = env[expName+"_new"] // assign back
+      } else {
+        throw new Error("exp is not a Variable with a name property in loopfront");
+      }
+    }
+
+    const s_c = term.value;
     switch (operation.type) {
       case "insert":
         const { str, position } = operation;
@@ -547,7 +568,26 @@ export function fuse(
       default:
         throw new Error(`Unhandled operation type: ${operation}`);
     }
-  } else {
+  } else if (term.type === "exp") {
+    switch(operation.type) {
+      case "insert":
+      case "delete":
+      case "replace":
+      case "bulk":
+      default:
+        throw new Error(`Unhandled operation type: ${operation}`);
+    }
+  } else if (term.type === "branchstart") {
+    switch(operation.type) {
+      case "insert":
+      case "delete":
+      case "replace":
+      case "bulk":
+      default:
+        throw new Error(`Unhandled operation type: ${operation}`);
+    }
+  }
+  else {
     throw new Error(
       "Operation can only be applied to ConstNode with string value"
     );

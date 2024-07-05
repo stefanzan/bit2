@@ -23,7 +23,7 @@ export function evaluateTermNode(node: LambdaAST.TermNode): string {
       return ''; // 返回空字符串，表示这些节点在输出中没有表示
     case 'loopfront':
     case 'looprear':
-      return node.separator;
+      return node.value;
     default:
       throw new Error(`Unhandled term node type: ${node.type}`);
   }

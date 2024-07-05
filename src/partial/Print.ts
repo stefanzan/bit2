@@ -34,10 +34,10 @@ export function printNode(node: TermNode, indent: string = ''): void {
             console.log(indent + '  Value: ' + node.value);
             break;
         case 'loopfront':
-            console.log(indent + '  front: ' + node.separator);
+            console.log(indent + '  front: ' + node.value);
             break;
         case 'looprear':
-            console.log(indent + '  rear: ' + node.separator);
+            console.log(indent + '  rear: ' + node.value);
             break;
         case 'lambda':
             console.log(indent + '  Variable: ' + node.variable.name);

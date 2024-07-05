@@ -76,13 +76,13 @@ export interface LoopItemMarker {
 export interface LoopFrontNode {
     type: 'loopfront';
     lst: Expr;
-    separator: string;
+    value: string;
 }
 
 export interface LoopRearNode {
     type: 'looprear';
     lst: Expr;
-    separator: string;
+    value: string;
 }
 
 export interface EndNode {
@@ -106,7 +106,7 @@ export interface CallEndNode {
 export type Binding = [Expr, Value];
 
 // Value
-export type Value = number | boolean | string | null | ObjectValue;
+export type Value = number | boolean | string | null | ObjectValue | [];
 
 // object
 export interface ObjectValue {
