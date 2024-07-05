@@ -1,7 +1,8 @@
-import { Value } from "../partial/AST";
-import { TermNode } from "../lambda/AST";
+import { Value, SpaceNode, ConstNode } from "../partial/AST";
+import { SeqNode, TermNode } from "../lambda/AST";
 //@ts-ignore
 import { UpdateOperation } from "./Update";
+import { isWhitespace } from "../utils/Utils";
 
 // Environment 类型定义
 export interface Environment {
@@ -13,27 +14,26 @@ export function fuse(
   env: Environment,
   operation: UpdateOperation,
   term: TermNode
-): 
-  {
-    newEnv: Environment;
-    newTermNode: TermNode;
-    remainingOperation: UpdateOperation;
-  }[] {
+): {
+  newEnv: Environment;
+  newTermNode: TermNode;
+  remainingOperation: UpdateOperation;
+}[] {
   // Check if the term is a ConstNode
-  if (term.type === "const" && typeof term.value === "string") {
+  if ((term.type === "const") && typeof term.value === "string") {
     const s_c = term.value;
 
     switch (operation.type) {
       case "insert":
         const { str, position } = operation;
-        if (s_c.length === 0) {
+        if (s_c.length === 0) { 
           return [
             { newEnv: env, newTermNode: term, remainingOperation: operation },
             {
               newEnv: env,
               newTermNode: { ...term, value: str },
               remainingOperation: { type: "id" },
-            }
+            },
           ];
         } else if (position === 0) {
           // 两种更新策略
@@ -45,9 +45,12 @@ export function fuse(
             },
             {
               newEnv: env,
-              newTermNode: {type:'seq', nodes: [{type:'const', value:str}, term]},
+              newTermNode: {
+                type: "seq",
+                nodes: [{ type: "const", value: str }, term],
+              },
               remainingOperation: { type: "id" },
-            }
+            },
           ];
         } else if (position < s_c.length) {
           const newStr = s_c.slice(0, position) + str + s_c.slice(position);
@@ -61,7 +64,11 @@ export function fuse(
         } else if (position === s_c.length) {
           // 两种策略
           return [
-            {newEnv:env, newTermNode:{...term, value:s_c+str},remainingOperation:{type:'id'}},
+            {
+              newEnv: env,
+              newTermNode: { ...term, value: s_c + str },
+              remainingOperation: { type: "id" },
+            },
             { newEnv: env, newTermNode: term, remainingOperation: operation },
           ];
         } else {
@@ -81,18 +88,20 @@ export function fuse(
           if (s_c.startsWith(delStr) && delStr.length <= s_c.length) {
             // 如果delStr===s_c，那么 newStr=""; 还有一个策略，即bot
             const newStr = s_c.slice(delStr.length);
-            let result = [{
+            let result = [
+              {
                 newEnv: env,
                 newTermNode: { ...term, value: newStr },
                 remainingOperation: { type: "id" },
-              }];
-            if(delStr.length === s_c.length){
+              },
+            ];
+            if (delStr.length === s_c.length) {
               result.push({
                 newEnv: env,
                 //@ts-ignore
-                newTermNode: {type:'bot'},
+                newTermNode: { type: "bot" },
                 remainingOperation: { type: "id" },
-              })
+              });
             }
             //@ts-ignore
             return result;
@@ -110,7 +119,7 @@ export function fuse(
               },
               {
                 newEnv: env,
-                newTermNode: { ...term, value:'' },
+                newTermNode: { ...term, value: "" },
                 remainingOperation: {
                   type: "delete",
                   str: remainingStr,
@@ -265,6 +274,80 @@ export function fuse(
       default:
         const exhaustiveCheck: never = operation;
         throw new Error(`Unhandled operation type: ${exhaustiveCheck}`);
+    }
+  } else if (term.type === "space") {
+    switch (operation.type) {
+      case "insert":
+        const { str, position } = operation;
+        // zero-width space 
+        if(term.width == 0) {
+          return [
+            { newEnv: env, newTermNode: term, remainingOperation: operation },
+            {
+              newEnv: env,
+              newTermNode: {type: "seq", nodes: [{ type: "const", value: str }, term] },
+              remainingOperation: { type: "id" },
+            },
+          ];
+        } else if (position == 0) { // non-zero space
+          let resultList: { newEnv: Environment; newTermNode: TermNode; remainingOperation: UpdateOperation }[] = [
+            {
+              newEnv: env,
+              newTermNode: {
+                type: "seq",
+                nodes: [{ type: "const", value: str } as ConstNode, term],
+              } as SeqNode,
+              remainingOperation: { type: "id" },
+            },
+          ]; 
+          if(isWhitespace(str)){
+            resultList.push({
+              newEnv: env,
+              newTermNode: {type:"space", width: term.width + str.length } as SpaceNode,
+              remainingOperation: { type: "id" },
+            })
+          }
+          return resultList;       
+        } else if (position < term.width) {
+          if(isWhitespace(str)){
+            return [
+              {
+                newEnv: env,
+                newTermNode: { ...term, width: str.length+term.width },
+                remainingOperation: { type: "id" },
+              },
+            ];
+          } else {
+            throw new Error(`Cannot insert non-space between space term: ${operation}`);
+          }
+        } else if (position === term.width) {
+          // 两种策略
+          let resultList: { newEnv: Environment; newTermNode: TermNode; remainingOperation: UpdateOperation }[] = [
+            { newEnv: env, newTermNode: term, remainingOperation: operation },
+          ];
+          if(isWhitespace(str)){
+            resultList.push({
+              newEnv: env,
+              newTermNode: { ...term, width:term.width+str.length },
+              remainingOperation: { type: "id" },
+            })
+          }
+          return resultList;
+        } else {
+          const newPos = position - term.width;
+          return [
+            {
+              newEnv: env,
+              newTermNode: term,
+              remainingOperation: { type: "insert", str, position: newPos },
+            },
+          ];
+        }
+      case "delete":
+      case "replace":
+      case "bulk":
+      default:
+        throw new Error(`Unhandled operation type: ${operation}`);
     }
   } else {
     throw new Error(
