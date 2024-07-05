@@ -430,6 +430,119 @@ export function fuse(
           ];
         }
       case "replace":
+        const {
+          str1,
+          str2,
+          position: repPos,
+        } = operation as {
+          type: "replace";
+          str1: string;
+          str2: string;
+          position: number;
+        };
+        if (repPos === 0) {
+          if (str1.length <= term.width) {
+            if(isWhitespace(str2)){
+              const newWidth = term.width - str1.length + str2.length;
+              return [
+                {
+                  newEnv: env,
+                  newTermNode: {
+                    ...term,
+                    width: newWidth
+                  },
+                  remainingOperation: { type: "id" },
+                },
+              ];
+            } else {
+            return [
+              {
+                newEnv: env,
+                newTermNode: {
+                  type:'seq',
+                  nodes:[
+                    { type:'const', value: str2 },
+                    { ...term, width: term.width-str1.length }
+                  ]
+                },
+                remainingOperation: { type: "id" },
+              },
+            ];
+            }
+         } else if (str1.length > term.width) {
+            const remainingS_c = str2.slice(0, term.width);
+            const remainingStr1 = str1.slice(term.width);
+            const remainingStr2 = str2.slice(term.width);
+            return [
+              {
+                newEnv: env,
+                newTermNode: { type:'const', value: remainingS_c }, // remove space(n), using const(s_c) instead
+                remainingOperation: {
+                  type: "replace",
+                  str1: remainingStr1,
+                  str2: remainingStr2,
+                  position: 0,
+                },
+              },
+            ];
+          }
+        } else if (repPos < term.width && repPos + str1.length <= term.width) {
+          if(isWhitespace(str2)){
+            return [
+              {
+                newEnv: env,
+                newTermNode: {...term, width: str2.length+term.width-str1.length },
+                remainingOperation: { type: "id" },
+              },
+            ];
+          } else {
+              const newStr =' '.repeat(repPos) + str2 + ' '.repeat(term.width - (repPos+str1.length));
+            return [
+              {
+                newEnv: env,
+                newTermNode: {type:'const', value: newStr },
+                remainingOperation: { type: "id" },
+              },
+            ];
+          }
+        } else if (repPos < term.width && repPos + str1.length > term.width) {
+          const part1 = ' '.repeat(repPos); // 替换位置之前的部分
+          const overlapPartLength = term.width-repPos; // 与替换的 str1 重叠的部分
+          const overlapStr2 = str2.substring(0, overlapPartLength);
+          const remainingStr1 = str1.substring(overlapPartLength); // 剩余需要替换的 str1 部分
+          const remainingStr2 = str2.substring(overlapPartLength); // 剩余替换的 str2 部分
+          const newOperation: UpdateOperation = {
+            type: "replace",
+            str1: remainingStr1,
+            str2: remainingStr2,
+            position: 0,
+          };
+          const newExpression: TermNode = {
+            type: "const",
+            value: part1 + overlapStr2,
+          };
+          return [
+            {
+              newEnv: env,
+              newTermNode: newExpression,
+              remainingOperation: newOperation,
+            },
+          ];
+        } else {
+          const newPos = repPos - term.width;
+          return [
+            {
+              newEnv: env,
+              newTermNode: term,
+              remainingOperation: {
+                type: "replace",
+                str1,
+                str2,
+                position: newPos,
+              },
+            },
+          ];
+        }
       case "bulk":
       default:
         throw new Error(`Unhandled operation type: ${operation}`);

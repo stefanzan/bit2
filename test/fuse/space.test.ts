@@ -133,3 +133,59 @@ fuse(env
   printNode(newTerm);
   console.log('U: ' + operationToStr(newOp));
 })
+
+
+/**
+ * space(n), replace
+ */
+console.log('===============Space(n), Replacement====================')
+fuse(env
+  , {type:'replace', str1:'  ', str2:' ', position: 0}
+  , { type:'space', width: 4 }
+).forEach(({newTermNode: newTerm, remainingOperation: newOp}) => {
+  console.log('------')
+  printNode(newTerm);
+  console.log('U: ' + operationToStr(newOp));
+})
+
+console.log('===================================')
+fuse(env
+  , {type:'replace', str1:'  buddy', str2:'  boy!', position: 0}
+  , { type:'space', width: 2 }
+).forEach(({newTermNode: newTerm, remainingOperation: newOp}) => {
+  console.log('------')
+  printNode(newTerm);
+  console.log('U: ' + operationToStr(newOp));
+})
+
+console.log('===================================')
+fuse(env
+  , {type:'replace', str1:'  buddy', str2:'Hey boy!', position: 0}
+  , { type:'space', width: 2 }
+).forEach(({newTermNode: newTerm, remainingOperation: newOp}) => {
+  console.log('------')
+  printNode(newTerm);
+  console.log('U: ' + operationToStr(newOp));
+})
+
+
+
+console.log('===================================')
+fuse(env
+  , {type:'replace', str1:'  ', str2:'Good', position: 2}
+  , { type:'space', width: 4 }
+).forEach(({newTermNode: newTerm, remainingOperation: newOp}) => {
+  console.log('------')
+  printNode(newTerm);
+  console.log('U: ' + operationToStr(newOp));
+})
+
+console.log('===================================')
+fuse(env
+  , {type:'replace', str1:'Mr.Bit', str2:'Mr.Bin', position: 20}
+  , { type:'space', width: 4 }
+).forEach(({newTermNode: newTerm, remainingOperation: newOp}) => {
+  console.log('------')
+  printNode(newTerm);
+  console.log('U: ' + operationToStr(newOp));
+})
