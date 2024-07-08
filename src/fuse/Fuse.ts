@@ -1,9 +1,9 @@
-import { Value, SpaceNode, ConstNode } from "../partial/AST";
+import { Value, SpaceNode, ConstNode, ExpNode, ObjectValue } from "../partial/AST";
 import { SeqNode, TermNode } from "../lambda/AST";
 //@ts-ignore
 import { UpdateOperation } from "./Update";
 import { isWhitespace } from "../utils/Utils";
-import { Expr, Variable } from "../common/Exp";
+import { Expr, FieldAccess, Variable } from "../common/Exp";
 
 // Environment 类型定义
 export interface Environment {
@@ -569,11 +569,210 @@ export function fuse(
         throw new Error(`Unhandled operation type: ${operation}`);
     }
   } else if (term.type === "exp") {
+    const expTerm = term as ExpNode;
+    const binding = term.binding;
+    const exp = binding[0];
+    const val = binding[1];
+    const valStr = valToStr(val);
+
     switch(operation.type) {
       case "insert":
+        const { str, position } = operation;
+        if (position === 0) {
+          let resultList: { newEnv: Environment; newTermNode: TermNode; remainingOperation: UpdateOperation}[] = [] ;
+          resultList.push({
+            newEnv: env,
+            newTermNode: {
+              type:"seq",
+              nodes:[{type:"const", value:str},term]
+            },
+            remainingOperation: {type:"id"}
+          });
+          // another choice:
+          let newStr = str + valStr;
+          let newVal = strToVal(newStr, val);
+          let {newEnv, newExp} = fuseExp(env, newVal, exp);
+          resultList.push({
+            newEnv: newEnv,
+            newTermNode: {
+              ...term,
+              binding:[newExp, newVal]
+            },
+            remainingOperation:{type:"id"}
+          });
+          return resultList;
+        } else if (position < valStr.length) {
+          const newStr = valStr.slice(0, position) + str + valStr.slice(position);
+          const newVal = strToVal(newStr, val);
+          let {newEnv, newExp} = fuseExp(env, newVal, exp);
+          return [
+            {
+              newEnv: newEnv,
+              newTermNode:  {
+                ...term,
+                binding:[newExp, newVal]
+              },
+              remainingOperation: { type: 'id' },
+            }
+          ];
+         } else if (position == valStr.length) {
+            const newStr = valStr.slice(0, position) + str;
+            const newVal = strToVal(newStr, val);
+            let {newEnv, newExp} = fuseExp(env, newVal, exp);
+            let resultList: { newEnv: Environment; newTermNode: TermNode; remainingOperation: UpdateOperation}[] = [] ;
+            resultList.push({
+                newEnv: newEnv,
+                newTermNode:  {
+                  ...term,
+                  binding:[newExp, newVal]
+                },
+                remainingOperation: { type: 'id' },
+              });
+
+            // If the expression is a variable, them add variable's bidning to env to mark it unmodifiable.
+            if ((exp as Variable).name) { 
+              let x = (exp as Variable).name;
+              env[x] = [val, [val]]; // mark x as unmodifiable.
+            }            
+            resultList.push({
+              newEnv:env,
+              newTermNode:term,
+              remainingOperation:{...operation, position:0}
+            })
+         } else {
+          const newPosition = position - valStr.length;
+          // If the expression is a variable, them add variable's bidning to env to mark it unmodifiable.
+          if ((exp as Variable).name) { 
+            let x = (exp as Variable).name;
+            env[x] = [val, [val]]; // mark x as unmodifiable.
+          }  
+          return [{
+              newEnv:env,
+              newTermNode:term,
+              remainingOperation:{...operation, position:newPosition}
+            }];
+        }
       case "delete":
+        const { str: delStr, position: delPos } = operation;
+        if (delPos === 0) { 
+          if(delStr.length < valStr.length){
+            const newValStr = valStr.slice(delStr.length);
+            const newVal = strToVal(newValStr, val);
+            let {newEnv, newExp} = fuseExp(env, newVal, exp);
+            return [{ newEnv: newEnv, newTermNode: {...term, binding:[newExp, newVal]}, remainingOperation: {type:'id'} }];
+          } else if (delStr.length == valStr.length) {
+            if ((exp as Variable).name) { 
+              let x = (exp as Variable).name;
+              if(typeof val == 'string'){
+                // two choice: update exp to "", or delete exp
+                let {newEnv, newExp} = fuseExp(env, "", exp);
+                return [
+                  { newEnv: newEnv, newTermNode: {...term, binding:[newExp, ""]}, remainingOperation: {type:'id'} },
+                  { newEnv: deleteFromEnv(env, x), newTermNode: {type:'bot'}, remainingOperation: {type:'id'} },
+                ];
+              } else { // delete exp, delete from env
+                return [{ newEnv: deleteFromEnv(env, x), newTermNode: {type:'bot'}, remainingOperation: {type:'id'} }];
+              }
+            }  else if ((exp as FieldAccess)) {
+              let x = ((exp as FieldAccess).object as Variable).name;
+              let field = (exp as FieldAccess).field;
+              let xVal = env[x][0] as ObjectValue;
+              let xValUpdatedMark = env[x][1][0] as ObjectValue;
+              if(xValUpdatedMark.fields[field].length==0){
+                let newXVal = deleteField(xVal, field);
+                let newXValUpdatedMark = deleteField(xValUpdatedMark, field);
+                let newEnv = deleteFromEnv(env, x);
+                newEnv[x] = [newXVal, [newXValUpdatedMark]];
+                return [{newEnv: newEnv, newTermNode:{type:'bot'},remainingOperation: {type:'id'}}];
+              } else {
+                throw new Error(`field has been updaeted, cannot be remvoed: ${field}$`);
+              }
+            }
+          } else if (delStr.length > valStr.length) {
+            let delStr1 = delStr.slice(0,valStr.length);
+            let delStr2 = delStr.slice(valStr.length);
+            let op1 = {type:'delete', str:delStr1, position:0} as UpdateOperation;
+            let resultList = fuse(env, op1, term);
+            let op2 = {type:'delete', str:delStr2, position:0} as UpdateOperation;
+            resultList.forEach(result => {result.remainingOperation = op2;});
+            return resultList;
+          }
+       } else if (delPos + delStr.length <= valStr.length) {
+          const newStr = valStr.slice(0, delPos) + valStr.slice(delPos + delStr.length);
+          const newVal = strToVal(newStr, val);
+          let {newEnv, newExp} = fuseExp(env, newVal, exp);
+          return [{ newEnv: newEnv, newTermNode: {...term, binding:[newExp, newVal]}, remainingOperation: {type:'id'} }];
+        } else if (delPos <=valStr.length && delPos + delStr.length > valStr.length) {
+          const newStr = valStr.slice(0, delPos);
+          const remainingDelStr = delStr.slice(valStr.length-delPos);
+          const newVal = strToVal(newStr, val);
+          let {newEnv, newExp} = fuseExp(env, newVal, exp);
+          return [
+            {
+              newEnv: newEnv,
+              newTermNode: {...term, binding:[newExp, newVal]},
+              remainingOperation: { type: 'delete', str:remainingDelStr, position: 0 },
+            },
+          ];
+        } else if(delPos > valStr.length) {
+          const newDelPos = delPos - valStr.length;
+          let [{newEnv, newTermNode, remainingOperation}] = fuse(env, {type:'id'}, term);
+          return [{
+            newEnv: newEnv,
+            newTermNode: newTermNode,
+            remainingOperation: {type:'delete', str: delStr, position: newDelPos}
+          }];
+        }
       case "replace":
+        const {
+          str1,
+          str2,
+          position: repPos,
+        } = operation as {
+          type: "replace";
+          str1: string;
+          str2: string;
+          position: number;
+        };
+        const s_v = String(expTerm.v);
+        if (position === 0 && s_v.startsWith(oldStr)) {
+          const s_v_prime = newStr + s_v.slice(oldStr.length);
+          const v_prime = strToVal(s_v_prime);
+          const newExpTerm = { ...expTerm, v: v_prime };
+          return [
+            { newEnv: env, newTermNode: expTerm, remainingOperation: operation },
+            {
+              newEnv: env,
+              newTermNode: newExpTerm,
+              remainingOperation: { type: 'id' },
+            },
+          ];
+        } else if (position + oldStr.length <= s_v.length) {
+          const s_v_prime = s_v.slice(0, position) + newStr + s_v.slice(position + oldStr.length);
+          const v_prime = strToVal(s_v_prime);
+          const newExpTerm = { ...expTerm, v: v_prime };
+          return [
+            { newEnv: env, newTermNode: expTerm, remainingOperation: operation },
+            {
+              newEnv: env,
+              newTermNode: newExpTerm,
+              remainingOperation: { type: 'id' },
+            },
+          ];
+        } else {
+          const n_prime = position - s_v.length;
+          const newEnv = { ...env, [expTerm.e]: [expTerm.v, [expTerm.v]] };
+          return [
+            { newEnv: newEnv, newTermNode: expTerm, remainingOperation: operation },
+            {
+              newEnv: newEnv,
+              newTermNode: expTerm,
+              remainingOperation: { type: 'replace', oldStr, newStr, position: n_prime },
+            },
+          ];
+        }
       case "bulk":
+      case "id":
       default:
         throw new Error(`Unhandled operation type: ${operation}`);
     }
@@ -592,4 +791,54 @@ export function fuse(
       "Operation can only be applied to ConstNode with string value"
     );
   }
+}
+
+
+function strToVal(s: string, v:Value): Value {
+  if (typeof v === 'number') {
+      return parseFloat(s); // Convert string to number
+  } else if (typeof v === 'boolean') {
+      return s.toLowerCase() === 'true'; // Convert string to boolean
+  } else if (typeof v === 'string') {
+      return s; // v is already string, return s as is
+  } else {
+      throw new Error(`Unsupported type: ${typeof v}`);
+  }
+}
+
+function valToStr(value: Value): string {
+  if (typeof value === 'number' || typeof value === 'boolean' || typeof value === 'string') {
+      return String(value); // Convert number, boolean, and string to string
+  } else {
+      return 'Unknown'; // Handle unexpected types
+  }
+}
+
+
+
+export function fuseExp(env: Environment, value: Value, exp: Expr): { newEnv: Environment; newExp: Expr } {
+  throw new Error("TODO")
+}
+
+function deleteFromEnv(env: Environment, key: string): Environment {
+  const newEnv = { ...env }; // Create a shallow copy of env
+  delete newEnv[key]; // Delete the specified key from the new environment
+  return newEnv; // Return the modified environment
+}
+
+/**
+ * Deletes a specified field from an ObjectValue.
+ * @param obj The ObjectValue from which to delete the field.
+ * @param field The field to delete.
+ * @returns A new ObjectValue with the specified field removed.
+ */
+function deleteField(obj: ObjectValue, field: string): ObjectValue {
+  // Destructure the fields, omitting the specified field
+  const { [field]: _, ...newFields } = obj.fields;
+  
+  // Return a new ObjectValue with the updated fields
+  return {
+    type: 'object',
+    fields: newFields
+  };
 }
