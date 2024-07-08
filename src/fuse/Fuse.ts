@@ -734,42 +734,31 @@ export function fuse(
           str2: string;
           position: number;
         };
-        const s_v = String(expTerm.v);
-        if (position === 0 && s_v.startsWith(oldStr)) {
-          const s_v_prime = newStr + s_v.slice(oldStr.length);
-          const v_prime = strToVal(s_v_prime);
-          const newExpTerm = { ...expTerm, v: v_prime };
+        if (repPos === 0) {
+          if(str1 === valStr){
+            const newVal = strToVal(str1, val);
+            let {newEnv, newExp} = fuseExp(env, newVal, exp);
+            return [{ newEnv: newEnv, newTermNode: {...term, binding:[newExp, newVal]}, remainingOperation: {type:'id'} }];
+          } else if (str1.startsWith(valStr)){
+            const newValStr = str2 + valStr.slice(str1.length);
+            const newVal = strToVal(newValStr, val);
+            let {newEnv, newExp} = fuseExp(env, newVal, exp);
+            return [{ newEnv: newEnv, newTermNode: {...term, binding:[newExp, newVal]}, remainingOperation: {type:'id'} }];
+          } else {
+            throw new Error(`unsupported replacement: ${str1}; ${valStr}`);
+          }
+        } else if (repPos > valStr.length) {
+          const newRepPos = repPos - valStr.length;
+          let [{newEnv, newTermNode, remainingOperation}] = fuse(env, {type:'id'}, term); 
           return [
-            { newEnv: env, newTermNode: expTerm, remainingOperation: operation },
             {
-              newEnv: env,
-              newTermNode: newExpTerm,
-              remainingOperation: { type: 'id' },
-            },
-          ];
-        } else if (position + oldStr.length <= s_v.length) {
-          const s_v_prime = s_v.slice(0, position) + newStr + s_v.slice(position + oldStr.length);
-          const v_prime = strToVal(s_v_prime);
-          const newExpTerm = { ...expTerm, v: v_prime };
-          return [
-            { newEnv: env, newTermNode: expTerm, remainingOperation: operation },
-            {
-              newEnv: env,
-              newTermNode: newExpTerm,
-              remainingOperation: { type: 'id' },
+              newEnv: newEnv,
+              newTermNode: newTermNode,
+              remainingOperation: { ...operation, position:newRepPos}
             },
           ];
         } else {
-          const n_prime = position - s_v.length;
-          const newEnv = { ...env, [expTerm.e]: [expTerm.v, [expTerm.v]] };
-          return [
-            { newEnv: newEnv, newTermNode: expTerm, remainingOperation: operation },
-            {
-              newEnv: newEnv,
-              newTermNode: expTerm,
-              remainingOperation: { type: 'replace', oldStr, newStr, position: n_prime },
-            },
-          ];
+          throw new Error(`Unsupported replacement`);
         }
       case "bulk":
       case "id":
