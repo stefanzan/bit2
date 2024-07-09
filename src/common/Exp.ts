@@ -61,3 +61,46 @@ export interface FunctionCall {
 // Operators
 export type BinaryOperator = '+' | '-' | '*' | '/' | '&&' | '||' | '>' | '<' | '>=' | '<=' | '!=';
 export type UnaryOperator = 'not';
+
+export function findVariablesAndFields(exp: Expr): { variables: Variable[], fields: { variable: Variable, field: string }[] } {
+  let variables: Variable[] = [];
+  let fields: { variable: Variable, field: string }[] = [];
+
+  function traverse(node: Expr) {
+    switch (node.type) {
+      case 'variable':
+        variables.push(node);
+        break;
+      case 'field':
+        if (node.object.type === 'variable') {
+          fields.push({ variable: node.object, field: node.field });
+        } else {
+          traverse(node.object);
+        }
+        break;
+      case 'binary':
+        traverse(node.left);
+        traverse(node.right);
+        break;
+      case 'unary':
+        traverse(node.operand);
+        break;
+      case 'array':
+        node.elements.forEach(traverse);
+        break;
+      case 'object':
+        Object.values(node.fields).forEach(traverse);
+        break;
+      case 'freeze':
+        traverse(node.expression);
+        break;
+      // Add other cases as needed
+      default:
+        break;
+    }
+  }
+
+  traverse(exp);
+  return { variables, fields };
+}
+

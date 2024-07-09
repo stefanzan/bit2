@@ -3,7 +3,7 @@ import { SeqNode, TermNode } from "../lambda/AST";
 //@ts-ignore
 import { UpdateOperation } from "./Update";
 import { isWhitespace } from "../utils/Utils";
-import { Expr, FieldAccess, Variable } from "../common/Exp";
+import { Expr, FieldAccess, Variable, findVariablesAndFields } from "../common/Exp";
 
 // Environment 类型定义
 export interface Environment {
@@ -762,6 +762,18 @@ export function fuse(
         }
       case "bulk":
       case "id":
+        // find variables in e, and update them in env
+        let { variables, fields } = findVariablesAndFields(exp);
+
+        variables.forEach(variable => {
+          env = markVariableInEnv(variable, env);
+        });
+      
+        fields.forEach(({ variable, field }) => {
+          env = markFieldOfObjectInEnv(field, variable, env);
+        });
+      
+        return [{newEnv:env, newTermNode:term, remainingOperation:{type:'id'}}];
       default:
         throw new Error(`Unhandled operation type: ${operation}`);
     }
@@ -830,4 +842,39 @@ function deleteField(obj: ObjectValue, field: string): ObjectValue {
     type: 'object',
     fields: newFields
   };
+}
+
+function updateFieldMark(obj: ObjectValue, field: string): ObjectValue {
+  // Destructure the fields, omitting the specified field
+  const { [field]: val, ...newFields } = obj.fields;
+  newFields.field = [val, [val]];
+  // Return a new ObjectValue with the updated fields
+  return {
+    type: 'object',
+    fields: newFields
+  };
+}
+
+function markVariableInEnv(variable: Variable, env: Environment): Environment {
+  if (!(variable.name in env)) {
+      throw new Error(`Variable ${variable.name} not found in environment.`);
+  }
+
+  let val = env[variable.name][0];
+  let newEnv = deleteFromEnv(env, variable.name);
+  newEnv[variable.name] = [val, [val]];
+  return newEnv;
+}
+
+function markFieldOfObjectInEnv(field: string, variable:Variable, env:Environment): Environment {
+ let x = variable.name;
+  if (!(x in env)) {
+    throw new Error(`Variable ${x} not found in environment.`);
+ }
+ let xVal = env[x][0] as ObjectValue;
+ let xValMark = env[x][1][0] as ObjectValue;
+ let newXValUpdatedMark = updateFieldMark(xValMark, field);
+ let newEnv = deleteFromEnv(env, x);
+ newEnv[x] = [xVal, [newXValUpdatedMark]];
+ return newEnv;
 }
