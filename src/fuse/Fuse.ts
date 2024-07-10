@@ -4,6 +4,7 @@ import { SeqNode, TermNode, LambdaAppNode } from "../lambda/AST";
 import { UpdateOperation } from "./Update";
 import { isWhitespace } from "../utils/Utils";
 import { Expr, FieldAccess, Variable, findVariablesAndFields } from "../common/Exp";
+import { evaluateExpr } from "../partialEval/peval";
 
 // Environment 类型定义
 export interface Environment {
@@ -914,6 +915,86 @@ export function fuse(
   }
 }
 
+export function fuseExp(env: Environment, value: Value, exp: Expr): { newEnv: Environment; newExp: Expr } {
+
+
+  switch (exp.type) {
+    case 'constant':
+      return { newEnv: env, newExp: exp };
+    case 'variable':
+      if (!(exp.name in env)) {
+        throw new Error(`Variable ${exp.name} not found in environment.`);
+      }
+      const [varValue, marks] = env[exp.name];
+      if (marks.length === 0) {
+        const newEnv = {...env};
+        newEnv[exp.name] = [value, [value]];
+        return { newEnv, newExp: exp };
+      } else if (marks.length === 1 && marks[0] === varValue) {
+        return { newEnv: env, newExp: exp };
+      } else {
+        throw new Error(`Fail, variable cannot be updated to different value ${exp.name}, previous: ${marks[0]}, new: ${varValue}`);
+      }
+    case 'freeze':
+      let [_, evaluated] = evaluateExpr(transformEnvironment(env), exp.expression);
+      if (evaluated !== value) {
+        throw new Error(`Fail, freezed expression cannot be changed, old: ${value}, new: ${evaluated}`);
+      } else {
+        return { newEnv: env, newExp: exp };
+      }
+    
+    case 'field':
+      // Rule for field access
+      const objExp = exp.object;
+      if (objExp.type === 'variable' && objExp.name in env) {
+        const [objValue, objMarks] = env[objExp.name];
+        if ((objValue as ObjectValue).type === 'object') {
+          const newFields = { ...(objValue as ObjectValue).fields, [exp.field]: value };
+          const newObjValue = { type: 'object', fields: newFields } as ObjectValue;
+          const newMarks = updateFieldMarkWithValue(objMarks[0] as ObjectValue, exp.field, value);
+          const newEnv: Environment = { ...env};
+          newEnv[objExp.name]=[newObjValue, [newMarks]];
+          return { newEnv, newExp: exp };
+        } else {
+          throw new Error("Field access's value is not an object");
+        }
+      } else {
+        throw new Error(`Field access not start with variable.`);
+      }
+      
+    case 'binary':
+      let transformedEnv = transformEnvironment(env);
+      let [envLeft, left] = evaluateExpr(transformedEnv, exp.left);
+      // let [envRight, right] = evaluateExpr(transformedEnv, exp.right);
+      if(value as number){
+        if (typeof value !== 'number' || value === null) {
+          throw new Error('Value must be a non-null number');
+        }
+        switch (exp.operator) {
+          case '+':
+            let subResultForPlus = fuseExp(env, value - left, exp.right);
+            return { newEnv: subResultForPlus.newEnv, newExp: { ...exp, right: subResultForPlus.newExp } };
+          case '-':
+            let subResultForMinus = fuseExp(env, left-value, exp.right);
+            return { newEnv: subResultForMinus.newEnv, newExp: { ...exp, right: subResultForMinus.newExp } };
+          case '*':
+            let subResultForTimes = fuseExp(env, value / left, exp.right);
+            return { newEnv: subResultForTimes.newEnv, newExp: { ...exp, right: subResultForTimes.newExp } };
+          case '/':
+            let subResultForDivide = fuseExp(env, left/value,  exp.right);
+            return { newEnv: subResultForDivide.newEnv, newExp: { ...exp, right: subResultForDivide.newExp } };
+        }
+      } else if (value as boolean) {
+        // TODO
+      }
+
+    case 'unary':
+      // Add logic for unary operations here
+      return { newEnv: env, newExp: exp };
+    default:
+      throw new Error(`Unsupported expression type: ${exp.type}`);
+  }
+}
 
 function strToVal(s: string, v:Value): Value {
   if (typeof v === 'number') {
@@ -935,11 +1016,6 @@ function valToStr(value: Value): string {
   }
 }
 
-
-
-export function fuseExp(env: Environment, value: Value, exp: Expr): { newEnv: Environment; newExp: Expr } {
-  throw new Error("TODO")
-}
 
 function deleteFromEnv(env: Environment, key: string): Environment {
   const newEnv = { ...env }; // Create a shallow copy of env
@@ -968,6 +1044,17 @@ function updateFieldMark(obj: ObjectValue, field: string): ObjectValue {
   // Destructure the fields, omitting the specified field
   const { [field]: val, ...newFields } = obj.fields;
   newFields.field = [val, [val]];
+  // Return a new ObjectValue with the updated fields
+  return {
+    type: 'object',
+    fields: newFields
+  };
+}
+
+function updateFieldMarkWithValue(obj: ObjectValue, field: string, value: Value): ObjectValue {
+  // Destructure the fields, omitting the specified field
+  const { [field]: val, ...newFields } = obj.fields;
+  newFields.field = [value, [value]];
   // Return a new ObjectValue with the updated fields
   return {
     type: 'object',
@@ -1012,4 +1099,16 @@ function updateEnvByEnv(env: Environment, env2: Environment): Environment {
   }
 
   return updatedEnv;
+}
+
+function transformEnvironment(env: Environment): Map<string, any> {
+  const map = new Map<string, any>();
+
+  for (const variable in env) {
+    if (env.hasOwnProperty(variable)) {
+      map.set(variable, env[variable][0]);
+    }
+  }
+
+  return map;
 }

@@ -217,7 +217,7 @@ export function partialEval(environment: Map<string, any>, termNode: CoreAST.Ter
 }
 
 // Function to evaluate expressions (Expr) and return updated environment and value
-function evaluateExpr(environment: Map<string, any>, expr: Expr.Expr): [Map<string, any>, any] {
+export function evaluateExpr(environment: Map<string, any>, expr: Expr.Expr): [Map<string, any>, any] {
     switch (expr.type) {
         case 'constant':
             // Return the unchanged environment and the constant value
