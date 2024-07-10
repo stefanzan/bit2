@@ -106,7 +106,7 @@ export interface CallEndNode {
 export type Binding = [Expr, Value];
 
 // Value
-export type Value = number | boolean | string | null | ObjectValue | [];
+export type Value = number | boolean | string | null | ObjectValue | Value[];
 
 // object
 export interface ObjectValue {

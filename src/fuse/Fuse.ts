@@ -1,5 +1,5 @@
-import { Value, SpaceNode, ConstNode, ExpNode, ObjectValue } from "../partial/AST";
-import { SeqNode, TermNode } from "../lambda/AST";
+import { Value, SpaceNode, ConstNode, ExpNode, ObjectValue, LoopItemMarker } from "../partial/AST";
+import { SeqNode, TermNode, LambdaAppNode } from "../lambda/AST";
 //@ts-ignore
 import { UpdateOperation } from "./Update";
 import { isWhitespace } from "../utils/Utils";
@@ -565,6 +565,14 @@ export function fuse(
           ];
         }
       case "bulk":
+      case "id":
+        return [
+          {
+            newEnv: env,
+            newTermNode: term,
+            remainingOperation: { type: "id" },
+          },
+        ];
       default:
         throw new Error(`Unhandled operation type: ${operation}`);
     }
@@ -777,17 +785,129 @@ export function fuse(
       default:
         throw new Error(`Unhandled operation type: ${operation}`);
     }
-  } else if (term.type === "branchstart") {
+  } else if (term.type === "nop") {
+    return [
+      {
+        newEnv: env,
+        newTermNode: term,
+        remainingOperation: operation
+      },
+    ]; 
+  } else if (term.type === "lambda") {
+    let marker = term.marker;
+    if (marker.type === "loopitem") {
+      let varName = term.variable.name;
+      let varExp = term.binding[0];
+      let varVal = term.binding[1];
+      env[varName]=[varVal,[]];
+
+      let newArrVarName = "";
+      if (marker.lst as Variable) { 
+        let expName = (marker.lst as Variable).name;
+        newArrVarName = expName + "_new";
+      } else {
+        throw new Error("exp is not a Variable with a name property in loopitem's marker");
+      }
+
+      let resultList = fuse(env, operation, term);
+      return resultList.map(({newEnv, newTermNode, remainingOperation})=>{
+        let newVarVal = newEnv[varName][0];
+        let newArrVal = env[newArrVarName][0] as Value[]; // must be an array
+        newArrVal.push(newVarVal);
+        newEnv[newArrVarName] = [newArrVal, [newArrVal]];
+        let {newEnv: updatedEnv, newExp} = fuseExp(newEnv, newVarVal, varExp); 
+        return {
+          newEnv: updatedEnv,
+          newTermNode:{
+            type: 'lambda',
+            variable: term.variable,
+            body: newTermNode,
+            binding: [newExp, newVarVal],
+            marker: term.marker
+          },
+          remainingOperation:remainingOperation
+        }
+      })
+    } else {
+      let varName = term.variable.name;
+      let varExp = term.binding[0];
+      let varVal = term.binding[1];
+
+      let env1 = {...env};
+      env1[varName]=[varVal,[]];
+
+      let resultList = fuse(env1, operation, term);
+      return resultList.map(({newEnv, newTermNode, remainingOperation})=>{
+        let newVarVal = newEnv[varName][0];
+        let updatedOldEnv = updateEnvByEnv(env, newEnv);
+        let {newEnv: updatedEnv, newExp} = fuseExp(updatedOldEnv, newVarVal, varExp); 
+        return {
+          newEnv: updatedEnv,
+          newTermNode:{
+            type: 'lambda',
+            variable: term.variable,
+            body: newTermNode,
+            binding: [newExp, newVarVal],
+            marker: term.marker
+          },
+          remainingOperation:remainingOperation
+        }
+      }) 
+    }
+  } else if (term.type === "branchstart" || term.type === "branchend") {
     switch(operation.type) {
       case "insert":
       case "delete":
       case "replace":
+        return [
+          {
+            newEnv: env,
+            newTermNode: term,
+            remainingOperation: operation,
+          },
+        ];
       case "bulk":
       default:
         throw new Error(`Unhandled operation type: ${operation}`);
     }
-  }
-  else {
+
+  } else if (term.type === "seq") {
+    const terms = term.nodes;
+    let results: { newEnv: Environment; newTermNode: TermNode; remainingOperation: UpdateOperation }[] = [
+        { newEnv: env, newTermNode: { type: 'seq', nodes: [] }, remainingOperation: operation }
+    ];
+
+    for (const subTerm of terms) {
+        const newResults: { newEnv: Environment; newTermNode: TermNode; remainingOperation: UpdateOperation }[] = [];
+        
+        for (const result of results) {
+            const subResults = fuse(result.newEnv, result.remainingOperation, subTerm);
+
+            for (const subResult of subResults) {
+                const updatedNodes = (result.newTermNode.type === 'seq' ? result.newTermNode.nodes : [result.newTermNode])
+                    .concat(subResult.newTermNode.type === 'seq' ? subResult.newTermNode.nodes : [subResult.newTermNode]);
+                newResults.push({
+                    newEnv: subResult.newEnv,
+                    newTermNode: {
+                        type: 'seq',
+                        nodes: updatedNodes
+                    },
+                    remainingOperation: subResult.remainingOperation
+                });
+            }
+        }
+
+        results = newResults;
+    }
+
+    return results.map(result => ({
+        newEnv: result.newEnv,
+        newTermNode: result.newTermNode.type === 'seq' && result.newTermNode.nodes.length === 1
+            ? result.newTermNode.nodes[0]
+            : result.newTermNode,
+        remainingOperation: result.remainingOperation
+    }));
+} else {
     throw new Error(
       "Operation can only be applied to ConstNode with string value"
     );
@@ -877,4 +997,19 @@ function markFieldOfObjectInEnv(field: string, variable:Variable, env:Environmen
  let newEnv = deleteFromEnv(env, x);
  newEnv[x] = [xVal, [newXValUpdatedMark]];
  return newEnv;
+}
+
+function updateEnvByEnv(env: Environment, env2: Environment): Environment {
+  // Create a copy of env to avoid mutating the original env
+  let updatedEnv = { ...env };
+
+  // Iterate over keys in env2
+  for (const key in env2) {
+    if (env2.hasOwnProperty(key)) {
+      // Update the value in the updatedEnv
+      updatedEnv[key] = env2[key];
+    }
+  }
+
+  return updatedEnv;
 }
