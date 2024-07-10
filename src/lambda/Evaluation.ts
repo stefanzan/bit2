@@ -55,7 +55,7 @@ export function printValue(value: Value): string {
     return 'null';
   } else if (typeof value === 'number' || typeof value === 'boolean' || typeof value === 'string') {
     return value.toString();
-  } else if (typeof value === 'object' && value.type === 'object') {
+  } else if ((value as ObjectValue).type === 'object') {
     const objectValue = value as ObjectValue;
     let result = '{';
     for (const key in objectValue.fields) {
@@ -68,7 +68,26 @@ export function printValue(value: Value): string {
     }
     result += '}';
     return result;
+  } else if (Array.isArray(value)){
+   const arrayValue = value as Value[];
+   let result = '[';
+   for (const element of arrayValue) {
+     result += `${printValue(element)}, `;
+   }
+   if (result.length > 1) {
+     result = result.slice(0, -2); // 移除最后的逗号和空格
+   }
+   result += ']';
+   return result;
   } else {
     throw new Error(`Unhandled value type: ${typeof value}`);
   }
+}
+
+function isObjectValue(value: Value): value is ObjectValue {
+  return (value as ObjectValue).type === 'object';
+}
+
+function isArrayValue(value: Value): value is Value[] {
+  return Array.isArray(value);
 }

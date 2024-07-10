@@ -13,6 +13,7 @@
     "evaluation": "node dist/test/lambda/evaluation.test.js",
     "lambdalize": "node dist/test/lambdalize/lambdalize.test.js",
     "const": "node dist/test/fuse/const.test.js",
-    "space": "node dist/test/fuse/space.test.js"
+    "space": "node dist/test/fuse/space.test.js",
+    "exp": "node dist/test/fuse/exp.test.js"
   }
 }

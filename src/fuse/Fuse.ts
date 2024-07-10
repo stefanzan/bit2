@@ -3,8 +3,9 @@ import { SeqNode, TermNode, LambdaAppNode } from "../lambda/AST";
 //@ts-ignore
 import { UpdateOperation } from "./Update";
 import { isWhitespace } from "../utils/Utils";
-import { Expr, FieldAccess, Variable, findVariablesAndFields } from "../common/Exp";
+import { Expr, FieldAccess, Variable, findVariablesAndFields, Constant } from "../common/Exp";
 import { evaluateExpr } from "../partialEval/peval";
+import { printValue } from "../partial/Print";
 
 // Environment 类型定义
 export interface Environment {
@@ -599,16 +600,20 @@ export function fuse(
           });
           // another choice:
           let newStr = str + valStr;
-          let newVal = strToVal(newStr, val);
-          let {newEnv, newExp} = fuseExp(env, newVal, exp);
-          resultList.push({
-            newEnv: newEnv,
-            newTermNode: {
-              ...term,
-              binding:[newExp, newVal]
-            },
-            remainingOperation:{type:"id"}
-          });
+          try {
+            let newVal = strToVal(newStr, val);
+            let {newEnv, newExp} = fuseExp(env, newVal, exp);
+            resultList.push({
+              newEnv: newEnv,
+              newTermNode: {
+                ...term,
+                binding:[newExp, newVal]
+              },
+              remainingOperation:{type:"id"}
+            });
+          } catch (error) {
+            // console.error(error);
+          }
           return resultList;
         } else if (position < valStr.length) {
           const newStr = valStr.slice(0, position) + str + valStr.slice(position);
@@ -625,29 +630,35 @@ export function fuse(
             }
           ];
          } else if (position == valStr.length) {
-            const newStr = valStr.slice(0, position) + str;
-            const newVal = strToVal(newStr, val);
-            let {newEnv, newExp} = fuseExp(env, newVal, exp);
             let resultList: { newEnv: Environment; newTermNode: TermNode; remainingOperation: UpdateOperation}[] = [] ;
-            resultList.push({
-                newEnv: newEnv,
-                newTermNode:  {
-                  ...term,
-                  binding:[newExp, newVal]
-                },
-                remainingOperation: { type: 'id' },
-              });
-
+            const newStr = valStr + str;
+            try {
+              const newVal = strToVal(newStr, val);
+              let {newEnv, newExp} = fuseExp(env, newVal, exp);
+              resultList.push({
+                  newEnv: newEnv,
+                  newTermNode:  {
+                    ...term,
+                    binding:[newExp, newVal]
+                  },
+                  remainingOperation: { type: 'id' },
+                });
+            } catch (error) {
+              console.error(error);
+            }
+            
             // If the expression is a variable, them add variable's bidning to env to mark it unmodifiable.
             if ((exp as Variable).name) { 
               let x = (exp as Variable).name;
               env[x] = [val, [val]]; // mark x as unmodifiable.
             }            
+
             resultList.push({
               newEnv:env,
               newTermNode:term,
               remainingOperation:{...operation, position:0}
             })
+            return resultList;
          } else {
           const newPosition = position - valStr.length;
           // If the expression is a variable, them add variable's bidning to env to mark it unmodifiable.
@@ -744,11 +755,7 @@ export function fuse(
           position: number;
         };
         if (repPos === 0) {
-          if(str1 === valStr){
-            const newVal = strToVal(str1, val);
-            let {newEnv, newExp} = fuseExp(env, newVal, exp);
-            return [{ newEnv: newEnv, newTermNode: {...term, binding:[newExp, newVal]}, remainingOperation: {type:'id'} }];
-          } else if (str1.startsWith(valStr)){
+          if (valStr.startsWith(str1)){
             const newValStr = str2 + valStr.slice(str1.length);
             const newVal = strToVal(newValStr, val);
             let {newEnv, newExp} = fuseExp(env, newVal, exp);
@@ -920,7 +927,7 @@ export function fuseExp(env: Environment, value: Value, exp: Expr): { newEnv: En
 
   switch (exp.type) {
     case 'constant':
-      return { newEnv: env, newExp: exp };
+      return { newEnv: env, newExp: valueToConstantExpr(value) };
     case 'variable':
       if (!(exp.name in env)) {
         throw new Error(`Variable ${exp.name} not found in environment.`);
@@ -998,9 +1005,20 @@ export function fuseExp(env: Environment, value: Value, exp: Expr): { newEnv: En
 
 function strToVal(s: string, v:Value): Value {
   if (typeof v === 'number') {
-      return parseFloat(s); // Convert string to number
+      const parsedNumber = parseFloat(s);
+      if(isNaN(parsedNumber)){
+        throw new Error("convert to number fail: ${s}");
+      } else {
+        return parsedNumber;
+      }
   } else if (typeof v === 'boolean') {
-      return s.toLowerCase() === 'true'; // Convert string to boolean
+    if(s==='true'){
+      return true;
+    } else if (s==='false'){
+      return false;
+    } else {
+      throw new Error("convert to boolean fail: ${s}");
+    }
   } else if (typeof v === 'string') {
       return s; // v is already string, return s as is
   } else {
@@ -1040,10 +1058,10 @@ function deleteField(obj: ObjectValue, field: string): ObjectValue {
   };
 }
 
-function updateFieldMark(obj: ObjectValue, field: string): ObjectValue {
+function updateFieldMark(obj: ObjectValue, field: string, objVal:ObjectValue): ObjectValue {
   // Destructure the fields, omitting the specified field
-  const { [field]: val, ...newFields } = obj.fields;
-  newFields.field = [val, [val]];
+  const { [field]: _, ...newFields } = obj.fields;
+  newFields[field] = objVal.fields[field];
   // Return a new ObjectValue with the updated fields
   return {
     type: 'object',
@@ -1054,7 +1072,7 @@ function updateFieldMark(obj: ObjectValue, field: string): ObjectValue {
 function updateFieldMarkWithValue(obj: ObjectValue, field: string, value: Value): ObjectValue {
   // Destructure the fields, omitting the specified field
   const { [field]: val, ...newFields } = obj.fields;
-  newFields.field = [value, [value]];
+  newFields[field] = [value];
   // Return a new ObjectValue with the updated fields
   return {
     type: 'object',
@@ -1080,7 +1098,10 @@ function markFieldOfObjectInEnv(field: string, variable:Variable, env:Environmen
  }
  let xVal = env[x][0] as ObjectValue;
  let xValMark = env[x][1][0] as ObjectValue;
- let newXValUpdatedMark = updateFieldMark(xValMark, field);
+ console.log("---------------------------")
+ console.log(xVal);
+ console.log(xValMark);
+ let newXValUpdatedMark = updateFieldMark(xValMark, field, xVal);
  let newEnv = deleteFromEnv(env, x);
  newEnv[x] = [xVal, [newXValUpdatedMark]];
  return newEnv;
@@ -1111,4 +1132,52 @@ function transformEnvironment(env: Environment): Map<string, any> {
   }
 
   return map;
+}
+
+
+export function valueToConstantExpr(value: Value): Constant {
+  if (value === null || typeof value === 'number' || typeof value === 'boolean' || typeof value === 'string') {
+    return { type: 'constant', value: value };
+  } else if (Array.isArray(value)) {
+    return {
+      type: 'constant',
+      value: value.map(v => valueToConstantExpr(v)) as unknown as []
+    };
+  } else if ((value as ObjectValue).type === 'object') {
+    const objectValue = value as ObjectValue;
+    const fields: { [key: string]: Constant } = {};
+    for (const key in objectValue.fields) {
+      if (objectValue.fields.hasOwnProperty(key)) {
+        fields[key] = valueToConstantExpr(objectValue.fields[key]) as Constant;
+      }
+    }
+    return {
+      type: 'constant',
+      value: { type: 'object', fields: fields }
+    };
+  } else {
+    throw new Error(`Unhandled value type: ${typeof value}`);
+  }
+}
+
+
+export function printEnvironment(env: Environment): void {
+  console.log('{\n');
+  for (const variable in env) {
+    if (env.hasOwnProperty(variable)) {
+      const [currentValue, marks] = env[variable];
+      console.log(`${variable}: {`);
+      console.log(' val: ');
+      printValue(currentValue, " ");
+      console.log(',marks: [');
+      marks.forEach((v, index) => {
+        printValue(v, " ");
+        if (index < marks.length - 1) {
+          console.log(', ');
+        }
+      });
+      console.log(']\n },\n');
+    }
+  }
+  console.log('}');
 }
