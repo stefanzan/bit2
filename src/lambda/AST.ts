@@ -23,11 +23,11 @@ export interface LambdaAppNode {
 
 type Marker = PartilAST.LoopItemMarker | DeclareMarker | AssignMarker;
 
-interface DeclareMarker {
+export interface DeclareMarker {
   type: 'declare';
 }
 
-interface AssignMarker {
+export interface AssignMarker {
   type: 'assign';
 }
 

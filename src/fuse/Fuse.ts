@@ -799,7 +799,8 @@ export function fuse(
       let varName = term.variable.name;
       let varExp = term.binding[0];
       let varVal = term.binding[1];
-      env[varName]=[varVal,[]];
+      let env1 = {...env};
+      env1[varName]=[varVal,[]];
 
       let newArrVarName = "";
       if (marker.lst as Variable) { 
@@ -809,13 +810,13 @@ export function fuse(
         throw new Error("exp is not a Variable with a name property in loopitem's marker");
       }
 
-      let resultList = fuse(env, operation, term);
+      let resultList = fuse(env1, operation, term.body);
       return resultList.map(({newEnv, newTermNode, remainingOperation})=>{
         let newVarVal = newEnv[varName][0];
         let newArrVal = env[newArrVarName][0] as Value[]; // must be an array
         newArrVal.push(newVarVal);
-        newEnv[newArrVarName] = [newArrVal, [newArrVal]];
-        let {newEnv: updatedEnv, newExp} = fuseExp(newEnv, newVarVal, varExp); 
+        env[newArrVarName] = [newArrVal, [newArrVal]];
+        let {newEnv: updatedEnv, newExp} = fuseExp(env, newVarVal, varExp); 
         return {
           newEnv: updatedEnv,
           newTermNode:{
@@ -836,7 +837,7 @@ export function fuse(
       let env1 = {...env};
       env1[varName]=[varVal,[]];
 
-      let resultList = fuse(env1, operation, term);
+      let resultList = fuse(env1, operation, term.body);
       return resultList.map(({newEnv, newTermNode, remainingOperation})=>{
         let newVarVal = newEnv[varName][0];
         let updatedOldEnv = updateEnvByEnv(env, newEnv);
@@ -922,8 +923,6 @@ export function fuse(
 }
 
 export function fuseExp(env: Environment, value: Value, exp: Expr): { newEnv: Environment; newExp: Expr } {
-
-
   switch (exp.type) {
     case 'constant':
       return { newEnv: env, newExp: valueToConstantExpr(value) };
@@ -936,7 +935,7 @@ export function fuseExp(env: Environment, value: Value, exp: Expr): { newEnv: En
         const newEnv = {...env};
         newEnv[exp.name] = [value, [value]];
         return { newEnv, newExp: exp };
-      } else if (marks.length === 1 && marks[0] === varValue) {
+      } else if (marks.length === 1 && marks[0] === value) {
         return { newEnv: env, newExp: exp };
       } else {
         throw new Error(`Fail, variable cannot be updated to different value ${exp.name}, previous: ${marks[0]}, new: ${varValue}`);
@@ -978,6 +977,9 @@ export function fuseExp(env: Environment, value: Value, exp: Expr): { newEnv: En
         }
         switch (exp.operator) {
           case '+':
+            console.log(value-left);
+            console.log(exp.right);
+            console.log(env);
             let subResultForPlus = fuseExp(env, value - left, exp.right);
             return { newEnv: subResultForPlus.newEnv, newExp: { ...exp, right: subResultForPlus.newExp } };
           case '-':
