@@ -793,14 +793,6 @@ export function fuse(
       default:
         throw new Error(`Unhandled operation type: ${operation}`);
     }
-  } else if (term.type === "nop") {
-    return [
-      {
-        newEnv: env,
-        newTermNode: term,
-        remainingOperation: operation
-      },
-    ]; 
   } else if (term.type === "lambda") {
     let marker = term.marker;
     if (marker.type === "loopitem") {
@@ -862,18 +854,25 @@ export function fuse(
         }
       }) 
     }
-  } else if (term.type === "branchstart" || term.type === "branchend") {
+  } else if (term.type === "branchstart" || term.type === "branchend" || term.type==="nop") {
+    let resultList: { newEnv: Environment; newTermNode: TermNode; remainingOperation: UpdateOperation}[] = [] ;
+    resultList.push({newEnv: env, newTermNode: term, remainingOperation: operation});
     switch(operation.type) {
       case "insert":
+        const { str, position } = operation;
+        if (position === 0){
+          resultList.push({
+            newEnv:env,
+            newTermNode:{
+              type:'seq',
+              nodes:[{type:'const', value:str},term]
+            },
+            remainingOperation:{type:'id'}
+          })
+        }
       case "delete":
       case "replace":
-        return [
-          {
-            newEnv: env,
-            newTermNode: term,
-            remainingOperation: operation,
-          },
-        ];
+        return resultList;
       case "bulk":
       default:
         throw new Error(`Unhandled operation type: ${operation}`);
