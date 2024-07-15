@@ -285,7 +285,7 @@ export function fuse(
         }
 
       case "bulk":
-      // TODO bulk
+        return fuseBulk(env, operation, term);
       case "id":
         return [
           {
@@ -568,6 +568,7 @@ export function fuse(
           ];
         }
       case "bulk":
+        return fuseBulk(env, operation, term);
       case "id":
         return [
           {
@@ -778,6 +779,7 @@ export function fuse(
           throw new Error(`Unsupported replacement`);
         }
       case "bulk":
+        return fuseBulk(env, operation, term);
       case "id":
         // find variables in e, and update them in env
         let { variables, fields } = findVariablesAndFields(exp);
@@ -876,6 +878,7 @@ export function fuse(
       case "replace":
         return resultList;
       case "bulk":
+        return fuseBulk(env, operation, term);
       default:
         throw new Error(`Unhandled operation type: ${operation}`);
     }
