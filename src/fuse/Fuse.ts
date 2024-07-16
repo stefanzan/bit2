@@ -93,7 +93,7 @@ export function fuse(
               newTermNode: { ...term, value: s_c + str },
               remainingOperation: { type: "id" },
             },
-            { newEnv: env, newTermNode: term, remainingOperation: operation },
+            { newEnv: env, newTermNode: term, remainingOperation: {type:'insert', str, position: position-s_c.length} },
           ];
         } else {
           const newPos = position - s_c.length;
@@ -884,6 +884,10 @@ export function fuse(
     }
 
   } else if (term.type === "seq") {
+    if(operation.type==="bulk"){
+      return fuseBulk(env, operation, term);
+    }
+
     const terms = term.nodes;
     let results: { newEnv: Environment; newTermNode: TermNode; remainingOperation: UpdateOperation }[] = [
         { newEnv: env, newTermNode: { type: 'seq', nodes: [] }, remainingOperation: operation }
@@ -1200,18 +1204,24 @@ export function fuseBulk(
   if (bulkOp.type !== 'bulk' || !bulkOp.operations) {
     throw new Error('Invalid bulk operation');
   }
-  const [op1, ...restOps] = bulkOp.operations;
 
+  // ending of recursive call
+  if(bulkOp.operations.length==0 ){
+    return [{newEnv:env, newTermNode:term, remainingOperation:{type:'id'}}];
+  } else if (term.type==="seq" && term.nodes.length==0) {
+    return [{newEnv:env, newTermNode:term, remainingOperation:bulkOp}];
+  }
+
+  const [op1, ...restOps] = bulkOp.operations;
   if(term.type==='seq'){
     const firstTerm = term.nodes[0];
     const remainingTerms = term.nodes.slice(1);
-  
     const fuseResultsOfFirstTerm = fuseBulk(env, bulkOp, firstTerm);
     const results: { newEnv: Environment; newTermNode: TermNode; remainingOperation: UpdateOperation }[] = [];
-  
+
     for (const result of fuseResultsOfFirstTerm) {
         const subResults = fuseBulk(result.newEnv, result.remainingOperation, { type: 'seq', nodes: remainingTerms });
-  
+
         for (const subResult of subResults) {
           let remainingNodesTerm = [];
           if(subResult.newTermNode.type!='seq'){
@@ -1236,19 +1246,9 @@ export function fuseBulk(
       const op1Results = fuse(env, op1, term);
       let listOfList = op1Results.map(op1Result => {
         let op1Prime = op1Result.remainingOperation;
-        if(op1Prime.type==="insert" || op1Prime.type==="delete" || op1Prime.type==="replace") {
-          const n1Prime = op1Prime.position;
-  
-          // case 1: totally not used in term
-          const deltaN = n1 - n1Prime;
-  
-          // case 2: partially used in term
-          let strOld = getOpStr(op1);
-          let strNew = getOpStr(op1Prime);
-          if(strOld != strNew){
-            let termStr = evaluateTermNode(op1Result.newTermNode);
-            deltaN - n1 - termStr.length;
-          }
+        if(op1Prime.type ==="id" || op1Prime.type==="insert" || op1Prime.type==="delete" || op1Prime.type==="replace") {
+          let termStr = evaluateTermNode(op1Result.newTermNode);
+          let deltaN = termStr.length;
   
           // Adjust positions for the remaining operations
           const adjustedRestOps = restOps.map(op => {
@@ -1265,19 +1265,12 @@ export function fuseBulk(
             type: 'bulk',
             operations: [op1Result.remainingOperation, ...adjustedRestOps]
           };
+          
           return [{
             newEnv: op1Result.newEnv,
             newTermNode: op1Result.newTermNode,
             remainingOperation: remainingBulkOp
           }] as {newEnv:Environment, newTermNode: TermNode, remainingOperation: UpdateOperation}[];
-        } else if (op1Prime.type === "id"){
-          // case 3
-          // Create a new bulk operation with the remaining operations
-          const newBulkOp: UpdateOperation = {
-            type: 'bulk',
-            operations: restOps,
-          };
-          return fuseBulk(env, newBulkOp, term);
         } else {
           throw new Error("nested bulk current not supported");
         }
