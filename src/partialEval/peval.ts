@@ -339,7 +339,13 @@ export function flatten(termNode: PartialAST.TermNode): PartialAST.TermNode {
   if (termNode.type === 'seq') {
       // 如果 termNode 是 seq 类型，则递归处理每个元素，并返回新的 seq 节点
       const flattenedElements = termNode.nodes.map(element => flatten(element));
-      return { type: 'seq', nodes: flattenedElements.flatMap(seqNode => seqNode) };
+      return { type: 'seq', nodes: flattenedElements.flatMap(seqNode => {
+        if(seqNode.type === 'seq'){
+          return seqNode.nodes;
+        } else {
+          return [seqNode]
+        }
+      }) };
   } else {
       // 其他情况下，直接返回
       return termNode;

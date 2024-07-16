@@ -19,6 +19,7 @@
     "loop": "node dist/test/fuse/loop.test.js",
     "ulambda": "node dist/test/fuse/lambda.test.js",
     "useq": "node dist/test/fuse/seq.test.js",
-    "bulk": "node dist/test/fuse/bulk.test.js"
+    "bulk": "node dist/test/fuse/bulk.test.js",
+    "unlambdalize": "node dist/test/lambdalize/unLambdalize.test.js"
   }
 }
