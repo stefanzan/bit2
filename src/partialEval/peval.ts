@@ -99,7 +99,9 @@ export function partialEval(environment: Map<string, any>, termNode: CoreAST.Ter
                       {
                           type: 'loopfront',
                           lst: lst,
-                          value: front.value
+                          value: front.value,
+                          body:body,
+                          separator:separator
                       },
                       {
                           type: 'looprear',
@@ -125,7 +127,9 @@ export function partialEval(environment: Map<string, any>, termNode: CoreAST.Ter
                       {
                           type: 'loopfront',
                           lst: lst,
-                          value: front.value
+                          value: front.value,
+                          body:body,
+                          separator:separator
                       },
                       evaluatedBody,
                       {
@@ -171,7 +175,9 @@ export function partialEval(environment: Map<string, any>, termNode: CoreAST.Ter
                       {
                           type: 'loopfront',
                           lst: lst,
-                          value: front.value
+                          value: front.value,
+                          body:body,
+                          separator:separator
                       },
                       ...currentNodes,
                       {
@@ -334,7 +340,7 @@ declare global {
     flatMap<U>(callback: (value: T, index: number, array: T[]) => U | readonly U[]): U[];
   }
 }
-// 定义 flatten 函数
+// 定义 flatten 函数 for PartialAST
 export function flatten(termNode: PartialAST.TermNode): PartialAST.TermNode {
   if (termNode.type === 'seq') {
       // 如果 termNode 是 seq 类型，则递归处理每个元素，并返回新的 seq 节点
@@ -346,8 +352,10 @@ export function flatten(termNode: PartialAST.TermNode): PartialAST.TermNode {
           return [seqNode]
         }
       }) };
-  } else {
+    } else if (termNode.type === 'lambda'){
+      return {...termNode, body:flatten(termNode.body)};
+    } else {
       // 其他情况下，直接返回
       return termNode;
-  }
+    }
 }

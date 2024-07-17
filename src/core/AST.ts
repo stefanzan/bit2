@@ -3,7 +3,8 @@ import {Expr, Constant, Variable, BinaryOperation, UnaryOperation, FieldAccess, 
 export type TermNode = ConstNode | SpaceNode | DeclareNode | AssignNode 
     | ExpNode | SeqNode | IfThenElseNode 
     | LoopNode 
-    | CallNode | NopNode | BotNode | EndNode;
+    | CallNode | NopNode | BotNode | EndNode
+    | LambdaWithExpr; // for internal usage
 
 export interface ConstNode {
     type: 'const';
@@ -87,6 +88,14 @@ export interface Lambda {
   variable: Variable;
   body: TermNode;
 }
+
+export interface LambdaWithExpr {
+  type: 'lambdawithexpr';
+  variable: Variable;
+  body: TermNode;
+  exp: Expr;
+}
+
 
 export interface CallNode {
   type: 'call';

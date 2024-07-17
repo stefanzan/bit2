@@ -1,8 +1,8 @@
 import * as PartilAST from "../partial/AST";
 import { Variable } from "../common/Exp";
-
+import * as CoreAST from "../core/AST";
 // Complete TermNode type
-export type TermNode = PartilAST.ConstNode | PartilAST.SpaceNode | PartilAST.SepNode | PartilAST.ExpNode | SeqNode
+export type TermNode = PartilAST.ConstNode | PartilAST.SpaceNode | CoreAST.SepNode | PartilAST.ExpNode | SeqNode
   | LambdaAppNode | PartilAST.BranchStartNode | PartilAST.BranchEndNode
   | PartilAST.LoopFrontNode | PartilAST.LoopRearNode | PartilAST.EndNode
   | PartilAST.NopNode | PartilAST.BotNode | PartilAST.CallStartNode | PartilAST.CallEndNode;

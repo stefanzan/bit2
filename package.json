@@ -20,6 +20,7 @@
     "ulambda": "node dist/test/fuse/lambda.test.js",
     "useq": "node dist/test/fuse/seq.test.js",
     "bulk": "node dist/test/fuse/bulk.test.js",
-    "unlambdalize": "node dist/test/lambdalize/unLambdalize.test.js"
+    "unlambdalize": "node dist/test/lambdalize/unLambdalize.test.js",
+    "unpeval": "node dist/test/partialEval/unpeval.test.js"
   }
 }

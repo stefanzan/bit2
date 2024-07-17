@@ -2,7 +2,7 @@ import * as CoreAST from "../core/AST";
 import {Expr, Constant, Variable, ObjectLiteral} from "../common/Exp";
 
 export type TermNode = ConstNode | SpaceNode | DeclareNode | AssignNode | ExpNode
-    | NopNode | SeqNode | BranchStartNode | BranchEndNode | SepNode | LambdaAppNode
+    | NopNode | SeqNode | BranchStartNode | BranchEndNode | CoreAST.SepNode | LambdaAppNode
     | LoopFrontNode | LoopRearNode | EndNode | BotNode | CallStartNode | CallEndNode;
 
 export interface ConstNode {
@@ -52,10 +52,6 @@ export interface BranchEndNode {
     type: 'branchend';
 }
 
-export interface SepNode {
-    type: 'sep';
-    value: string;
-}
 
 export interface LambdaAppNode {
   type: 'lambda';
@@ -77,6 +73,8 @@ export interface LoopFrontNode {
     type: 'loopfront';
     lst: Expr;
     value: string;
+    body: CoreAST.Lambda;
+    separator:CoreAST.SepNode;
 }
 
 export interface LoopRearNode {
