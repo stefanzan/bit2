@@ -923,7 +923,12 @@ export function fuse(
             : result.newTermNode,
         remainingOperation: result.remainingOperation
     }));
-} else {
+  } else if (term.type === "end") {
+    let results: { newEnv: Environment; newTermNode: TermNode; remainingOperation: UpdateOperation }[] = [
+      { newEnv: env, newTermNode: term, remainingOperation: operation }
+    ];
+    return results;
+  } else {
     throw new Error(
       "Operation can only be applied to ConstNode with string value"
     );
@@ -985,9 +990,9 @@ export function fuseExp(env: Environment, value: Value, exp: Expr): { newEnv: En
         }
         switch (exp.operator) {
           case '+':
-            console.log(value-left);
-            console.log(exp.right);
-            console.log(env);
+            // console.log(value-left);
+            // console.log(exp.right);
+            // console.log(env);
             let subResultForPlus = fuseExp(env, value - left, exp.right);
             return { newEnv: subResultForPlus.newEnv, newExp: { ...exp, right: subResultForPlus.newExp } };
           case '-':
@@ -1107,9 +1112,9 @@ function markFieldOfObjectInEnv(field: string, variable:Variable, env:Environmen
  }
  let xVal = env[x][0] as ObjectValue;
  let xValMark = env[x][1][0] as ObjectValue;
- console.log("---------------------------")
- console.log(xVal);
- console.log(xValMark);
+//  console.log("---------------------------")
+//  console.log(xVal);
+//  console.log(xValMark);
  let newXValUpdatedMark = updateFieldMark(xValMark, field, xVal);
  let newEnv = deleteFromEnv(env, x);
  newEnv[x] = [xVal, [newXValUpdatedMark]];

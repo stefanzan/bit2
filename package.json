@@ -21,6 +21,7 @@
     "useq": "node dist/test/fuse/seq.test.js",
     "bulk": "node dist/test/fuse/bulk.test.js",
     "unlambdalize": "node dist/test/lambdalize/unLambdalize.test.js",
-    "unpeval": "node dist/test/partialEval/unpeval.test.js"
+    "unpeval": "node dist/test/partialEval/unpeval.test.js",
+    "bieval": "node dist/test/bx/biEval.test.js"
   }
 }
