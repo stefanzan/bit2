@@ -14,7 +14,7 @@ import { Environment, fuse, printEnvironment } from "../../src/fuse/Fuse";
 import { printNode } from "../../src/lambda/Print";
 import { unLambdalize } from "../../src/lambdalize/unLambdalize";
 import { flatten } from "../../src/partialEval/peval";
-
+import * as LambdaPrint from "../../src/lambda/Print";
 
 export function evaluateToLambdaAST(core: CoreAST.TermNode): LambdaAST.TermNode {
   const initialEnvironment = new Map<string, any>();
@@ -32,6 +32,7 @@ export function forward(core: CoreAST.TermNode):string {
 
 export function backward(core: CoreAST.TermNode, operation: UpdateOperation): CoreAST.TermNode[] {
   let lambdaAST = evaluateToLambdaAST(core)
+  // LambdaPrint.printNode(lambdaAST,"");
   let env: Environment = {};
   return fuse(env, operation, lambdaAST)
   .map(({newTermNode: newTerm, remainingOperation: newOp}) => {

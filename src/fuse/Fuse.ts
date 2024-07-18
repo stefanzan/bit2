@@ -843,6 +843,7 @@ export function fuse(
       let resultList = fuse(env1, operation, term.body);
       return resultList.map(({newEnv, newTermNode, remainingOperation})=>{
         let newVarVal = newEnv[varName][0];
+        delete (newEnv as any)[varName];
         let updatedOldEnv = updateEnvByEnv(env, newEnv);
         let {newEnv: updatedEnv, newExp} = fuseExp(updatedOldEnv, newVarVal, varExp); 
         return {
