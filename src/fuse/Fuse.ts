@@ -991,9 +991,6 @@ export function fuseExp(env: Environment, value: Value, exp: Expr): { newEnv: En
         }
         switch (exp.operator) {
           case '+':
-            // console.log(value-left);
-            // console.log(exp.right);
-            // console.log(env);
             let subResultForPlus = fuseExp(env, value - left, exp.right);
             return { newEnv: subResultForPlus.newEnv, newExp: { ...exp, right: subResultForPlus.newExp } };
           case '-':
@@ -1113,9 +1110,6 @@ function markFieldOfObjectInEnv(field: string, variable:Variable, env:Environmen
  }
  let xVal = env[x][0] as ObjectValue;
  let xValMark = env[x][1][0] as ObjectValue;
-//  console.log("---------------------------")
-//  console.log(xVal);
-//  console.log(xValMark);
  let newXValUpdatedMark = updateFieldMark(xValMark, field, xVal);
  let newEnv = deleteFromEnv(env, x);
  newEnv[x] = [xVal, [newXValUpdatedMark]];
@@ -1207,6 +1201,11 @@ export function fuseBulk(
   newTermNode: TermNode;
   remainingOperation: UpdateOperation;
 }[] {
+
+  if(bulkOp.type === 'id'){
+    return [{ newEnv: env, newTermNode: term, remainingOperation: { type: 'id' } }];
+  }
+
   if (bulkOp.type !== 'bulk' || !bulkOp.operations) {
     throw new Error('Invalid bulk operation');
   }
@@ -1245,10 +1244,12 @@ export function fuseBulk(
   
     return results;
 
+  } else if (term.type === "lambda"){
+    return fuse(env, bulkOp, term);
   } else {
-    
     if (op1.type==="insert" || op1.type==="delete" || op1.type==="replace"){
       const n1 = op1.position;
+      // 这里不能简单的fuse整个term，要根据term类型来，就好比上一个if判断是seq，除了seq外，LambdaAppNode需要特殊处理
       const op1Results = fuse(env, op1, term);
       let listOfList = op1Results.map(op1Result => {
         let op1Prime = op1Result.remainingOperation;
@@ -1267,7 +1268,7 @@ export function fuseBulk(
             }
           });
           // Combine the remaining operations
-          const remainingBulkOp: UpdateOperation = {
+          let remainingBulkOp: UpdateOperation = {
             type: 'bulk',
             operations: [op1Result.remainingOperation, ...adjustedRestOps]
           };

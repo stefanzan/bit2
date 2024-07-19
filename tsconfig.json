@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
-    "target": "es2015",
+    // "target": "es2015",
+    "target": "es6",
     "lib": ["es2015", "es2017", "dom"],
     "module": "commonjs",
     "strict": true,
@@ -13,7 +14,8 @@
     "baseUrl": "./",
     "paths": {
       "*": ["node_modules/*", "src/types/*"]
-    }
+    },
+    "sourceMap": true
   },
   "include": ["src/**/*.ts", "test/**/*.ts"],
   "exclude": ["node_modules"]
