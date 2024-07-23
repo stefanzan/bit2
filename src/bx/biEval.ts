@@ -6,6 +6,9 @@ import { partialEval } from "../partialEval/peval";
 import { lambdalize } from "../lambdalize/lambdalize";
 import * as Evaluation from "../lambda/Evaluation";
 import * as UnEvaluation from "../../src/partialEval/unpeval";
+import * as Parser from "../surface/Parser";
+import * as Translator from "../translate/Translate";
+
 
 //@ts-ignore
 import { UpdateOperation } from "../../src/fuse/Update";
@@ -24,9 +27,11 @@ export function evaluateToLambdaAST(core: CoreAST.TermNode): LambdaAST.TermNode 
 }
 
 
-export function forward(core: CoreAST.TermNode):string {
-  let str = Evaluation.evaluateTermNode(evaluateToLambdaAST(core));
-  return str;
+export function forward(str: string):string {
+  let surface = Parser.parse(str);
+  let core = Translator.translate(surface)
+  let result = Evaluation.evaluateTermNode(evaluateToLambdaAST(core));
+  return result;
 }
 
 

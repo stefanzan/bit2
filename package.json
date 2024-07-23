@@ -23,6 +23,7 @@
     "unlambdalize": "node dist/test/lambdalize/unLambdalize.test.js",
     "unpeval": "node dist/test/partialEval/unpeval.test.js",
     "bieval": "node dist/test/bx/biEval.test.js",
-    "parse": "node dist/test/surface/AST.test.js"
+    "parse": "node dist/test/surface/AST.test.js",
+    "translate": "node dist/test/translate/translate.test.js"
   }
 }
