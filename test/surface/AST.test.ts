@@ -1,14 +1,29 @@
 import * as Parser from "../../src/surface/Parser";
 // Example usage
-// Example usage
 const exampleInput = `
-  Some literal text
-  «VAR v = 0»
-  More literal text
-  «FOR item IN lst SEPARATOR "," BEFORE "[" AFTER "]"» «item» «ENDFOR»
-  End literal text
-  «no = no + 1»
+    Some literal text
+    «VAR v = 0»
+    More literal text
+    «FOR item IN lst SEPARATOR "," FRONT "[" REAR "]"» «item» «ENDFOR»
+    End literal text
+    «no = no + 1»
 `;
+
+// const exampleInput = `
+// «var paragraphs = ![{head:"Hello", text:"Hello!"}, {head:"Farewell", text:"Good Bye!"}] »
+// <html>
+//     <body>
+//       «var no = 0»
+//       «for p in paragraphs separator "" front "" rear ""»
+//           «no = no + 1»
+//           <h1>«no».«p.head.toUpperCase»</h1>
+//         <p>
+//           «p.text»
+//         </p>
+//       «endfor»
+//     </body>
+// </html>
+// `;
 
 const tokens = Parser.tokenize(exampleInput);
 const parsedFragment = Parser.parseTokens(tokens);

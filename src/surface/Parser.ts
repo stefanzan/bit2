@@ -111,7 +111,7 @@ export function parseTokens(
 
         case "FOR":
           const forParts = directiveContent.match(
-            /FOR\s+(\w+)\s+IN\s+(.*?)\s+SEPARATOR\s+"(.*?)"\s+BEFORE\s+"(.*?)"\s+AFTER\s+"(.*?)"/
+            /FOR\s+(\w+)\s+IN\s+(.*?)\s+SEPARATOR\s+"(.*?)"\s+FRONT\s+"(.*?)"\s+REAR\s+"(.*?)"/
           );
           if (forParts) {
             const loopTokens: (Surface.Literal | string)[] = [];
@@ -190,14 +190,29 @@ export function parseTokens(
 function parseExpr(input: string): Expr {
   const tokens = tokenize(input);
   let pos = 0;
-  // Tokenize the input string
   function tokenize(input: string): string[] {
-    return input
-      .replace(/\s+/g, " ")
-      .split(/([()+\-*/&&||<>=!]+|[\[\],.:])/)
-      .filter((token) => token.trim().length > 0)
-      .map((token) => token.trim());
-  }
+    const regex = /"([^"\\]*(?:\\.[^"\\]*)*)"|'([^'\\]*(?:\\.[^'\\]*)*)'|([{}[\](),.:;!])|(\s+)|([^\s{}[\](),.:;!]+)/g;
+    const tokens: string[] = [];
+    let match: RegExpExecArray | null;
+  
+    while ((match = regex.exec(input)) !== null) {
+      if (match[1] !== undefined) {
+        // Double-quoted string
+        tokens.push(`"${match[1]}"`);
+      } else if (match[2] !== undefined) {
+        // Single-quoted string
+        tokens.push(`'${match[2]}'`);
+      } else if (match[3] !== undefined) {
+        // Delimiters
+        tokens.push(match[3]);
+      } else if (match[5] !== undefined) {
+        // Other tokens (identifiers, numbers, etc.)
+        tokens.push(match[5]);
+      }
+    }
+  
+    return tokens;
+  }  
 
   function parsePrimary(): Expr {
     if (tokens[pos] === "(") {
@@ -209,7 +224,7 @@ function parseExpr(input: string): Expr {
       }
       throw new Error("Mismatched parentheses");
     }
-
+  
     if (tokens[pos] === "[") {
       pos++; // Consume '['
       const elements: Expr[] = [];
@@ -223,10 +238,10 @@ function parseExpr(input: string): Expr {
       pos++; // Consume ']'
       return { type: "array", elements } as ArrayLiteral;
     }
-
+  
     if (tokens[pos] === "{") {
       pos++; // Consume '{'
-      const fields: { [key: string]: Constant } = {};
+      const fields: { [key: string]: Expr } = {};
       while (tokens[pos] !== "}") {
         if (tokens[pos] === ",") {
           pos++; // Consume ','
@@ -234,8 +249,8 @@ function parseExpr(input: string): Expr {
           const key = tokens[pos++];
           if (tokens[pos] === ":") {
             pos++; // Consume ':'
-            const value = parsePrimary();
-            fields[key] = value as Constant;
+            const value = parseExpression();
+            fields[key] = value;
           } else {
             throw new Error("Expected colon in object literal");
           }
@@ -244,24 +259,28 @@ function parseExpr(input: string): Expr {
       pos++; // Consume '}'
       return { type: "object", fields } as ObjectLiteral;
     }
-
+  
     if (!isNaN(Number(tokens[pos]))) {
       return { type: "constant", value: Number(tokens[pos++]) } as Constant;
     }
 
+    if (/^['"].*['"]$/.test(tokens[pos])) {
+      return { type: "constant", value: tokens[pos++].slice(1, -1) } as Constant;
+    }
+  
     if (/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(tokens[pos])) {
       return { type: "variable", name: tokens[pos++] } as Variable;
     }
-
-    if (tokens[pos] === "freeze") {
-      pos++; // Consume 'freeze'
+  
+    if (tokens[pos] === "!") {
+      pos++; // Consume '!'
       const expression = parsePrimary();
       return { type: "freeze", expression } as FreezeExp;
     }
-
+  
     throw new Error(`Unexpected token: ${tokens[pos]}`);
-  }
-
+  }  
+  
   function parseExpression(): Expr {
     let left = parsePrimary();
 
