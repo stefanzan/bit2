@@ -22,6 +22,7 @@
     "bulk": "node dist/test/fuse/bulk.test.js",
     "unlambdalize": "node dist/test/lambdalize/unLambdalize.test.js",
     "unpeval": "node dist/test/partialEval/unpeval.test.js",
-    "bieval": "node dist/test/bx/biEval.test.js"
+    "bieval": "node dist/test/bx/biEval.test.js",
+    "parse": "node dist/test/surface/AST.test.js"
   }
 }
