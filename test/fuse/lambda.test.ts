@@ -11,6 +11,9 @@ let env: Environment = {};
 /**
  * Declare/Assign
  */
+
+
+
 console.log('===================================')
 // let x = 1; <x>
 console.log('1. replace "1" with "2" at 0 |> \ x.x 1');
@@ -78,24 +81,29 @@ fuse(env
 });
 env={};
 
-/**
- * Loopitem
- */
-console.log('===================================')
-env['lst'] = [[1,2,3],[]];
-env['lst_new']=[[10],[]];
 
-console.log('1. replace "2" with "20" at 0 |> \ x.x 2');
-let lambdaAppLoopitem: LambdaAppNode = {
+console.log('===================================')
+// let x = 1; <x>
+console.log('4. replace "2" with "1" at 2 |> (\\x.x (\\x.x (1+x))) 1');
+let lambdaAppDeclareAssign: LambdaAppNode = {
   type:'lambda',
   variable: {type:'variable', name:'x'},
-  body:{type:'exp', binding:[{type:'variable',name:'x'}, 2]},
-  binding:[{type:'constant', value:2},2],
-  marker: {type:'loopitem', lst:{type:'variable', name:'lst'}} as LoopItemMarker
+  body:{type:'seq', nodes:[
+    {type:'exp', binding:[{type:'variable',name:'x'}, 1]}, 
+    {type:'space', width:1},
+    {type:'lambda',
+      variable:{type:'variable', name:'x'},
+      body:{type:'exp', binding:[{type:'variable',name:'x'}, 2]},
+      binding:[{type:'binary', operator:"+", left:{type:'variable', name:'x'}, right:{type:'constant', value:1}}, 2],
+      marker: {type:'assign'} as AssignMarker
+    } 
+  ]},
+  binding:[{type:'constant', value:1},1],
+  marker: {type:'declare'} as DeclareMarker
 }
 fuse(env
-  , {type:'replace',str1: "2", str2:"20", position:0}
-  , lambdaAppLoopitem
+  , {type:'replace',str1: "2", str2:"1", position:2}
+  , lambdaAppDeclareAssign
 ).forEach(({newEnv:newEnv, newTermNode: newTerm, remainingOperation: newOp}) => {
   console.log('------')
   printEnvironment(newEnv);
@@ -103,3 +111,30 @@ fuse(env
   console.log('U: ' + operationToStr(newOp));
 });
 env={};
+
+
+// /**
+//  * Loopitem
+//  */
+// console.log('==============Loopitem=====================')
+// env['lst'] = [[1,2,3],[]];
+// env['lst_new']=[[10],[]];
+
+// console.log('1. replace "2" with "20" at 0 |> \ x.x 2');
+// let lambdaAppLoopitem: LambdaAppNode = {
+//   type:'lambda',
+//   variable: {type:'variable', name:'x'},
+//   body:{type:'exp', binding:[{type:'variable',name:'x'}, 2]},
+//   binding:[{type:'constant', value:2},2],
+//   marker: {type:'loopitem', lst:{type:'variable', name:'lst'}} as LoopItemMarker
+// }
+// fuse(env
+//   , {type:'replace',str1: "2", str2:"20", position:0}
+//   , lambdaAppLoopitem
+// ).forEach(({newEnv:newEnv, newTermNode: newTerm, remainingOperation: newOp}) => {
+//   console.log('------')
+//   printEnvironment(newEnv);
+//   printNode(newTerm);
+//   console.log('U: ' + operationToStr(newOp));
+// });
+// env={};

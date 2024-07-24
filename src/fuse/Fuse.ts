@@ -952,7 +952,7 @@ export function fuseExp(env: Environment, value: Value, exp: Expr): { newEnv: En
       } else if (marks.length === 1 && marks[0] === value) {
         return { newEnv: env, newExp: exp };
       } else {
-        throw new Error(`Fail, variable cannot be updated to different value ${exp.name}, previous: ${marks[0]}, new: ${varValue}`);
+        throw new Error(`Fail, variable cannot be updated to different value ${exp.name}, previous: ${marks[0]}, new: ${value}`);
       }
     case 'freeze':
       let [_, evaluated] = evaluateExpr(transformEnvironment(env), exp.expression);
@@ -985,7 +985,8 @@ export function fuseExp(env: Environment, value: Value, exp: Expr): { newEnv: En
       let transformedEnv = transformEnvironment(env);
       let [envLeft, left] = evaluateExpr(transformedEnv, exp.left);
       // let [envRight, right] = evaluateExpr(transformedEnv, exp.right);
-      if(value as number){
+      // if(value as number){
+      if(typeof value === 'number'){
         if (typeof value !== 'number' || value === null) {
           throw new Error('Value must be a non-null number');
         }
@@ -1003,7 +1004,8 @@ export function fuseExp(env: Environment, value: Value, exp: Expr): { newEnv: En
             let subResultForDivide = fuseExp(env, left/value,  exp.right);
             return { newEnv: subResultForDivide.newEnv, newExp: { ...exp, right: subResultForDivide.newExp } };
         }
-      } else if (value as boolean) {
+      // } else if (value as boolean) {
+      } else if(typeof value === 'boolean'){
         // TODO
       }
 

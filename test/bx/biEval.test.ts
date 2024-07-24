@@ -11,12 +11,13 @@ Before: «no»
 After: «no»`;
 console.log(BiEval.forward(exampleInput));
 console.log("== Backward Evaluation ==");
-console.log('Operation:\n replace "0" with "1" at 9');
+// console.log('Operation:\n replace "0" with "1" at 9');
+console.log('Operation:\n replace "1" with "0" at 19');
 console.log("Original:");
 // CorePrint.printAST(SimpleCoreExample.assignmentExample);
 // console.log(CorePrettyPrint.prettyPrint(SimpleCoreExample.assignmentExample));
 console.log("Updated:");
-BiEval.backward(exampleInput, {type:'replace', str1:"0", str2:"1", position:9}).forEach(updatedCoreAST => {
+BiEval.backward(exampleInput, {type:'replace', str1:"1", str2:"0", position:19}).forEach(updatedCoreAST => {
   // CorePrint.printAST(updatedCoreAST);
   console.log(updatedCoreAST);
   console.log("~~~~~~~~~~~~~~~~~~~~~~~~");

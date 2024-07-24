@@ -19,6 +19,7 @@ export function evaluateTermNode(node: LambdaAST.TermNode): string {
     case 'branchstart':
     case 'branchend':
     case 'end':
+    case 'bot':
     case 'nop':
       return ''; // 返回空字符串，表示这些节点在输出中没有表示
     case 'loopfront':
