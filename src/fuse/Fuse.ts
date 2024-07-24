@@ -9,7 +9,7 @@ import {
 import { SeqNode, TermNode, LambdaAppNode } from "../lambda/AST";
 //@ts-ignore
 import { UpdateOperation } from "./Update";
-import { isWhitespace } from "../utils/Utils";
+import { isWhitespace, containsNewlineOrSpace } from "../utils/Utils";
 import {
   Expr,
   FieldAccess,
@@ -388,15 +388,17 @@ export function fuse(
             );
           }
         } else if (position === term.width) {
+          console.log("postion === term.width:", position, term.width);
           // 两种策略
           let resultList: {
             newEnv: Environment;
             newTermNode: TermNode;
             remainingOperation: UpdateOperation;
           }[] = [
-            { newEnv: env, newTermNode: term, remainingOperation: operation },
+            { newEnv: env, newTermNode: term, remainingOperation: { type: "insert", str, position: position-term.width}}
           ];
           if (isWhitespace(str)) {
+            console.log("no: ", str);
             resultList.push({
               newEnv: { ...env },
               newTermNode: { ...term, width: term.width + str.length },
@@ -657,7 +659,7 @@ export function fuse(
             },
             remainingOperation: { type: "id" },
           });
-          if (!isWhitespace(str)) {
+          if (!containsNewlineOrSpace(str)) {
             // another choice:
             let newStr = str + valStr;
             try {
@@ -698,7 +700,7 @@ export function fuse(
             newTermNode: TermNode;
             remainingOperation: UpdateOperation;
           }[] = [];
-          if(!isWhitespace(str)){
+          if(!containsNewlineOrSpace(str)){
             const newStr = valStr + str;
             try {
               const newVal = strToVal(newStr, val);

@@ -1,5 +1,2 @@
-«var no=1»«no»«no=no+1»«no»
-******************************
-«var no=1»«no»«no=no+1»  «no»
-******************************
-«var no=1»«no»«no=no+1»«no»
+«var no=1»Before: «no»«no=no+1»  
+«no»
