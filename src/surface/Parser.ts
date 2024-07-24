@@ -239,10 +239,13 @@ export function parseTokens(
 // Utility function to parse expressions
 function parseExpr(input: string): Expr {
   const tokens = tokenizeExpression(input);
+  // console.log("parseExpr, tokens:", tokens);
   let pos = 0;
 
   function tokenizeExpression(input: string): string[] {
-    const regex = /"([^"\\]*(?:\\.[^"\\]*)*)"|'([^'\\]*(?:\\.[^'\\]*)*)'|([{}[\](),.:;!])|(\s+)|([^\s{}[\](),.:;!]+)/g;
+    const regex = /"([^"\\]*(?:\\.[^"\\]*)*)"|'([^'\\]*(?:\\.[^'\\]*)*)'|(&&|\|\||[<>!=]=|[{}[\](),.:;!+\-*/<>])|(\s+)|([^\s{}[\](),.:;!+\-*/<>!=&|]+)/g;
+    // const regex = /"([^"\\]*(?:\\.[^"\\]*)*)"|'([^'\\]*(?:\\.[^'\\]*)*)'|([{}[\](),.:;!+\-*/<>=])|(\s+)|([^\s{}[\](),.:;!+\-*/<>=]+)/g;
+    // const regex = /"([^"\\]*(?:\\.[^"\\]*)*)"|'([^'\\]*(?:\\.[^'\\]*)*)'|([{}[\](),.:;!])|(\s+)|([^\s{}[\](),.:;!]+)/g;
     const tokens: string[] = [];
     let match: RegExpExecArray | null;
 

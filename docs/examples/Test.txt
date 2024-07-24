@@ -1,4 +1,5 @@
-«VAR no = 0»
-Before: «no»
-«no = no + 1»
-After: «no»
+«var no=1»«no»«no=no+1»«no»
+******************************
+«var no=1»«no»«no=no+1»  «no»
+******************************
+«var no=1»«no»«no=no+1»«no»

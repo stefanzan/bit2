@@ -28,7 +28,7 @@ import * as Parser from "../../src/surface/Parser";
 const exampleInput = 
 `«VAR no = 0»
 Before: «v»
-«no = no + 1»
+«no=no+1»
 After: «no»`;
 
 const parsedFragment = Parser.parse(exampleInput);
