@@ -113,6 +113,37 @@ fuse(env
 env={};
 
 
+
+console.log('===================================')
+// let x = 1; <x>; x = x+1; x
+console.log('5. replace "1" with "2" at 0 |> (\\x.x (\\x.x (1+x))) 1');
+let lambdaAppDeclareAssign2: LambdaAppNode = {
+  type:'lambda',
+  variable: {type:'variable', name:'x'},
+  body:{type:'seq', nodes:[
+    {type:'exp', binding:[{type:'variable',name:'x'}, 1]}, 
+    {type:'space', width:1},
+    {type:'lambda',
+      variable:{type:'variable', name:'x'},
+      body:{type:'exp', binding:[{type:'variable',name:'x'}, 2]},
+      binding:[{type:'binary', operator:"+", left:{type:'variable', name:'x'}, right:{type:'constant', value:1}}, 2],
+      marker: {type:'assign'} as AssignMarker
+    } 
+  ]},
+  binding:[{type:'constant', value:1},1],
+  marker: {type:'declare'} as DeclareMarker
+}
+fuse(env
+  , {type:'replace',str1: "1", str2:"2", position:0}
+  , lambdaAppDeclareAssign2
+).forEach(({newEnv:newEnv, newTermNode: newTerm, remainingOperation: newOp}) => {
+  console.log('------')
+  printEnvironment(newEnv);
+  printNode(newTerm);
+  console.log('U: ' + operationToStr(newOp));
+});
+env={};
+
 // /**
 //  * Loopitem
 //  */

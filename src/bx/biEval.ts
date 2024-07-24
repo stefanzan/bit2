@@ -57,7 +57,7 @@ export function backward(str: string, operation: UpdateOperation): string[] {
     // console.log("--------updatedCoreAST------------");
     // CorePrint.printAST(updatedCoreAST);
     let surfaceText = CorePretty.printToSurface(updatedCoreAST);
-    console.log("result in backward:\n", surfaceText);
+    // console.log("result in backward:\n", surfaceText);
     return surfaceText;
   });
 }

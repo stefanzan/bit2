@@ -761,6 +761,8 @@ export function fuse(
             const newValStr = str2 + valStr.slice(str1.length);
             const newVal = strToVal(newValStr, val);
             let {newEnv, newExp} = fuseExp(env, newVal, exp);
+            // console.log("fuseExp, newVal:", newVal);
+            // console.log("newEnv:", newEnv);
             return [{ newEnv: newEnv, newTermNode: {...term, binding:[newExp, newVal]}, remainingOperation: {type:'id'} }];
           } else {
             throw new Error(`unsupported replacement: ${str1}; ${valStr}`);
@@ -840,12 +842,20 @@ export function fuse(
       let env1 = {...env};
       env1[varName]=[varVal,[]];
 
+      // console.log("--------lambda----------");
+      // console.log("operation:", operation);
+      // console.log("term.body:", term.body);
       let resultList = fuse(env1, operation, term.body);
       return resultList.map(({newEnv, newTermNode, remainingOperation})=>{
         let newVarVal = newEnv[varName][0];
         delete (newEnv as any)[varName];
         let updatedOldEnv = updateEnvByEnv(env, newEnv);
         let {newEnv: updatedEnv, newExp} = fuseExp(updatedOldEnv, newVarVal, varExp); 
+        // console.log("lambda, newVarVal:", newVarVal);
+        // console.log("updatedOldEnv:", updatedOldEnv);
+        // console.log("exp:", varExp);
+        // console.log("newExp:", newExp);
+        // console.log("updatedEnv:", updatedEnv);
         return {
           newEnv: updatedEnv,
           newTermNode:{
@@ -898,6 +908,9 @@ export function fuse(
         const newResults: { newEnv: Environment; newTermNode: TermNode; remainingOperation: UpdateOperation }[] = [];
         
         for (const result of results) {
+            // console.log("-------------seq-----------");
+            // console.log(result);
+            // console.log(subTerm);
             const subResults = fuse(result.newEnv, result.remainingOperation, subTerm);
 
             for (const subResult of subResults) {
@@ -986,6 +999,10 @@ export function fuseExp(env: Environment, value: Value, exp: Expr): { newEnv: En
       let [envLeft, left] = evaluateExpr(transformedEnv, exp.left);
       // let [envRight, right] = evaluateExpr(transformedEnv, exp.right);
       // if(value as number){
+      // console.log("transformedEnv:", transformedEnv);
+      // console.log("left:", left);
+      // console.log("value:", value);
+      // console.log("exp:", exp);
       if(typeof value === 'number'){
         if (typeof value !== 'number' || value === null) {
           throw new Error('Value must be a non-null number');
@@ -993,6 +1010,7 @@ export function fuseExp(env: Environment, value: Value, exp: Expr): { newEnv: En
         switch (exp.operator) {
           case '+':
             let subResultForPlus = fuseExp(env, value - left, exp.right);
+            // console.log("subResult:", subResultForPlus);
             return { newEnv: subResultForPlus.newEnv, newExp: { ...exp, right: subResultForPlus.newExp } };
           case '-':
             let subResultForMinus = fuseExp(env, left-value, exp.right);
@@ -1205,7 +1223,9 @@ export function fuseBulk(
 }[] {
 
   if(bulkOp.type === 'id'){
-    return [{ newEnv: env, newTermNode: term, remainingOperation: { type: 'id' } }];
+    // console.log("Bulk, term:", term);
+    return fuse(env, bulkOp, term);
+    // return [{ newEnv: env, newTermNode: term, remainingOperation: { type: 'id' } }];
   }
 
   if (bulkOp.type !== 'bulk' || !bulkOp.operations) {
