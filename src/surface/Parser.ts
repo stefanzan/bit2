@@ -205,7 +205,7 @@ export function parseTokens(
               type: "Directive",
               content: {
                 type: "assign",
-                name: assignParts[0].split(" ")[1].trim(),
+                name: assignParts[0].split(" ")[0].trim(),
                 expr: parseExpr(assignParts[1].trim()),
               },
             });

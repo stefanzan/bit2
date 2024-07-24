@@ -1,5 +1,4 @@
 import * as CoreAST from "../core/AST";
-import * as PartialAST from "../partial/AST";
 import * as Expr from "../common/Exp";
 import * as LambdaAST from "../lambda/AST";
 import { partialEval } from "../partialEval/peval";
@@ -8,7 +7,10 @@ import * as Evaluation from "../lambda/Evaluation";
 import * as UnEvaluation from "../../src/partialEval/unpeval";
 import * as Parser from "../surface/Parser";
 import * as Translator from "../translate/Translate";
-
+import * as CorePrint from "../core/Print";
+import * as CorePretty from "../core/PrettyPrint";
+import * as PartialPrint from "../partial/Print";
+import * as PartialAST from "../partial/AST";
 
 //@ts-ignore
 import { UpdateOperation } from "../../src/fuse/Update";
@@ -22,7 +24,11 @@ import * as LambdaPrint from "../../src/lambda/Print";
 export function evaluateToLambdaAST(core: CoreAST.TermNode): LambdaAST.TermNode {
   const initialEnvironment = new Map<string, any>();
   const [_, partialNode] = partialEval(initialEnvironment, core);
+  // console.log("----------------------------");
+  // PartialPrint.printNode(partialNode);
   const lambdaAST = lambdalize(partialNode);
+  // console.log("----------------------------");
+  // LambdaPrint.printNode(lambdaAST);
   return lambdaAST;
 }
 
@@ -30,12 +36,15 @@ export function evaluateToLambdaAST(core: CoreAST.TermNode): LambdaAST.TermNode 
 export function forward(str: string):string {
   let surface = Parser.parse(str);
   let core = Translator.translate(surface)
+  CorePrint.printAST(core);
   let result = Evaluation.evaluateTermNode(evaluateToLambdaAST(core));
   return result;
 }
 
 
-export function backward(core: CoreAST.TermNode, operation: UpdateOperation): CoreAST.TermNode[] {
+export function backward(str: string, operation: UpdateOperation): string[] {
+  let surface = Parser.parse(str);
+  let core = Translator.translate(surface)
   let lambdaAST = evaluateToLambdaAST(core)
   // LambdaPrint.printNode(lambdaAST,"");
   let env: Environment = {};
@@ -43,6 +52,7 @@ export function backward(core: CoreAST.TermNode, operation: UpdateOperation): Co
   .map(({newTermNode: newTerm, remainingOperation: newOp}) => {
     let partialAST = flatten(unLambdalize(newTerm));
     let updatedCoreAST = UnEvaluation.flatten(UnEvaluation.unPartialEval(partialAST));
-    return updatedCoreAST;
+    let surfaceText = CorePretty.printToSurface(updatedCoreAST);
+    return surfaceText;
   });
 }

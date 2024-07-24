@@ -14,8 +14,8 @@ TOTAL_LINES=0
 for FILE_TYPE in "${FILE_TYPES[@]}"; do
     echo "Processing file type: $FILE_TYPE"
     
-    # Find all files of the current type and count lines
-    LINES=$(find "$DIR" -name "$FILE_TYPE" -type f -exec wc -l {} + | awk '{total += $1} END {print total}')
+    # Find all files of the current type and count lines, excluding node_modules
+    LINES=$(find "$DIR" -path "$DIR/node_modules" -prune -o -name "$FILE_TYPE" -type f -exec wc -l {} + | awk '{total += $1} END {print total}')
     
     if [ -z "$LINES" ]; then
         LINES=0

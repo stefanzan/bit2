@@ -10,7 +10,7 @@ export function translate(surfaceAST: Surface.Fragment): Core.SeqNode {
 // Translate a surface AST fragment to a core AST term node
 function translateFragment(fragment: Surface.Fragment): Core.TermNode[] {
   if (typeof fragment === 'string') {
-    return [Core.constNode(fragment)];
+    return convertStringToNodes(fragment);
   }
 
   switch (fragment.type) {
@@ -44,6 +44,30 @@ function translateFragment(fragment: Surface.Fragment): Core.TermNode[] {
     default:
       throw new Error(`Unknown fragment: ${fragment}`);
   }
+}
+
+// Helper function to convert string to Core nodes, including SpaceNode for spaces
+function convertStringToNodes(str: string): Core.TermNode[] {
+  const nodes: Core.TermNode[] = [];
+  let buffer = '';
+
+  for (let char of str) {
+    if (char === ' ') {
+      if (buffer.length > 0) {
+        nodes.push(Core.constNode(buffer));
+        buffer = '';
+      }
+      nodes.push(Core.space(1)); // Add SpaceNode for each space
+    } else {
+      buffer += char;
+    }
+  }
+
+  if (buffer.length > 0) {
+    nodes.push(Core.constNode(buffer));
+  }
+
+  return nodes;
 }
 
 // Type guard for IfDirective

@@ -1,7 +1,7 @@
 import * as AST from "./AST";
 import * as Exp from "../common/PrettyPrint";
 
-export function prettyPrint(node:AST.TermNode):string {
+export function printToSurface(node:AST.TermNode):string {
   let str = "";
   switch(node.type) {
     case 'const':
@@ -31,15 +31,15 @@ export function prettyPrint(node:AST.TermNode):string {
       str += "»";
       return str;
     case 'seq':
-      return node.nodes.map(node => prettyPrint(node)).join("");
+      return node.nodes.map(node => printToSurface(node)).join("");
     case 'ite':
       str = "«if " + Exp.prettyPrint(node.condition) + "»\n";
-      str += prettyPrint(node.trueBranch);
+      str += printToSurface(node.trueBranch);
       str += "«endif»\n";
       return str;
     case 'loop':
       str = "«for " + Exp.prettyPrint(node.body.variable) + " :" + Exp.prettyPrint(node.lst) + "»\n";
-      str += prettyPrint(node.body.body);
+      str += printToSurface(node.body.body);
       str += "«endfor»\n";
       return str;
     case 'nop':

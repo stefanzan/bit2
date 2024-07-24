@@ -1,9 +1,24 @@
 {
+  "name": "bit2",
+  "version": "0.0.1",
+  "main": "dist/bit2.js",
+  "types": "dist/bit2.d.ts",
   "dependencies": {
     "core-js": "^3.37.1"
   },
+  "devDependencies": {
+    "@types/node": "^15.14.9",
+    "dts-bundle-generator": "^9.5.1",
+    "ts-loader": "^9.2.6",
+    "typescript": "^5.5.4",
+    "webpack": "^5.42.0",
+    "webpack-cli": "^4.7.2"
+  },
   "scripts": {
     "build": "tsc",
+    "build:webpack": "webpack",
+    "build:dts": "webpack && npm run generate-dts",
+    "generate-dts": "node generate-dts.js",
     "core": "node dist/test/core/core.test.js",
     "core.0": "node dist/test/core/0.simple.test.js",
     "core.1": "node dist/test/core/1.core.test.js",
@@ -25,5 +40,8 @@
     "bieval": "node dist/test/bx/biEval.test.js",
     "parse": "node dist/test/surface/AST.test.js",
     "translate": "node dist/test/translate/translate.test.js"
-  }
+  },
+  "files": [
+    "dist"
+  ]
 }
