@@ -16,11 +16,17 @@ console.log("=== Backward Evaluation===");
 //   console.log("~~~~~~~~~~~~~~~~~~~~~~~~");
 // });
 
-console.log('--- 2. replace "stefanzantao" with "stefanzan" at 2------------------');
-BiEval.backward(exampleInput, {type:'replace', str1:"stefanzantao", str2:"stefanzan", position:2}).forEach(updatedCoreAST => {
+console.log('--- 2. replace "stefanzantao" with "stefanzentao" at 2------------------');
+BiEval.backward(exampleInput, {type:'replace', str1:"stefanzantao", str2:"stefanzentao", position:2}).forEach(updatedCoreAST => {
   console.log(updatedCoreAST);
   console.log("~~~~~~~~~~~~~~~~~~~~~~~~");
 });
+
+// console.log('--- 3. replace "stefanzantao" with "stefanzan" at 2------------------');
+// BiEval.backward(exampleInput, {type:'replace', str1:"stefanzantao", str2:"stefanzan", position:2}).forEach(updatedCoreAST => {
+//   console.log(updatedCoreAST);
+//   console.log("~~~~~~~~~~~~~~~~~~~~~~~~");
+// });
 
 
 // const exampleInput2 = 

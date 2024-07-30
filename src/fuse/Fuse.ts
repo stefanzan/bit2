@@ -1059,7 +1059,7 @@ export function fuse(
     if(term.type === "branchend"){
       let conditionExp = term.condition[0];
       let conditionVal = term.condition[1];
-      let newConditionalVal = evaluateExpr( transformEnvironment(env), conditionExp);
+      let [_, newConditionalVal] = evaluateExpr( transformEnvironment(env), conditionExp);
       if(newConditionalVal !== conditionVal){
         throw new Error("Violate BX properties: updates change if-then-else branch.");
       }
