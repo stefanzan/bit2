@@ -25,11 +25,20 @@ import * as Parser from "../../src/surface/Parser";
 // </html>
 // `;
 
-const exampleInput = 
-`«VAR no = 0»
-Before: «v»
-«no=no+1»
-After: «no»`;
+// const exampleInput = 
+// `«VAR no = 0»
+// Before: «v»
+// «no=no+1»
+// After: «no»`;
 
-const parsedFragment = Parser.parse(exampleInput);
+// const parsedFragment = Parser.parse(exampleInput);
+// console.log(JSON.stringify(parsedFragment, null, 2));
+
+const branchExample = 
+`«VAR v="stefanzantao"»
+«IF v.length>10»
+«v»...
+«ENDIF»`;
+const parsedFragment = Parser.parse(branchExample);
 console.log(JSON.stringify(parsedFragment, null, 2));
+

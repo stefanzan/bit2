@@ -38,9 +38,10 @@
     "unlambdalize": "node dist/test/lambdalize/unLambdalize.test.js",
     "unpeval": "node dist/test/partialEval/unpeval.test.js",
     "bieval": "node dist/test/bx/biEval.test.js",
-    "parse": "node dist/test/surface/AST.test.js",
+    "parser": "node dist/test/surface/parser.test.js",
     "translate": "node dist/test/translate/translate.test.js",
-    "example.1": "node dist/test/examples/1.Assignment.test.js"
+    "example.1": "node dist/test/examples/1.Assignment.test.js",
+    "example.2": "node dist/test/examples/2.Branch.test.js"
   },
   "files": [
     "dist/bit2.js",

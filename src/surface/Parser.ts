@@ -46,7 +46,7 @@ export function parseTokens(
 ): Surface.Fragment {
   const fragments: Surface.Fragment[] = [];
   let i = 0;
-
+  // console.log("tokens:", tokens);
   while (i < tokens.length) {
     const token = tokens[i];
     if (
@@ -71,8 +71,9 @@ export function parseTokens(
           break;
 
         case "IF":
-          const ifParts = directiveContent.match(/IF\s+(.*?)\s*»/);
+          const ifParts = directiveContent.match(/^(IF)\s+/i);
           if (ifParts) {
+            const expression = directiveContent.slice(ifParts[0].length).trim();
             const thenBranchTokens: (Surface.Literal | string)[] = [];
             const elseBranchTokens: (Surface.Literal | string)[] = [];
             let nestingLevel = 1;
@@ -80,17 +81,19 @@ export function parseTokens(
             while (j < tokens.length && nestingLevel > 0) {
               const nextToken = tokens[j];
               if (typeof nextToken === "string" && nextToken.startsWith("«")) {
-                if (nextToken.includes("ENDIF")) {
+                if (nextToken.includes("ENDIF") || nextToken.includes("endif")) {
                   nestingLevel--;
+                  // meet endif, break.
                   if (nestingLevel === 0) break;
-                } else if (nextToken.includes("IF")) {
+                } else if (nextToken.includes("IF") || nextToken.includes("if")) {
                   nestingLevel++;
-                } else if (nextToken.includes("ELSE") && nestingLevel === 1) {
+                } else if ((nextToken.includes("else") || nextToken.includes("ELSE")) && nestingLevel === 1) {
                   nestingLevel = 0; // Mark end of thenBranch
                   j++;
                   continue;
                 }
               }
+
               if (nestingLevel > 0) thenBranchTokens.push(nextToken);
               else elseBranchTokens.push(nextToken);
               j++;
@@ -104,7 +107,7 @@ export function parseTokens(
               type: "Directive",
               content: {
                 type: "if",
-                expr: parseExpr(ifParts[1].trim()),
+                expr: parseExpr(expression),
                 thenBranch,
                 elseBranch,
               },
@@ -328,7 +331,22 @@ function parseExpr(input: string): Expr {
     }
 
     if (/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(tokens[pos])) {
-      return { type: "variable", name: tokens[pos++] } as Variable;
+      let variable = { type: "variable", name: tokens[pos++] } as Variable;
+      
+      while (tokens[pos] === ".") {
+        pos++; // Consume '.'
+        if (/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(tokens[pos])) {
+          return {
+            type: "field",
+            object: variable,
+            field: tokens[pos++]
+          } as FieldAccess;
+        } else {
+          throw new Error("Expected property name after '.'");
+        }
+      }
+      
+      return variable;
     }
 
     if (tokens[pos] === "!") {
