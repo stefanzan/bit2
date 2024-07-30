@@ -1,2 +1,4 @@
-«var no=1»Before: «no»«no=no+1»  
+«var no=100»
+Before: «no»,
+«no=no-88»  
 After: «no»

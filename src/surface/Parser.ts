@@ -313,6 +313,11 @@ function parseExpr(input: string): Expr {
       pos++; // Consume '}'
       return { type: "object", fields } as ObjectLiteral;
     }
+    // Check for negative numbers
+    if (tokens[pos] === "-" && !isNaN(Number(tokens[pos + 1]))) {
+      pos++; // Consume '-'
+      return { type: "constant", value: -Number(tokens[pos++]) } as Constant;
+    }
 
     if (!isNaN(Number(tokens[pos]))) {
       return { type: "constant", value: Number(tokens[pos++]) } as Constant;

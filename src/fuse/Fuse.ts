@@ -388,14 +388,21 @@ export function fuse(
             );
           }
         } else if (position === term.width) {
-          console.log("postion === term.width:", position, term.width);
           // 两种策略
           let resultList: {
             newEnv: Environment;
             newTermNode: TermNode;
             remainingOperation: UpdateOperation;
           }[] = [
-            { newEnv: env, newTermNode: term, remainingOperation: { type: "insert", str, position: position-term.width}}
+            {
+              newEnv: env,
+              newTermNode: term,
+              remainingOperation: {
+                type: "insert",
+                str,
+                position: position - term.width,
+              },
+            },
           ];
           if (isWhitespace(str)) {
             console.log("no: ", str);
@@ -661,20 +668,22 @@ export function fuse(
           });
           if (!containsNewlineOrSpace(str)) {
             // another choice:
-            let newStr = str + valStr;
-            try {
-              let newVal = strToVal(newStr, val);
-              let { newEnv, newExp } = fuseExp({ ...env }, newVal, exp);
-              resultList.push({
-                newEnv: newEnv,
-                newTermNode: {
-                  ...term,
-                  binding: [newExp, newVal],
-                },
-                remainingOperation: { type: "id" },
-              });
-            } catch (error) {
-              // console.error(error);
+            let newStr = prependStr(valStr, str, val);
+            if (newStr !== undefined) {
+              try {
+                let newVal = strToVal(newStr, val);
+                let { newEnv, newExp } = fuseExp({ ...env }, newVal, exp);
+                resultList.push({
+                  newEnv: newEnv,
+                  newTermNode: {
+                    ...term,
+                    binding: [newExp, newVal],
+                  },
+                  remainingOperation: { type: "id" },
+                });
+              } catch (error) {
+                // console.error(error);
+              }
             }
           }
 
@@ -700,24 +709,26 @@ export function fuse(
             newTermNode: TermNode;
             remainingOperation: UpdateOperation;
           }[] = [];
-          if(!containsNewlineOrSpace(str)){
-            const newStr = valStr + str;
-            try {
-              const newVal = strToVal(newStr, val);
-              let { newEnv, newExp } = fuseExp({ ...env }, newVal, exp);
-              resultList.push({
-                newEnv: newEnv,
-                newTermNode: {
-                  ...term,
-                  binding: [newExp, newVal],
-                },
-                remainingOperation: { type: "id" },
-              });
-            } catch (error) {
-              console.error(error);
+          if (!containsNewlineOrSpace(str)) {
+            const newStr = appendStr(valStr, str, val);
+            if (newStr !== undefined) {
+              try {
+                const newVal = strToVal(newStr, val);
+                let { newEnv, newExp } = fuseExp({ ...env }, newVal, exp);
+                resultList.push({
+                  newEnv: newEnv,
+                  newTermNode: {
+                    ...term,
+                    binding: [newExp, newVal],
+                  },
+                  remainingOperation: { type: "id" },
+                });
+              } catch (error) {
+                console.error(error);
+              }
             }
           }
-          
+
           // If the expression is a variable, them add variable's bidning to env to mark it unmodifiable.
           let env2 = { ...env };
           if ((exp as Variable).name) {
@@ -908,7 +919,18 @@ export function fuse(
           } else {
             throw new Error(`unsupported replacement: ${str1}; ${valStr}`);
           }
-        } else if (repPos > valStr.length) {
+        } else if (repPos < valStr.length) {
+          const newValStr = valStr.slice(0, repPos) + str2 + valStr.slice(repPos + str1.length);
+          const newVal = strToVal(newValStr, val);
+          let { newEnv, newExp } = fuseExp(env, newVal, exp);
+          return [
+            {
+              newEnv: newEnv,
+              newTermNode: { ...term, binding: [newExp, newVal] },
+              remainingOperation: { type:'id' },
+            },
+          ];
+        } else if (repPos >= valStr.length) {
           const newRepPos = repPos - valStr.length;
           let [{ newEnv, newTermNode, remainingOperation }] = fuse(
             env,
@@ -1267,6 +1289,7 @@ export function fuseExp(
 
 function strToVal(s: string, v: Value): Value {
   if (typeof v === "number") {
+    // parseFloat("0,") = 0
     const parsedNumber = parseFloat(s);
     if (isNaN(parsedNumber)) {
       throw new Error("convert to number fail: ${s}");
@@ -1600,4 +1623,60 @@ function getOpStr(op1: UpdateOperation): string | undefined {
   } else {
     return undefined;
   }
+}
+
+function prependStr(
+  str1: string,
+  str2: string,
+  val: Value
+): string | undefined {
+  // 尝试将str2转换为Value类型
+  try {
+    const parsedValue: Value = JSON.parse(str2);
+
+    // 如果转换成功且类型匹配，则返回合并后的字符串
+    if (isValidValue(parsedValue)) {
+      return str2 + str1;
+    }
+  } catch (e) {
+    // 如果转换失败，则返回undefined
+    return undefined;
+  }
+
+  return undefined;
+}
+
+function appendStr(str1: string, str2: string, val: Value): string | undefined {
+  // 尝试将str2转换为Value类型
+  try {
+    const parsedValue: Value = JSON.parse(str2);
+
+    // 如果转换成功且类型匹配，则返回合并后的字符串
+    if (isValidValue(parsedValue)) {
+      return str1 + str2;
+    }
+  } catch (e) {
+    // 如果转换失败，则返回undefined
+    return undefined;
+  }
+
+  return undefined;
+}
+
+// 检查转换后的值是否是有效的Value类型
+function isValidValue(value: any): value is Value {
+  if (
+    typeof value === "number" ||
+    typeof value === "boolean" ||
+    typeof value === "string" ||
+    value === null ||
+    (Array.isArray(value) && value.every(isValidValue)) ||
+    (typeof value === "object" &&
+      value !== null &&
+      value.type === "object" &&
+      typeof value.fields === "object")
+  ) {
+    return true;
+  }
+  return false;
 }

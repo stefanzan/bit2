@@ -1,6 +1,6 @@
 {
   "name": "bit2",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "main": "dist/bit2.js",
   "types": "dist/bit2.d.ts",
   "dependencies": {
@@ -39,9 +39,14 @@
     "unpeval": "node dist/test/partialEval/unpeval.test.js",
     "bieval": "node dist/test/bx/biEval.test.js",
     "parse": "node dist/test/surface/AST.test.js",
-    "translate": "node dist/test/translate/translate.test.js"
+    "translate": "node dist/test/translate/translate.test.js",
+    "example.1": "node dist/test/examples/1.Assignment.test.js"
   },
   "files": [
-    "dist"
-  ]
+    "dist/bit2.js",
+    "dist/bit2.d.ts",
+    "dist/src/**/*.d.ts"
+  ],
+  "author": "steanzan",
+  "keywords": ["bx", "live programming", "bidirectional live programming", "template language"]
 }

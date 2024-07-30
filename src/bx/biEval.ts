@@ -55,10 +55,11 @@ export function backward(str: string, operation: UpdateOperation): string[] {
     // PartialPrint.printNode(partialAST);
     let updatedCoreAST = UnEvaluation.flatten(UnEvaluation.unPartialEval(partialAST));
     // console.log("--------updatedCoreAST------------");
-    CorePrint.printAST(updatedCoreAST);
+    // CorePrint.printAST(updatedCoreAST);
     let surfaceText = CorePretty.printToSurface(updatedCoreAST);
     // console.log("result in backward:\n", surfaceText);
     return surfaceText;
   });
+  // remove redundant/identical results
   return Array.from(new Set(resultList));
 }
