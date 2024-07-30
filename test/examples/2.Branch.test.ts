@@ -66,20 +66,42 @@ import * as BiEval from "../../src/bx/biEval";
 // });        
 
 
-const exampleInput4 = 
-`«var v="stefanzan0"»
+// const exampleInput4 = 
+// `«var v="stefanzan0"»
+// «if v.length>10»
+// «v»...
+// «elseif v.length == 10 »
+// «v»_10
+// «endif»`;
+
+// console.log("===Forward Evaluation===");
+// console.log(BiEval.forward(exampleInput4));
+
+// console.log("=== Backward Evaluation===");
+// console.log('--- 6. replace "a" with "e" at 9------------------');
+// BiEval.backward(exampleInput4, {type:'replace', str1:"a", str2:"e", position:9}).forEach(updatedCoreAST => {
+//   console.log(updatedCoreAST);
+//   console.log("~~~~~~~~~~~~~~~~~~~~~~~~");
+// });        
+
+
+
+const exampleInput5 = 
+`«var v="stefan"»
 «if v.length>10»
 «v»...
 «elseif v.length == 10 »
 «v»_10
+«else»
+«v»
 «endif»`;
 
 console.log("===Forward Evaluation===");
-console.log(BiEval.forward(exampleInput4));
+console.log(BiEval.forward(exampleInput5));
 
-console.log("=== Backward Evaluation===");
-console.log('--- 6. replace "a" with "e" at 9------------------');
-BiEval.backward(exampleInput4, {type:'replace', str1:"a", str2:"e", position:9}).forEach(updatedCoreAST => {
-  console.log(updatedCoreAST);
-  console.log("~~~~~~~~~~~~~~~~~~~~~~~~");
-});        
+// console.log("=== Backward Evaluation===");
+// console.log('--- 7. replace "a" with "e" at 9------------------');
+// BiEval.backward(exampleInput5, {type:'replace', str1:"a", str2:"e", position:9}).forEach(updatedCoreAST => {
+//   console.log(updatedCoreAST);
+//   console.log("~~~~~~~~~~~~~~~~~~~~~~~~");
+// });     
