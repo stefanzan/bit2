@@ -62,7 +62,7 @@ export function partialEval(environment: Map<string, any>, termNode: CoreAST.Ter
                       falseBranch: termNode.falseBranch 
                     },
                     evaluatedTrueBranch,
-                    {type:'branchend'}
+                    {type:'branchend', condition: [termNode.condition, evaluatedCondition]}
                 ]
               }]
             } else if (evaluatedCondition === false){
@@ -77,7 +77,7 @@ export function partialEval(environment: Map<string, any>, termNode: CoreAST.Ter
                       falseBranch: termNode.falseBranch
                     },
                     evaluatedFalseBranch,
-                    {type:'branchend'}
+                    {type:'branchend', condition: [termNode.condition, evaluatedCondition]}
                 ]
               }]
             } else {

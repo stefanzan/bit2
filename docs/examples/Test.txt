@@ -1,4 +1,4 @@
-«var no=100»
-Before: «no»,
-«no=no-88»  
-After: «no»
+«var v="stefanzantao"»
+«if v.length>10»
+«v»...
+«endif»

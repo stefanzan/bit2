@@ -33,14 +33,14 @@ export function printToSurface(node:AST.TermNode):string {
     case 'seq':
       return node.nodes.map(node => printToSurface(node)).join("");
     case 'ite':
-      str = "«if " + Exp.prettyPrint(node.condition) + "»\n";
+      str = "«if " + Exp.prettyPrint(node.condition) + "»";
       str += printToSurface(node.trueBranch);
-      str += "«endif»\n";
+      str += "«endif»";
       return str;
     case 'loop':
-      str = "«for " + Exp.prettyPrint(node.body.variable) + " :" + Exp.prettyPrint(node.lst) + "»\n";
+      str = "«for " + Exp.prettyPrint(node.body.variable) + " :" + Exp.prettyPrint(node.lst) + "»";
       str += printToSurface(node.body.body);
-      str += "«endfor»\n";
+      str += "«endfor»";
       return str;
     case 'nop':
       return "";

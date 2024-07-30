@@ -55,7 +55,7 @@ function lambdalizeSeq(seqNode: PartialAST.SeqNode): LambdaAST.SeqNode {
           };
           newNodes.push(lambdaNode);
           if(lastNode?.type === 'branchend'){
-            newNodes.push({ type: 'branchend' });
+            newNodes.push({ type: 'branchend', condition: lastNode.condition });
           }
           i = nextIndex; // Skip to the index after the matched BranchEndNode
       } else {

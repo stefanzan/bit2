@@ -50,6 +50,7 @@ export interface BranchStartNode {
 
 export interface BranchEndNode {
     type: 'branchend';
+    condition: Binding;
 }
 
 

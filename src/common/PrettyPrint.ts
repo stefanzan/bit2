@@ -3,7 +3,11 @@ import * as Exp from "./Exp";
 export function prettyPrint(node:Exp.Expr): string {
   switch(node.type){
     case 'constant':
-      return String(node.value);
+      if(typeof node.value === 'string') {
+        return '"' + String(node.value) + '"';
+      } else {
+        return String(node.value);
+      }
     case 'variable':
       return node.name;
     case 'binary':

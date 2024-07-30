@@ -1055,6 +1055,16 @@ export function fuse(
     term.type === "branchend" ||
     term.type === "nop"
   ) {
+
+    if(term.type === "branchend"){
+      let conditionExp = term.condition[0];
+      let conditionVal = term.condition[1];
+      let newConditionalVal = evaluateExpr( transformEnvironment(env), conditionExp);
+      if(newConditionalVal !== conditionVal){
+        throw new Error("Violate BX properties: updates change if-then-else branch.");
+      }
+    }
+
     let resultList: {
       newEnv: Environment;
       newTermNode: TermNode;
@@ -1080,6 +1090,7 @@ export function fuse(
         }
       case "delete":
       case "replace":
+      case "id":
         return resultList;
       case "bulk":
         return fuseBulk(env, operation, term);
