@@ -42,13 +42,22 @@ import * as Parser from "../../src/surface/Parser";
 // const parsedFragment = Parser.parse(branchExample);
 // console.log(JSON.stringify(parsedFragment, null, 2));
 
-const branchExample2 = 
-`«var v="stefanzantao"»
+// const branchExample2 = 
+// `«var v="stefanzantao"»
+// «if v.length>10»
+// «v»...
+// «else»
+// «v»
+// «endif»`;
+// const parsedFragment = Parser.parse(branchExample2);
+// console.log(JSON.stringify(parsedFragment, null, 2));
+
+const exampleInput4 = 
+`«var v="stefanzan0"»
 «if v.length>10»
 «v»...
-«else»
-«v»
+«else if v.length == 10 »
+«v»_10
 «endif»`;
-const parsedFragment = Parser.parse(branchExample2);
+const parsedFragment = Parser.parse(exampleInput4);
 console.log(JSON.stringify(parsedFragment, null, 2));
-

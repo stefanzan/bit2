@@ -79,7 +79,7 @@ export function parseTokens(
             let nestingLevel = 1;
             let j = i + 1;
             while (j < tokens.length) {
-              const nextToken = tokens[j];
+              let nextToken = tokens[j];
               if (typeof nextToken === "string" && nextToken.startsWith("«")) {
                 if (nextToken.includes("ENDIF") || nextToken.includes("endif")) {
                   nestingLevel--;
@@ -87,8 +87,12 @@ export function parseTokens(
                   if (nestingLevel <= 0) break;
                 } else if ((nextToken.includes("else") || nextToken.includes("ELSE")) && nestingLevel === 1) {
                   nestingLevel = 0; // Mark end of thenBranch
-                  j++;
-                  continue;
+                  if(!nextToken.includes("if") && !nextToken.includes("IF")){
+                    j++;
+                    continue;
+                  } 
+                  // 去掉字符else
+                  nextToken = nextToken.replace(/\belse\b\s*/, '')
                 }
               }
 
@@ -360,7 +364,7 @@ function parseExpr(input: string): Expr {
     let left = parsePrimary();
 
     while (
-      ["+", "-", "*", "/", "&&", "||", ">", "<", ">=", "<=", "!="].includes(
+      ["+", "-", "*", "/", "&&", "||", ">", "<", ">=", "<=", "!=", "==", "=="].includes(
         tokens[pos]
       )
     ) {

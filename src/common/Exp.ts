@@ -59,7 +59,7 @@ export interface FunctionCall {
 
 
 // Operators
-export type BinaryOperator = '+' | '-' | '*' | '/' | '&&' | '||' | '>' | '<' | '>=' | '<=' | '!=';
+export type BinaryOperator = '+' | '-' | '*' | '/' | '&&' | '||' | '>' | '<' | '>=' | '<=' | '!=' | '==';
 export type UnaryOperator = 'not';
 
 export function findVariablesAndFields(exp: Expr): { variables: Variable[], fields: { variable: Variable, field: string }[] } {

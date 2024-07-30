@@ -58,6 +58,7 @@ import * as BiEval from "../../src/bx/biEval";
 // console.log("===Forward Evaluation===");
 // console.log(BiEval.forward(exampleInput3));
 
+// console.log("=== Backward Evaluation===");
 // console.log('--- 5. replace "stefan" with "stefanzantao" at 2------------------');
 // BiEval.backward(exampleInput3, {type:'replace', str1:"stefan", str2:"stefanzantao", position:2}).forEach(updatedCoreAST => {
 //   console.log(updatedCoreAST);
@@ -76,8 +77,9 @@ const exampleInput4 =
 console.log("===Forward Evaluation===");
 console.log(BiEval.forward(exampleInput4));
 
-// console.log('--- 5. replace "stefan" with "stefanzantao" at 2------------------');
-// BiEval.backward(exampleInput4, {type:'replace', str1:"stefan", str2:"stefanzantao", position:2}).forEach(updatedCoreAST => {
-//   console.log(updatedCoreAST);
-//   console.log("~~~~~~~~~~~~~~~~~~~~~~~~");
-// });        
+console.log("=== Backward Evaluation===");
+console.log('--- 6. replace "a" with "e" at 9------------------');
+BiEval.backward(exampleInput4, {type:'replace', str1:"a", str2:"e", position:9}).forEach(updatedCoreAST => {
+  console.log(updatedCoreAST);
+  console.log("~~~~~~~~~~~~~~~~~~~~~~~~");
+});        

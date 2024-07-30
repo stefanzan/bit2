@@ -265,6 +265,8 @@ export function evaluateExpr(environment: Map<string, any>, expr: Expr.Expr): [M
                     return [envRight, left >= right];
                 case '<=':
                     return [envRight, left <= right];
+                case '==':
+                    return [envRight, left == right];
                 default:
                     throw new Error(`Unsupported binary operator`);
             }

@@ -36,15 +36,19 @@ export function printToSurface(node:AST.TermNode):string {
       str = "«if " + Exp.prettyPrint(node.condition) + "»";
       str += printToSurface(node.trueBranch);
       let falseBranch = node.falseBranch;
-      if(falseBranch.type === "ite"){
+      if(falseBranch.type === "ite" || (falseBranch.type==='seq'&& falseBranch.nodes.length==1)){
         let nestedIfStr = printToSurface(falseBranch);
-        str += "«elseif"; + nestedIfStr.slice(2);
-      } else if(falseBranch.type !== 'bot'){
+        str += "«elseif" + nestedIfStr.slice(3);
+      } else if(falseBranch.type !== 'bot' && (falseBranch.type==='seq' && falseBranch.nodes.length!=0)){
         str += "«else»";
         str += printToSurface(falseBranch);
       }
-      str += "«endif»";
-      return str;
+      if(str.endsWith("«endif»")){
+        return str;
+      } else {
+        str += "«endif»";
+        return str;
+      }
     case 'loop':
       str = "«for " + Exp.prettyPrint(node.body.variable) + " :" + Exp.prettyPrint(node.lst) + "»";
       str += printToSurface(node.body.body);

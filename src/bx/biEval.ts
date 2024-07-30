@@ -36,7 +36,7 @@ export function evaluateToLambdaAST(core: CoreAST.TermNode): LambdaAST.TermNode 
 export function forward(str: string):string {
   let surface = Parser.parse(str);
   let core = Translator.translate(surface)
-  CorePrint.printAST(core);
+  // CorePrint.printAST(core);
   let result = Evaluation.evaluateTermNode(evaluateToLambdaAST(core));
   return result;
 }
@@ -51,11 +51,11 @@ export function backward(str: string, operation: UpdateOperation): string[] {
   let resultList = fuse(env, operation, lambdaAST)
   .map(({newTermNode: newTerm, remainingOperation: newOp}) => {
     let partialAST = flatten(unLambdalize(newTerm));
-    console.log("--------updatedPartialAST------------");
-    PartialPrint.printNode(partialAST);
+    // console.log("--------updatedPartialAST------------");
+    // PartialPrint.printNode(partialAST);
     let updatedCoreAST = UnEvaluation.flatten(UnEvaluation.unPartialEval(partialAST));
     // console.log("--------updatedCoreAST------------");
-    CorePrint.printAST(updatedCoreAST);
+    // CorePrint.printAST(updatedCoreAST);
     let surfaceText = CorePretty.printToSurface(updatedCoreAST);
     // console.log("result in backward:\n", surfaceText);
     return surfaceText;

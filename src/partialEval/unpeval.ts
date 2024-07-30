@@ -47,21 +47,29 @@ function unSeq(node: PartialAST.SeqNode): CoreAST.TermNode {
       const conditionValue = current.condition[1];
       const trueBranch = current.trueBranch;
       const falseBranch = current.falseBranch;
-      const updatedBranchSeq = [];
+      let nestedLevel = 1;
+      const branchSeq = [];
       for (let j = i + 1; j < nodes.length; j++) {
         const next = nodes[j];
-        if (next.type === 'branchend') {
-          break;
+        if(next.type === 'branchstart'){
+          nestedLevel++;
+        } if (next.type === 'branchend') {
+          if(nestedLevel==1){
+            break;
+          } else {
+            nestedLevel--;
+            branchSeq.push(nodes[j]);
+          }
         } else {
-          updatedBranchSeq.push(unPartialEval(nodes[j]));
+          branchSeq.push(nodes[j]);
         }
       }
-      if(condition){
-        newNodes.push(CoreAST.ite(condition,{type:'seq', nodes:updatedBranchSeq}, falseBranch))
+      if(conditionValue){
+        newNodes.push(CoreAST.ite(condition,unSeq({type:'seq', nodes:branchSeq}), falseBranch))
       } else {
-        newNodes.push(CoreAST.ite(condition,trueBranch,{type:'seq', nodes:updatedBranchSeq}))
+        newNodes.push(CoreAST.ite(condition,trueBranch,unSeq({type:'seq', nodes:branchSeq})))
       }
-      i += updatedBranchSeq.length+1;
+      i += branchSeq.length+1;
     } else if (current.type === 'loopfront') {
       let loopfrontNode = current;
       let looprearNode = {type:'looprear', value:''};
