@@ -78,15 +78,13 @@ export function parseTokens(
             const elseBranchTokens: (Surface.Literal | string)[] = [];
             let nestingLevel = 1;
             let j = i + 1;
-            while (j < tokens.length && nestingLevel > 0) {
+            while (j < tokens.length) {
               const nextToken = tokens[j];
               if (typeof nextToken === "string" && nextToken.startsWith("«")) {
                 if (nextToken.includes("ENDIF") || nextToken.includes("endif")) {
                   nestingLevel--;
                   // meet endif, break.
-                  if (nestingLevel === 0) break;
-                } else if (nextToken.includes("IF") || nextToken.includes("if")) {
-                  nestingLevel++;
+                  if (nestingLevel <= 0) break;
                 } else if ((nextToken.includes("else") || nextToken.includes("ELSE")) && nestingLevel === 1) {
                   nestingLevel = 0; // Mark end of thenBranch
                   j++;

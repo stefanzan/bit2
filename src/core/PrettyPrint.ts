@@ -35,6 +35,14 @@ export function printToSurface(node:AST.TermNode):string {
     case 'ite':
       str = "«if " + Exp.prettyPrint(node.condition) + "»";
       str += printToSurface(node.trueBranch);
+      let falseBranch = node.falseBranch;
+      if(falseBranch.type === "ite"){
+        let nestedIfStr = printToSurface(falseBranch);
+        str += "«elseif"; + nestedIfStr.slice(2);
+      } else if(falseBranch.type !== 'bot'){
+        str += "«else»";
+        str += printToSurface(falseBranch);
+      }
       str += "«endif»";
       return str;
     case 'loop':
