@@ -70,7 +70,7 @@ const exampleInput4 =
 `«var v="stefanzan0"»
 «if v.length>10»
 «v»...
-«else if v.length == 10 »
+«elseif v.length == 10 »
 «v»_10
 «endif»`;
 

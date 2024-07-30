@@ -92,7 +92,7 @@ export function parseTokens(
                     continue;
                   } 
                   // 去掉字符else
-                  nextToken = nextToken.replace(/\belse\b\s*/, '')
+                  nextToken = nextToken.replace(/else(?=if)/, '');
                 }
               }
 
