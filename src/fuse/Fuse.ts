@@ -16,6 +16,7 @@ import {
   Variable,
   findVariablesAndFields,
   Constant,
+  ObjectLiteral
 } from "../common/Exp";
 import { evaluateExpr } from "../partialEval/peval";
 import { printValue } from "../partial/Print";
@@ -74,9 +75,9 @@ export function fuse(
         const { str, position } = operation;
         if (s_c.length === 0) {
           return [
-            { newEnv: env, newTermNode: term, remainingOperation: operation },
+            { newEnv: deepCloneEnvironment(env), newTermNode: term, remainingOperation: operation },
             {
-              newEnv: env,
+              newEnv: deepCloneEnvironment(env),
               newTermNode: { ...term, value: str },
               remainingOperation: { type: "id" },
             },
@@ -85,12 +86,12 @@ export function fuse(
           // 两种更新策略
           return [
             {
-              newEnv: { ...env },
+              newEnv: deepCloneEnvironment(env),
               newTermNode: { ...term, value: str + s_c },
               remainingOperation: { type: "id" },
             },
             {
-              newEnv: { ...env },
+              newEnv: deepCloneEnvironment(env),
               newTermNode: {
                 type: "seq",
                 nodes: [{ type: "const", value: str }, term],
@@ -102,7 +103,7 @@ export function fuse(
           const newStr = s_c.slice(0, position) + str + s_c.slice(position);
           return [
             {
-              newEnv: env,
+              newEnv: deepCloneEnvironment(env),
               newTermNode: { ...term, value: newStr },
               remainingOperation: { type: "id" },
             },
@@ -111,12 +112,12 @@ export function fuse(
           // 两种策略
           return [
             {
-              newEnv: { ...env },
+              newEnv: deepCloneEnvironment(env),
               newTermNode: { ...term, value: s_c + str },
               remainingOperation: { type: "id" },
             },
             {
-              newEnv: { ...env },
+              newEnv: deepCloneEnvironment(env),
               newTermNode: term,
               remainingOperation: {
                 type: "insert",
@@ -129,7 +130,7 @@ export function fuse(
           const newPos = position - s_c.length;
           return [
             {
-              newEnv: env,
+              newEnv: deepCloneEnvironment(env),
               newTermNode: term,
               remainingOperation: { type: "insert", str, position: newPos },
             },
@@ -144,14 +145,14 @@ export function fuse(
             const newStr = s_c.slice(delStr.length);
             let result = [
               {
-                newEnv: env,
+                newEnv: deepCloneEnvironment(env),
                 newTermNode: { ...term, value: newStr },
                 remainingOperation: { type: "id" },
               },
             ];
             if (delStr.length === s_c.length) {
               result.push({
-                newEnv: { ...env },
+                newEnv: deepCloneEnvironment(env),
                 //@ts-ignore
                 newTermNode: { type: "bot" },
                 remainingOperation: { type: "id" },
@@ -163,7 +164,7 @@ export function fuse(
             const remainingStr = delStr.slice(s_c.length);
             return [
               {
-                newEnv: env,
+                newEnv: deepCloneEnvironment(env),
                 newTermNode: { type: "bot" },
                 remainingOperation: {
                   type: "delete",
@@ -172,7 +173,7 @@ export function fuse(
                 },
               },
               {
-                newEnv: { ...env },
+                newEnv: deepCloneEnvironment(env),
                 newTermNode: { ...term, value: "" },
                 remainingOperation: {
                   type: "delete",
@@ -190,7 +191,7 @@ export function fuse(
             s_c.slice(0, delPos) + s_c.slice(delPos + delStr.length);
           return [
             {
-              newEnv: env,
+              newEnv: deepCloneEnvironment(env),
               newTermNode: { ...term, value: newStr },
               remainingOperation: { type: "id" },
             },
@@ -200,7 +201,7 @@ export function fuse(
           const remainingDelStr = delStr.substring(s_c.length - delPos); // 剩余需要删除的字符串
           return [
             {
-              newEnv: env,
+              newEnv: deepCloneEnvironment(env),
               newTermNode: { type: "const", value: remainingS_c },
               remainingOperation: {
                 type: "delete",
@@ -213,7 +214,7 @@ export function fuse(
           const newPos = delPos - s_c.length;
           return [
             {
-              newEnv: env,
+              newEnv: deepCloneEnvironment(env),
               newTermNode: term,
               remainingOperation: {
                 type: "delete",
@@ -240,7 +241,7 @@ export function fuse(
             const newStr = str2 + s_c.slice(str1.length);
             return [
               {
-                newEnv: env,
+                newEnv: deepCloneEnvironment(env),
                 newTermNode: {
                   ...term,
                   value: newStr,
@@ -254,7 +255,7 @@ export function fuse(
             const remainingStr2 = str2.slice(s_c.length);
             return [
               {
-                newEnv: env,
+                newEnv: deepCloneEnvironment(env),
                 newTermNode: { ...term, value: remainingS_c },
                 remainingOperation: {
                   type: "replace",
@@ -270,7 +271,7 @@ export function fuse(
             s_c.slice(0, repPos) + str2 + s_c.slice(repPos + str1.length);
           return [
             {
-              newEnv: env,
+              newEnv: deepCloneEnvironment(env),
               newTermNode: { ...term, value: newStr },
               remainingOperation: { type: "id" },
             },
@@ -293,7 +294,7 @@ export function fuse(
           };
           return [
             {
-              newEnv: env,
+              newEnv: deepCloneEnvironment(env),
               newTermNode: newExpression,
               remainingOperation: newOperation,
             },
@@ -302,7 +303,7 @@ export function fuse(
           const newPos = repPos - s_c.length;
           return [
             {
-              newEnv: env,
+              newEnv: deepCloneEnvironment(env),
               newTermNode: { ...term, value: s_c },
               remainingOperation: {
                 type: "replace",
@@ -319,7 +320,7 @@ export function fuse(
       case "id":
         return [
           {
-            newEnv: env,
+            newEnv: deepCloneEnvironment(env),
             newTermNode: term,
             remainingOperation: { type: "id" },
           },
@@ -336,9 +337,9 @@ export function fuse(
         // zero-width space
         if (term.width == 0) {
           return [
-            { newEnv: env, newTermNode: term, remainingOperation: operation },
+            { newEnv: deepCloneEnvironment(env), newTermNode: term, remainingOperation: operation },
             {
-              newEnv: { ...env },
+              newEnv: deepCloneEnvironment(env),
               newTermNode: {
                 type: "seq",
                 nodes: [{ type: "const", value: str }, term],
@@ -354,7 +355,7 @@ export function fuse(
             remainingOperation: UpdateOperation;
           }[] = [
             {
-              newEnv: env,
+              newEnv: deepCloneEnvironment(env),
               newTermNode: {
                 type: "seq",
                 nodes: [{ type: "const", value: str } as ConstNode, term],
@@ -364,7 +365,7 @@ export function fuse(
           ];
           if (isWhitespace(str)) {
             resultList.push({
-              newEnv: { ...env },
+              newEnv: deepCloneEnvironment(env),
               newTermNode: {
                 type: "space",
                 width: term.width + str.length,
@@ -377,7 +378,7 @@ export function fuse(
           if (isWhitespace(str)) {
             return [
               {
-                newEnv: env,
+                newEnv: deepCloneEnvironment(env),
                 newTermNode: { ...term, width: str.length + term.width },
                 remainingOperation: { type: "id" },
               },
@@ -395,7 +396,7 @@ export function fuse(
             remainingOperation: UpdateOperation;
           }[] = [
             {
-              newEnv: env,
+              newEnv: deepCloneEnvironment(env),
               newTermNode: term,
               remainingOperation: {
                 type: "insert",
@@ -405,9 +406,9 @@ export function fuse(
             },
           ];
           if (isWhitespace(str)) {
-            console.log("no: ", str);
+            // console.log("no: ", str);
             resultList.push({
-              newEnv: { ...env },
+              newEnv: deepCloneEnvironment(env),
               newTermNode: { ...term, width: term.width + str.length },
               remainingOperation: { type: "id" },
             });
@@ -417,7 +418,7 @@ export function fuse(
           const newPos = position - term.width;
           return [
             {
-              newEnv: env,
+              newEnv: deepCloneEnvironment(env),
               newTermNode: term,
               remainingOperation: { type: "insert", str, position: newPos },
             },
@@ -431,14 +432,14 @@ export function fuse(
             const newWidth = term.width - delStr.length;
             let result = [
               {
-                newEnv: env,
+                newEnv: deepCloneEnvironment(env),
                 newTermNode: { ...term, width: newWidth },
                 remainingOperation: { type: "id" },
               },
             ];
             // if (delStr.length === term.width) {
             //   result.push({
-            //     newEnv: {...env},
+            //     newEnv: deepCloneEnvironment(env),
             //     //@ts-ignore
             //     newTermNode: { type: "bot" },
             //     remainingOperation: { type: "id" },
@@ -450,7 +451,7 @@ export function fuse(
             const remainingStr = delStr.slice(term.width);
             return [
               {
-                newEnv: env,
+                newEnv: deepCloneEnvironment(env),
                 newTermNode: { type: "bot" },
                 remainingOperation: {
                   type: "delete",
@@ -459,7 +460,7 @@ export function fuse(
                 },
               },
               {
-                newEnv: { ...env },
+                newEnv: deepCloneEnvironment(env),
                 newTermNode: { ...term, width: 0 },
                 remainingOperation: {
                   type: "delete",
@@ -476,7 +477,7 @@ export function fuse(
           const newWidth = term.width - delStr.length;
           return [
             {
-              newEnv: env,
+              newEnv: deepCloneEnvironment(env),
               newTermNode: { ...term, width: newWidth },
               remainingOperation: { type: "id" },
             },
@@ -486,7 +487,7 @@ export function fuse(
           const remainingDelStr = delStr.substring(term.width - delPos); // 剩余需要删除的字符串
           return [
             {
-              newEnv: env,
+              newEnv: deepCloneEnvironment(env),
               newTermNode: { type: "space", width: remainingWidth },
               remainingOperation: {
                 type: "delete",
@@ -499,7 +500,7 @@ export function fuse(
           const newPos = delPos - term.width;
           return [
             {
-              newEnv: env,
+              newEnv: deepCloneEnvironment(env),
               newTermNode: term,
               remainingOperation: {
                 type: "delete",
@@ -526,7 +527,7 @@ export function fuse(
               const newWidth = term.width - str1.length + str2.length;
               return [
                 {
-                  newEnv: env,
+                  newEnv: deepCloneEnvironment(env),
                   newTermNode: {
                     ...term,
                     width: newWidth,
@@ -537,7 +538,7 @@ export function fuse(
             } else {
               return [
                 {
-                  newEnv: env,
+                  newEnv: deepCloneEnvironment(env),
                   newTermNode: {
                     type: "seq",
                     nodes: [
@@ -555,7 +556,7 @@ export function fuse(
             const remainingStr2 = str2.slice(term.width);
             return [
               {
-                newEnv: env,
+                newEnv: deepCloneEnvironment(env),
                 newTermNode: { type: "const", value: remainingS_c }, // remove space(n), using const(s_c) instead
                 remainingOperation: {
                   type: "replace",
@@ -570,7 +571,7 @@ export function fuse(
           if (isWhitespace(str2)) {
             return [
               {
-                newEnv: env,
+                newEnv: deepCloneEnvironment(env),
                 newTermNode: {
                   ...term,
                   width: str2.length + term.width - str1.length,
@@ -585,7 +586,7 @@ export function fuse(
               " ".repeat(term.width - (repPos + str1.length));
             return [
               {
-                newEnv: env,
+                newEnv: deepCloneEnvironment(env),
                 newTermNode: { type: "const", value: newStr },
                 remainingOperation: { type: "id" },
               },
@@ -609,7 +610,7 @@ export function fuse(
           };
           return [
             {
-              newEnv: env,
+              newEnv: deepCloneEnvironment(env),
               newTermNode: newExpression,
               remainingOperation: newOperation,
             },
@@ -618,7 +619,7 @@ export function fuse(
           const newPos = repPos - term.width;
           return [
             {
-              newEnv: env,
+              newEnv: deepCloneEnvironment(env),
               newTermNode: term,
               remainingOperation: {
                 type: "replace",
@@ -634,7 +635,7 @@ export function fuse(
       case "id":
         return [
           {
-            newEnv: env,
+            newEnv: deepCloneEnvironment(env),
             newTermNode: term,
             remainingOperation: { type: "id" },
           },
@@ -659,7 +660,7 @@ export function fuse(
             remainingOperation: UpdateOperation;
           }[] = [];
           resultList.push({
-            newEnv: env,
+            newEnv: deepCloneEnvironment(env),
             newTermNode: {
               type: "seq",
               nodes: [{ type: "const", value: str }, term],
@@ -672,9 +673,9 @@ export function fuse(
             if (newStr !== undefined) {
               try {
                 let newVal = strToVal(newStr, val);
-                let { newEnv, newExp } = fuseExp({ ...env }, newVal, exp);
+                let { newEnv, newExp } = fuseExp(env, newVal, exp);
                 resultList.push({
-                  newEnv: newEnv,
+                  newEnv: deepCloneEnvironment(newEnv),
                   newTermNode: {
                     ...term,
                     binding: [newExp, newVal],
@@ -695,7 +696,7 @@ export function fuse(
           let { newEnv, newExp } = fuseExp(env, newVal, exp);
           return [
             {
-              newEnv: newEnv,
+              newEnv: deepCloneEnvironment(newEnv),
               newTermNode: {
                 ...term,
                 binding: [newExp, newVal],
@@ -714,9 +715,9 @@ export function fuse(
             if (newStr !== undefined) {
               try {
                 const newVal = strToVal(newStr, val);
-                let { newEnv, newExp } = fuseExp({ ...env }, newVal, exp);
+                let { newEnv, newExp } = fuseExp(env, newVal, exp);
                 resultList.push({
-                  newEnv: newEnv,
+                  newEnv: deepCloneEnvironment(newEnv),
                   newTermNode: {
                     ...term,
                     binding: [newExp, newVal],
@@ -730,7 +731,7 @@ export function fuse(
           }
 
           // If the expression is a variable, them add variable's bidning to env to mark it unmodifiable.
-          let env2 = { ...env };
+          let env2 = deepCloneEnvironment(env);
           if ((exp as Variable).name) {
             let x = (exp as Variable).name;
             env2[x] = [val, [val]]; // mark x as unmodifiable.
@@ -751,7 +752,7 @@ export function fuse(
           }
           return [
             {
-              newEnv: env,
+              newEnv: deepCloneEnvironment(env),
               newTermNode: term,
               remainingOperation: { ...operation, position: newPosition },
             },
@@ -766,7 +767,7 @@ export function fuse(
             let { newEnv, newExp } = fuseExp(env, newVal, exp);
             return [
               {
-                newEnv: newEnv,
+                newEnv: deepCloneEnvironment(newEnv),
                 newTermNode: { ...term, binding: [newExp, newVal] },
                 remainingOperation: { type: "id" },
               },
@@ -776,15 +777,15 @@ export function fuse(
               let x = (exp as Variable).name;
               if (typeof val == "string") {
                 // two choice: update exp to "", or delete exp
-                let { newEnv, newExp } = fuseExp({ ...env }, "", exp);
+                let { newEnv, newExp } = fuseExp(env, "", exp);
                 return [
                   {
-                    newEnv: newEnv,
+                    newEnv: deepCloneEnvironment(newEnv),
                     newTermNode: { ...term, binding: [newExp, ""] },
                     remainingOperation: { type: "id" },
                   },
                   {
-                    newEnv: deleteFromEnv(env, x),
+                    newEnv: deleteFromEnv(deepCloneEnvironment(env), x),
                     newTermNode: { type: "bot" },
                     remainingOperation: { type: "id" },
                   },
@@ -793,7 +794,7 @@ export function fuse(
                 // delete exp, delete from env
                 return [
                   {
-                    newEnv: deleteFromEnv(env, x),
+                    newEnv: deleteFromEnv(deepCloneEnvironment(env), x),
                     newTermNode: { type: "bot" },
                     remainingOperation: { type: "id" },
                   },
@@ -807,11 +808,11 @@ export function fuse(
               if (xValUpdatedMark.fields[field].length == 0) {
                 let newXVal = deleteField(xVal, field);
                 let newXValUpdatedMark = deleteField(xValUpdatedMark, field);
-                let newEnv = deleteFromEnv(env, x);
+                let newEnv = deleteFromEnv(deepCloneEnvironment(env), x);
                 newEnv[x] = [newXVal, [newXValUpdatedMark]];
                 return [
                   {
-                    newEnv: newEnv,
+                    newEnv: deepCloneEnvironment(newEnv),
                     newTermNode: { type: "bot" },
                     remainingOperation: { type: "id" },
                   },
@@ -848,7 +849,7 @@ export function fuse(
           let { newEnv, newExp } = fuseExp(env, newVal, exp);
           return [
             {
-              newEnv: newEnv,
+              newEnv: deepCloneEnvironment(newEnv),
               newTermNode: { ...term, binding: [newExp, newVal] },
               remainingOperation: { type: "id" },
             },
@@ -863,7 +864,7 @@ export function fuse(
           let { newEnv, newExp } = fuseExp(env, newVal, exp);
           return [
             {
-              newEnv: newEnv,
+              newEnv: deepCloneEnvironment(newEnv),
               newTermNode: { ...term, binding: [newExp, newVal] },
               remainingOperation: {
                 type: "delete",
@@ -881,7 +882,7 @@ export function fuse(
           );
           return [
             {
-              newEnv: newEnv,
+              newEnv: deepCloneEnvironment(newEnv),
               newTermNode: newTermNode,
               remainingOperation: {
                 type: "delete",
@@ -911,7 +912,7 @@ export function fuse(
             // console.log("newEnv:", newEnv);
             return [
               {
-                newEnv: newEnv,
+                newEnv: deepCloneEnvironment(newEnv),
                 newTermNode: { ...term, binding: [newExp, newVal] },
                 remainingOperation: { type: "id" },
               },
@@ -920,14 +921,15 @@ export function fuse(
             throw new Error(`unsupported replacement: ${str1}; ${valStr}`);
           }
         } else if (repPos < valStr.length) {
-          const newValStr = valStr.slice(0, repPos) + str2 + valStr.slice(repPos + str1.length);
+          const newValStr =
+            valStr.slice(0, repPos) + str2 + valStr.slice(repPos + str1.length);
           const newVal = strToVal(newValStr, val);
           let { newEnv, newExp } = fuseExp(env, newVal, exp);
           return [
             {
-              newEnv: newEnv,
+              newEnv: deepCloneEnvironment(newEnv),
               newTermNode: { ...term, binding: [newExp, newVal] },
-              remainingOperation: { type:'id' },
+              remainingOperation: { type: "id" },
             },
           ];
         } else if (repPos >= valStr.length) {
@@ -939,7 +941,7 @@ export function fuse(
           );
           return [
             {
-              newEnv: newEnv,
+              newEnv: deepCloneEnvironment(newEnv),
               newTermNode: newTermNode,
               remainingOperation: { ...operation, position: newRepPos },
             },
@@ -963,7 +965,7 @@ export function fuse(
 
         return [
           {
-            newEnv: env,
+            newEnv: deepCloneEnvironment(env),
             newTermNode: term,
             remainingOperation: { type: "id" },
           },
@@ -977,7 +979,7 @@ export function fuse(
       let varName = term.variable.name;
       let varExp = term.binding[0];
       let varVal = term.binding[1];
-      let env1 = { ...env };
+      let env1 = deepCloneEnvironment(env);
       env1[varName] = [varVal, []];
 
       let newArrVarName = "";
@@ -992,29 +994,40 @@ export function fuse(
 
       let resultList = fuse(env1, operation, term.body);
       return resultList.map(({ newEnv, newTermNode, remainingOperation }) => {
-        let newVarVal = newEnv[varName][0];
-        let newArrVal = env[newArrVarName][0] as Value[]; // must be an array
-        newArrVal.push(newVarVal);
-        env[newArrVarName] = [newArrVal, [newArrVal]];
-        let { newEnv: updatedEnv, newExp } = fuseExp(env, newVarVal, varExp);
-        return {
-          newEnv: updatedEnv,
-          newTermNode: {
-            type: "lambda",
-            variable: term.variable,
-            body: newTermNode,
-            binding: [newExp, newVarVal],
-            marker: term.marker,
-          },
-          remainingOperation: remainingOperation,
-        };
+        // 要考虑删除的情况 varName不再newEnv中存在
+        if (varName in newEnv) {
+          let newVarVal = newEnv[varName][0];
+          let newArrVal = env[newArrVarName][0] as Value[]; // must be an array
+          newArrVal.push(newVarVal);
+          env[newArrVarName] = [newArrVal, [newArrVal]];
+
+          let { newEnv: updatedEnv, newExp } = fuseExp(env, newVarVal, varExp);
+          return {
+            newEnv: updatedEnv,
+            newTermNode: {
+              type: "lambda",
+              variable: term.variable,
+              body: newTermNode,
+              binding: [newExp, newVarVal],
+              marker: term.marker,
+            },
+            remainingOperation: remainingOperation,
+          };
+        } else {
+          // deleted item
+          return {
+            newEnv: newEnv,
+            newTermNode: {type:'bot'},
+            remainingOperation:remainingOperation
+          }
+        }
       });
     } else {
       let varName = term.variable.name;
       let varExp = term.binding[0];
       let varVal = term.binding[1];
 
-      let env1 = { ...env };
+      let env1 = deepCloneEnvironment(env);
       env1[varName] = [varVal, []];
 
       // console.log("--------lambda----------");
@@ -1055,13 +1068,17 @@ export function fuse(
     term.type === "branchend" ||
     term.type === "nop"
   ) {
-
-    if(term.type === "branchend"){
+    if (term.type === "branchend") {
       let conditionExp = term.condition[0];
       let conditionVal = term.condition[1];
-      let [_, newConditionalVal] = evaluateExpr( transformEnvironment(env), conditionExp);
-      if(newConditionalVal !== conditionVal){
-        throw new Error("Violate BX properties: updates change if-then-else branch.");
+      let [_, newConditionalVal] = evaluateExpr(
+        transformEnvironment(env),
+        conditionExp
+      );
+      if (newConditionalVal !== conditionVal) {
+        throw new Error(
+          "Violate BX properties: updates change if-then-else branch."
+        );
       }
     }
 
@@ -1071,7 +1088,7 @@ export function fuse(
       remainingOperation: UpdateOperation;
     }[] = [];
     resultList.push({
-      newEnv: env,
+      newEnv: deepCloneEnvironment(env),
       newTermNode: term,
       remainingOperation: operation,
     });
@@ -1080,7 +1097,7 @@ export function fuse(
         const { str, position } = operation;
         if (position === 0) {
           resultList.push({
-            newEnv: env,
+            newEnv: deepCloneEnvironment(env),
             newTermNode: {
               type: "seq",
               nodes: [{ type: "const", value: str }, term],
@@ -1170,7 +1187,7 @@ export function fuse(
       newEnv: Environment;
       newTermNode: TermNode;
       remainingOperation: UpdateOperation;
-    }[] = [{ newEnv: env, newTermNode: term, remainingOperation: operation }];
+    }[] = [{ newEnv: deepCloneEnvironment(env), newTermNode: term, remainingOperation: operation }];
     return results;
   } else {
     throw new Error(
@@ -1193,7 +1210,7 @@ export function fuseExp(
       }
       const [varValue, marks] = env[exp.name];
       if (marks.length === 0) {
-        const newEnv = { ...env };
+        const newEnv = deepCloneEnvironment(env);
         newEnv[exp.name] = [value, [value]];
         return { newEnv, newExp: exp };
       } else if (marks.length === 1 && marks[0] === value) {
@@ -1235,7 +1252,7 @@ export function fuseExp(
             exp.field,
             value
           );
-          const newEnv: Environment = { ...env };
+          const newEnv: Environment = deepCloneEnvironment(env);
           newEnv[objExp.name] = [newObjValue, [newMarks]];
           return { newEnv, newExp: exp };
         } else {
@@ -1293,10 +1310,67 @@ export function fuseExp(
     case "unary":
       // Add logic for unary operations here
       return { newEnv: env, newExp: exp };
+    case "array":
+      // construct exp
+      let elements = exp.elements;
+      let updatedElements = alignAndUpdate(elements, value as Value[]);
+      return {newEnv: {}, newExp: {type:'array', elements: updatedElements}};
     default:
       throw new Error(`Unsupported expression type: ${exp.type}`);
   }
 }
+
+function alignAndUpdate(elements: Expr[], valLst: Value[]): Expr[] {
+  const updatedElements: Expr[] = [];
+
+  for (let i = 0; i < valLst.length; i++) {
+      if (i < elements.length) {
+          updatedElements.push(updateExpr(elements[i], valLst[i]));
+      } else {
+          updatedElements.push(convertToExpr(valLst[i]));
+      }
+  }
+
+  return updatedElements;
+}
+
+function updateExpr(expr: Expr, value: Value): Expr {
+  switch (expr.type) {
+      case 'constant':
+          return { ...expr, value: value as number | boolean | string | [] | null | ObjectLiteral };
+      case 'array':
+          return { ...expr, elements: alignAndUpdate(expr.elements, value as Value[]) };
+      case 'object':
+          return {
+              ...expr,
+              fields: Object.keys(expr.fields).reduce((fields, key) => {
+                  fields[key] = { ...expr.fields[key], value: (value as ObjectValue).fields[key] };
+                  return fields;
+              }, {} as { [key: string]: Constant })
+          };
+      // case 'freeze':
+          // return { ...expr, expression: updateExpr(expr.expression, value) };
+      default:
+          throw new Error(`Unsupported expression type: ${(expr as any).type}`);
+  }
+}
+
+function convertToExpr(value: Value): Expr {
+  if (typeof value === 'number' || typeof value === 'boolean' || typeof value === 'string' || value === null) {
+      return { type: 'constant', value };
+  }
+  if (Array.isArray(value)) {
+      return { type: 'array', elements: value.map(convertToExpr) };
+  }
+  if (typeof value === 'object' && value !== null) {
+      return { type: 'object', fields: Object.keys(value.fields).reduce((fields, key) => {
+          fields[key] = { type: 'constant', value: value.fields[key] };
+          return fields;
+      }, {} as { [key: string]: Constant }) };
+  }
+  throw new Error(`Unsupported value type: ${typeof value}`);
+}
+
 
 function strToVal(s: string, v: Value): Value {
   if (typeof v === "number") {
@@ -1335,7 +1409,7 @@ function valToStr(value: Value): string {
 }
 
 function deleteFromEnv(env: Environment, key: string): Environment {
-  const newEnv = { ...env }; // Create a shallow copy of env
+  const newEnv = deepCloneEnvironment(env); // Create a shallow copy of env
   delete newEnv[key]; // Delete the specified key from the new environment
   return newEnv; // Return the modified environment
 }
@@ -1417,7 +1491,7 @@ function markFieldOfObjectInEnv(
 
 function updateEnvByEnv(env: Environment, env2: Environment): Environment {
   // Create a copy of env to avoid mutating the original env
-  let updatedEnv = { ...env };
+  let updatedEnv = deepCloneEnvironment(env);
 
   // Iterate over keys in env2
   for (const key in env2) {
@@ -1515,10 +1589,10 @@ export function fuseBulk(
   // ending of recursive call
   if (bulkOp.operations.length == 0) {
     return [
-      { newEnv: env, newTermNode: term, remainingOperation: { type: "id" } },
+      { newEnv: deepCloneEnvironment(env), newTermNode: term, remainingOperation: { type: "id" } },
     ];
   } else if (term.type === "seq" && term.nodes.length == 0) {
-    return [{ newEnv: env, newTermNode: term, remainingOperation: bulkOp }];
+    return [{ newEnv: deepCloneEnvironment(env), newTermNode: term, remainingOperation: bulkOp }];
   }
 
   const [op1, ...restOps] = bulkOp.operations;
@@ -1691,3 +1765,52 @@ function isValidValue(value: any): value is Value {
   }
   return false;
 }
+
+
+// 类型保护函数，用于判断一个值是否为 ObjectValue 类型
+function isObjectValue(value: any): value is ObjectValue {
+  return value && typeof value === 'object' && value.type === 'object' && 'fields' in value;
+}
+
+// 深拷贝函数
+function deepClone(value: Value): Value {
+  if (value === null || typeof value !== 'object') {
+    return value;
+  }
+
+  if (Array.isArray(value)) {
+    return value.map(deepClone);
+  }
+
+  if (isObjectValue(value)) {
+    const clonedFields: { [key: string]: Value } = {};
+    for (const key in value.fields) {
+      if (value.fields.hasOwnProperty(key)) {
+        clonedFields[key] = deepClone(value.fields[key]);
+      }
+    }
+    return { type: 'object', fields: clonedFields };
+  }
+
+  // 处理普通对象
+  const clonedObj: { [key: string]: Value } = {};
+  for (const key in value as { [key: string]: Value }) {
+    if ((value as { [key: string]: Value }).hasOwnProperty(key)) {
+      clonedObj[key] = deepClone((value as { [key: string]: Value })[key]);
+    }
+  }
+  return clonedObj as unknown as Value;
+}
+
+// 深拷贝 Environment
+function deepCloneEnvironment(env: Environment): Environment {
+  const clonedEnv: Environment = {};
+  for (const key in env) {
+    if (env.hasOwnProperty(key)) {
+      const [val1, valArray] = env[key];
+      clonedEnv[key] = [deepClone(val1), deepClone(valArray) as Value[]];
+    }
+  }
+  return clonedEnv;
+}
+

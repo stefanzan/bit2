@@ -63,10 +63,17 @@ import * as Parser from "../../src/surface/Parser";
 // console.log(JSON.stringify(parsedFragment, null, 2));
 
 
+// const exampleInput5 = 
+// `«var lst=[1,2,3]»
+// «for item in lst separator "," front "[" rear "]"»«item»«endfor»`;
+// const parsedFragment = Parser.parse(exampleInput5);
+// console.log(JSON.stringify(parsedFragment, null, 2));
 
-const exampleInput5 = 
-`«var lst=[1,2,3]»
-«for item in lst separator "," front "[" rear "]"»«item»«endfor»`;
-const parsedFragment = Parser.parse(exampleInput5);
+const exampleInput6 = 
+`«var lst=[{head:"Modeling", text:"UML"},{head:"Programming", text:"Java"}]»
+«for item in lst»
+<h1>«p.head»</h1>
+<p>«p.text»</p>
+«endfor»`;
+const parsedFragment = Parser.parse(exampleInput6);
 console.log(JSON.stringify(parsedFragment, null, 2));
-

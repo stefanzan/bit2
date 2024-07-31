@@ -4,7 +4,8 @@ export type TermNode = ConstNode | SpaceNode | DeclareNode | AssignNode
     | ExpNode | SeqNode | IfThenElseNode 
     | LoopNode 
     | CallNode | NopNode | BotNode | EndNode
-    | LambdaWithExpr; // for internal usage
+    | LambdaWithExpr // for internal usage
+    | SepNode // for internal usage
 
 export interface ConstNode {
     type: 'const';
@@ -135,6 +136,10 @@ export function ite(condition: Expr, trueBranch: TermNode, falseBranch: TermNode
 
 export function assign(name: Variable, value: Expr): AssignNode {
   return { type: 'assign', name, value };
+}
+
+export function sep(value: string): SepNode {
+  return {type:'sep', value:value};
 }
 
 export function nop(): NopNode {

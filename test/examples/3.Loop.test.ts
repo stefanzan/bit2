@@ -41,9 +41,37 @@ const exampleInput =
 console.log("===Forward Evaluation===");
 console.log(BiEval.forward(exampleInput));
 
-// console.log("=== Backward Evaluation===");
+console.log("=== Backward Evaluation===");
 // console.log('--- 1. id ------------------');
 // BiEval.backward(exampleInput, {type:'bulk', operations:[]}).forEach(updatedCoreAST => {
 //   console.log(updatedCoreAST);
 //   console.log("~~~~~~~~~~~~~~~~~~~~~~~~");
 // });
+
+
+console.log('--- 2. delete "1," at 2 ------------------');
+BiEval.backward(exampleInput, {type:'delete', str:'1,', position:2}).forEach(updatedCoreAST => {
+  console.log(updatedCoreAST);
+  console.log("~~~~~~~~~~~~~~~~~~~~~~~~");
+});
+
+
+// console.log('--- 2. delete "2," at 4 ------------------');
+// BiEval.backward(exampleInput, {type:'delete', str:'2,', position:4}).forEach(updatedCoreAST => {
+//   console.log(updatedCoreAST);
+//   console.log("~~~~~~~~~~~~~~~~~~~~~~~~");
+// });
+
+// console.log('--- 2. delete "[1,2,3]" at 1 ------------------');
+// BiEval.backward(exampleInput, {type:'delete', str:'[1,2,3]', position:1}).forEach(updatedCoreAST => {
+//   console.log(updatedCoreAST);
+//   console.log("~~~~~~~~~~~~~~~~~~~~~~~~");
+// });
+
+
+// const exampleInput2 = 
+// `«var lst=[{head:"Modeling", text:"UML"},{head:"Programming", text:"Java"}]»
+// «for item in lst»
+// <h1>«p.head»</h1>
+// <p>«p.text»</p>
+// «endfor»`;

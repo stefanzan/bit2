@@ -30,6 +30,8 @@ export function unPartialEval(node: PartialAST.TermNode): CoreAST.TermNode {
         return unSeq(node);
     case 'lambda':
         return unPartialEvalLambdaApp(node);
+    case 'sep':
+        return node;
     default:
       throw new Error(`Unknown node type: ${node.type}`);
   }
