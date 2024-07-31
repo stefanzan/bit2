@@ -50,7 +50,17 @@ export function printToSurface(node:AST.TermNode):string {
         return str;
       }
     case 'loop':
-      str = "«for " + Exp.prettyPrint(node.body.variable) + " :" + Exp.prettyPrint(node.lst) + "»";
+      str = "«for " + Exp.prettyPrint(node.body.variable) + " in " + Exp.prettyPrint(node.lst);
+      if(node.separator.value){
+        str += ' separator ' + '"' + node.separator.value + '"'; 
+      }
+      if(node.front.value){
+        str += ' front ' + '"' + node.front.value + '"'; 
+      }
+      if(node.rear.value){
+        str += ' rear ' + '"' + node.rear.value + '"'; 
+      } 
+      str += "»";
       str += printToSurface(node.body.body);
       str += "«endfor»";
       return str;
