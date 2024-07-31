@@ -170,10 +170,10 @@ export function parseTokens(
           
                 // Handle nested FOR and ENDFOR
                 if (typeof nextToken === "string" && nextToken.startsWith("«")) {
-                  if (nextToken.includes("ENDFOR")) {
+                  if (nextToken.includes("ENDFOR") || nextToken.includes("endfor")) {
                     nestingLevel--;
                     if (nestingLevel === 0) break; // End of current FOR block
-                  } else if (nextToken.includes("FOR")) {
+                  } else if (nextToken.includes("FOR") || nextToken.includes("for")) {
                     nestingLevel++;
                   }
                 }
