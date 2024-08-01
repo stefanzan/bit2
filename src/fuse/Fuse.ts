@@ -963,6 +963,7 @@ export function fuse(
           env = markFieldOfObjectInEnv(field, variable, env);
         });
 
+        // console.log("::::::newExp:", term);
         return [
           {
             newEnv: deepCloneEnvironment(env),
@@ -1173,15 +1174,18 @@ export function fuse(
       results = newResults;
     }
 
-    return results.map((result) => ({
-      newEnv: result.newEnv,
-      newTermNode:
-        result.newTermNode.type === "seq" &&
-        result.newTermNode.nodes.length === 1
-          ? result.newTermNode.nodes[0]
-          : result.newTermNode,
-      remainingOperation: result.remainingOperation,
-    }));
+    return results.map((result) => {
+      return result;
+    //   return {
+    //   newEnv: result.newEnv,
+    //   newTermNode:
+    //     result.newTermNode.type === "seq" &&
+    //     result.newTermNode.nodes.length === 1
+    //       ? result.newTermNode.nodes[0]
+    //       : result.newTermNode,
+    //   remainingOperation: result.remainingOperation,
+    // }
+    });
   } else if (term.type === "end") {
     let results: {
       newEnv: Environment;
@@ -1687,13 +1691,19 @@ export function fuseBulk(
       });
       return listOfList.reduce((acc, val) => acc.concat(val), []);
     } else if (op1.type === "id") {
-      // case 3
+      // case 3: using id through the whole program. 
+      if(restOps.length == 0){
+        return fuse(env, op1, term);
+      } else {
+      // case 4
       // Create a new bulk operation with the remaining operations
       const newBulkOp: UpdateOperation = {
         type: "bulk",
         operations: restOps,
       };
       return fuseBulk(env, newBulkOp, term);
+
+      }
     }
   }
 

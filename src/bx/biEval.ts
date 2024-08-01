@@ -53,13 +53,23 @@ export function backward(str: string, operation: UpdateOperation): string[] {
     let partialAST = flatten(unLambdalize(newTerm));
     // console.log("--------updatedPartialAST------------");
     // PartialPrint.printNode(partialAST);
-    let updatedCoreAST = UnEvaluation.flatten(UnEvaluation.unPartialEval(partialAST));
-    // console.log("--------updatedCoreAST------------");
-    // CorePrint.printAST(updatedCoreAST);
-    let surfaceText = CorePretty.printToSurface(updatedCoreAST);
-    // console.log("result in backward:\n", surfaceText);
-    return surfaceText;
+    try {
+      let updatedCoreASTRedundant = UnEvaluation.unPartialEval(partialAST)
+      let updatedCoreAST = UnEvaluation.flatten(updatedCoreASTRedundant);
+      // console.log("--------updatedCoreAST------------");
+      // CorePrint.printAST(updatedCoreAST);
+      let surfaceText = CorePretty.printToSurface(updatedCoreAST);
+      // console.log("result in backward:\n", surfaceText);
+      return surfaceText;
+    } catch (error) {
+      const typedError = error as Error;
+      console.log(typedError.message);
+      return "";
+    }
   });
+
+  console.log("solution list:", resultList);
+  resultList = resultList.filter(result => result != (""))
   // remove redundant/identical results
   return Array.from(new Set(resultList));
 }

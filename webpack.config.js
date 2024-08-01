@@ -18,8 +18,9 @@ module.exports = {
   output: {
     filename: 'bit2.js',
     path: path.resolve(__dirname, 'dist'),
-    library: 'MyLibrary',
+    library: 'BiEval',
     libraryTarget: 'umd',
     globalObject: 'this'
-  }
+  },
+  target:'node'
 };

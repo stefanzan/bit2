@@ -86,10 +86,10 @@ export function partialEval(environment: Map<string, any>, termNode: CoreAST.Ter
 
 
         case 'loop': 
-          const { lst, separator, front, rear, body } = termNode;
+          const { lst: list, separator, front, rear, body } = termNode;
 
           // Evaluate e_arr to get its value
-          const [updatedEnv, e_arr_value] = evaluateExpr(environment, lst);
+          const [updatedEnv, e_arr_value] = evaluateExpr(environment, list);
       
           // Case 1: e_arr 是一个空数组
           if (Array.isArray(e_arr_value) && e_arr_value.length === 0) {
@@ -98,14 +98,14 @@ export function partialEval(environment: Map<string, any>, termNode: CoreAST.Ter
                   nodes: [
                       {
                           type: 'loopfront',
-                          lst: lst,
+                          lst: list,
                           value: front.value,
                           body:body,
                           separator:separator
                       },
                       {
                           type: 'looprear',
-                          lst: lst,
+                          lst: list,
                           value: rear.value
                       }
                   ]
@@ -126,7 +126,7 @@ export function partialEval(environment: Map<string, any>, termNode: CoreAST.Ter
                   nodes: [
                       {
                           type: 'loopfront',
-                          lst: lst,
+                          lst: list,
                           value: front.value,
                           body:body,
                           separator:separator
@@ -134,7 +134,7 @@ export function partialEval(environment: Map<string, any>, termNode: CoreAST.Ter
                       evaluatedBody,
                       {
                           type: 'looprear',
-                          lst: lst,
+                          lst: list,
                           value: rear.value
                       }
                   ]
@@ -161,7 +161,7 @@ export function partialEval(environment: Map<string, any>, termNode: CoreAST.Ter
                       binding: [{ type: 'constant', value:element }, element],
                       marker: {
                           type: 'loopitem',
-                          lst: lst
+                          lst: list
                       }
                   });
                   if(i < e_arr_value.length-1){
@@ -174,7 +174,7 @@ export function partialEval(environment: Map<string, any>, termNode: CoreAST.Ter
                   nodes: [
                       {
                           type: 'loopfront',
-                          lst: lst,
+                          lst: list,
                           value: front.value,
                           body:body,
                           separator:separator
@@ -182,7 +182,7 @@ export function partialEval(environment: Map<string, any>, termNode: CoreAST.Ter
                       ...currentNodes,
                       {
                           type: 'looprear',
-                          lst: lst,
+                          lst: list,
                           value: rear.value
                       }
                   ]

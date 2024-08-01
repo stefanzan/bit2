@@ -82,7 +82,7 @@ function unSeq(node: PartialAST.SeqNode): CoreAST.TermNode {
           looprearNode = next;
           break;
         } else {
-          updatedLoopSeq.push(unPartialEval(nodes[j]));
+          updatedLoopSeq.push(flatten(unPartialEval(nodes[j])));
         }
       }
 
@@ -102,12 +102,22 @@ function unSeq(node: PartialAST.SeqNode): CoreAST.TermNode {
         }
       } else {
         // case 4 and case 5
+        let loopNode = CoreAST.loop(loopfrontNode.lst, loopfrontNode.separator, {type:'front', value:current.value}, {type:'rear', value:looprearNode.value}, loopfrontNode.body);
+
+        let sepNodes = filterSepNodesFromTermNodes(updatedLoopSeq);
+        if(areAllSepNodesEqual(sepNodes)){
+          loopNode.separator = sepNodes[0];
+        } else {
+          throw new Error("seperators in loop are not equal.")
+        }
+
         let filteredUpdatedLoopSeq = filterBotNodesFromTermNodes(updatedLoopSeq);
         if(areAllLambdaWithExprsEqual(filteredUpdatedLoopSeq)){
-          newNodes.push(CoreAST.loop(loopfrontNode.lst, loopfrontNode.separator, {type:'front', value:current.value}, {type:'rear', value:looprearNode.value},constructLambda(filteredUpdatedLoopSeq[0])));
+          loopNode.body = constructLambda(filteredUpdatedLoopSeq[0]);
         } else {
-          throw new Error("\ x.t in loop seq, ts are not equal");
+          throw new Error("\ x.term in loop seq, all terms are not equal.");
         }
+        newNodes.push(loopNode);
       }
      i += updatedLoopSeq.length+1;
     } else {
@@ -198,6 +208,19 @@ function isLambdaWithExpr(node: CoreAST.TermNode): node is CoreAST.LambdaWithExp
 function filterBotNodesFromTermNodes(nodes: CoreAST.TermNode[]): CoreAST.LambdaWithExpr[] {
   return nodes.filter(isLambdaWithExpr).filter(lambda => !isBotNode(lambda.body));
 }
+
+function filterSepNodesFromTermNodes(nodes:CoreAST.TermNode[]):CoreAST.SepNode[] {
+  return nodes.filter(isSepNode);
+}
+function isSepNode(node: CoreAST.TermNode): node is CoreAST.SepNode {
+  return node.type === 'sep';
+}
+
+// function filterBotNodesOptionallyWithSepNodeFromTermNodes(nodes: CoreAST.TermNode[]): CoreAST.TermNode[] {
+
+// }
+
+
 
 // Function to check if two Variables are equal
 function areVariablesEqual(var1: Exp.Variable, var2: Exp.Variable): boolean {
@@ -353,12 +376,27 @@ function areAllLambdaWithExprsEqual(lambdas: CoreAST.LambdaWithExpr[]): boolean 
   return lambdas.every(lambda => areLambdaWithExprsEqual(lambda, firstLambda));
 }
 
+function areSepNodesEqual(sep1: CoreAST.SepNode, sep2: CoreAST.SepNode): boolean {
+  return  sep1.value === sep2.value;
+}
+
+function areAllSepNodesEqual(seps: CoreAST.SepNode[]): boolean {
+  if(seps.length === 0){
+    return true;
+  }
+
+  const firstSep = seps[0];
+  return seps.every(sep => areSepNodesEqual(sep, firstSep));
+}
 
 // 定义 flatten 函数
 export function flatten(termNode: CoreAST.TermNode): CoreAST.TermNode {
   if (termNode.type === 'seq') {
       // 如果 termNode 是 seq 类型，则递归处理每个元素，并返回新的 seq 节点
       const flattenedElements = termNode.nodes.map(element => flatten(element));
+      if(flattenedElements.length==1){
+        return flattenedElements[0];
+      }
       return { type: 'seq', nodes: flattenedElements.flatMap(seqNode => {
         if(seqNode.type === 'seq'){
           return seqNode.nodes;
