@@ -1,2 +1,0 @@
-«var lst=[]»
-«for item in lst separator "," front "[" rear "]"»«item»«endfor»

@@ -977,11 +977,14 @@ export function fuse(
   } else if (term.type === "lambda") {
     let marker = term.marker;
     if (marker.type === "loopitem") {
+      // TODO: handle inserting a whole loopitem with separator case
+
+
       let varName = term.variable.name;
       let varExp = term.binding[0];
       let varVal = term.binding[1];
       let env1 = deepCloneEnvironment(env);
-      env1[varName] = [varVal, []];
+      env1 = initializeMarkerOfVariableInEnv(env, varName, varVal);
 
       let newArrVarName = "";
       if (marker.lst as Variable) {
@@ -1029,7 +1032,8 @@ export function fuse(
       let varVal = term.binding[1];
 
       let env1 = deepCloneEnvironment(env);
-      env1[varName] = [varVal, []];
+      // 判断var类型，非基本类型，需要特殊处理
+      env1 = initializeMarkerOfVariableInEnv(env, varName, varVal);
 
       // console.log("--------lambda----------");
       // console.log("operation:", operation);
@@ -1824,3 +1828,31 @@ function deepCloneEnvironment(env: Environment): Environment {
   return clonedEnv;
 }
 
+// // Value
+// export type Value = number | boolean | string | null | ObjectValue | Value[];
+
+// // object
+// export interface ObjectValue {
+//   type: 'object';
+//   fields: { [key: string]: any };
+// }
+
+
+function initializeMarkerOfVariableInEnv(env: Environment, variableName: string, value: Value): Environment {
+  if (typeof value === 'number' || typeof value === 'boolean' || typeof value === 'string' || value === null) {
+      // 如果是 number, boolean, string 或 null，直接初始化为 [value, []]
+      env[variableName] = [value, []];
+  } else if (Array.isArray(value)) {
+      // 如果是 Value[]，简单处理为 [value, []]
+      env[variableName] = [value, []];
+  } else if (typeof value === 'object' && value !== null && 'fields' in value) {
+      // 如果是 ObjectValue，生成 [value, [{ field1: [], field2: [] }]]
+      const fieldMarkers = {type:'object', fields: {}} as ObjectValue;
+      for (const field in value.fields) {
+          fieldMarkers.fields[field] = [];
+      }
+      env[variableName] = [value, [fieldMarkers]];
+  }
+
+  return env;
+}

@@ -291,7 +291,7 @@ export function evaluateExpr(environment: Map<string, any>, expr: Expr.Expr): [M
             if (typeof objectValue !== 'string' && (typeof objectValue !== 'object' || objectValue === null)) {
                 throw new Error(`Cannot access field '${expr.field}' from non-object`);
             }
-            const fieldValue = objectValue[expr.field];
+            const fieldValue = objectValue.fields[expr.field];
             if (fieldValue === undefined) {
                 throw new Error(`Field '${expr.field}' not found in object`);
             }
@@ -314,13 +314,13 @@ export function evaluateExpr(environment: Map<string, any>, expr: Expr.Expr): [M
 
         case 'object':
             // Evaluate fields of the object
-            let evaluatedFields: { [key: string]: any } = {};
+            let evaluatedFields: { [key: string]: any } = {type:'object', fields: {}} as PartialAST.ObjectValue;
             let objEnv = environment;
 
             for (const key in expr.fields) {
                 if (expr.fields.hasOwnProperty(key)) {
                     let [updatedEnv, evaluatedValue] = evaluateExpr(objEnv, expr.fields[key]);
-                    evaluatedFields[key] = evaluatedValue;
+                    evaluatedFields.fields[key] = evaluatedValue;
                     objEnv = updatedEnv;
                 }
             }

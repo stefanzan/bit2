@@ -20,6 +20,12 @@ export function prettyPrint(node:Exp.Expr): string {
       return "[" + node.elements.map(ele=>prettyPrint(ele)).join(",") + "]";
     case 'freeze':
       return "!" + prettyPrint(node.expression);
+    case 'object':
+      let fieldsObj = node.fields;
+      const fieldsStr = Object.keys(fieldsObj).map(field => {
+        return field + ":" + prettyPrint(fieldsObj[field]);
+      }).join(', ');
+      return "{" + fieldsStr  +"}";
     default:
       return "";
   }
