@@ -16,7 +16,7 @@ import {
   Variable,
   findVariablesAndFields,
   Constant,
-  ObjectLiteral
+  ObjectLiteral,
 } from "../common/Exp";
 import { evaluateExpr } from "../partialEval/peval";
 import { printValue } from "../partial/Print";
@@ -75,7 +75,11 @@ export function fuse(
         const { str, position } = operation;
         if (s_c.length === 0) {
           return [
-            { newEnv: deepCloneEnvironment(env), newTermNode: term, remainingOperation: operation },
+            {
+              newEnv: deepCloneEnvironment(env),
+              newTermNode: term,
+              remainingOperation: operation,
+            },
             {
               newEnv: deepCloneEnvironment(env),
               newTermNode: { ...term, value: str },
@@ -337,7 +341,11 @@ export function fuse(
         // zero-width space
         if (term.width == 0) {
           return [
-            { newEnv: deepCloneEnvironment(env), newTermNode: term, remainingOperation: operation },
+            {
+              newEnv: deepCloneEnvironment(env),
+              newTermNode: term,
+              remainingOperation: operation,
+            },
             {
               newEnv: deepCloneEnvironment(env),
               newTermNode: {
@@ -978,8 +986,128 @@ export function fuse(
     let marker = term.marker;
     if (marker.type === "loopitem") {
       // TODO: handle inserting a whole loopitem with separator case
+      // 如果是 insert "item" at 0, 可以两种结果：1. insert 改replace;然后保留原item且可以用id往下走; 2. 正常insert
+      let loopItemResultList: {
+        newEnv: Environment;
+        newTermNode: TermNode;
+        remainingOperation: UpdateOperation;
+      }[] = [];
 
+      if (operation.type === "bulk" && operation.operations.length > 0) {
+        let ops = operation.operations;
+        const [firstOp, ...restOps] = ops;
+        if (firstOp.type === "insert" && firstOp.position === 0) {
+          // soltuion 0: try to replace the item
+          let origianlTermStr = evaluateTermNode(term);
+          let newReplaceOp = {
+            type: "replace",
+            str1: origianlTermStr,
+            str2: firstOp.str,
+            position: 0,
+          } as UpdateOperation;
+          let newOps = {
+            type: "bulk",
+            operations: [newReplaceOp].concat(ops.slice(1)),
+          } as UpdateOperation;
+          try {
+            let repResultList = fuse(deepCloneEnvironment(env), newOps, term);
+            let filteredRepResultList = repResultList.filter(
+              (repResult) =>
+                repResult.remainingOperation.type === "bulk" &&
+                repResult.remainingOperation.operations[0].type === "id"
+            );
+            // Note: very adhoc implementation for loop item insertion:
+            if (filteredRepResultList.length === 1) {
+              let filteredRepResult = filteredRepResultList[0];
+              // suppose only two ops and swap them.
+              let remainingOps = filteredRepResult.remainingOperation;
+              //@ts-ignore
+              [remainingOps.operations[0], remainingOps.operations[1]] = [remainingOps.operations[1],remainingOps.operations[0]];
+              let idResultList = fuse(
+                deepCloneEnvironment(filteredRepResult.newEnv),
+                filteredRepResult.remainingOperation,
+                term
+              );
 
+              for(const idResult of idResultList) {
+                loopItemResultList.push({
+                  newEnv: idResult.newEnv,
+                  newTermNode: {
+                    type: "seq",
+                    nodes: [filteredRepResult.newTermNode, idResult.newTermNode],
+                  },
+                  remainingOperation: idResult.remainingOperation, 
+                })
+              }
+            }
+          } catch (error) {
+            // console.log(error);
+          }
+
+          // solution 2: insert before
+          // 如果postion是0,可以插入一个const(str)在前面，并更新后面的postion值
+            let deltaN = firstOp.str.length;
+
+            // Adjust positions for the remaining operations
+            const adjustedRestOps = restOps.map((op) => {
+              if (op.type === "id") {
+                return op;
+              } else if (!("position" in op)) {
+                throw new Error("All operations must have positions");
+              } else {
+                return { ...op, position: op.position - deltaN };
+              }
+            });
+            // Combine the remaining operations
+            let remainingBulkOp: UpdateOperation = {
+              type: "bulk",
+              operations: adjustedRestOps,
+            };
+            let resultList = fuse(deepCloneEnvironment(env), remainingBulkOp, term);
+            resultList.map((result) => {
+              result.newTermNode = {
+                type: "seq",
+                nodes: [{ type: "sep", value: firstOp.str }, result.newTermNode],
+              };
+              return result;
+            });
+            loopItemResultList = loopItemResultList.concat(resultList);
+        }
+      } else if (operation.type === "insert" && operation.position === 0) {
+        let origianlTermStr = evaluateTermNode(term);
+        let newReplaceOp = {
+          type: "replace",
+          str1: origianlTermStr,
+          str2: operation.str,
+          position: 0,
+        } as UpdateOperation;
+
+        let repResultList = fuse(env, newReplaceOp, term);
+        let filteredRepResultList = repResultList.filter(
+          (repResult) => repResult.remainingOperation.type === "id"
+        );
+        if (filteredRepResultList.length === 1) {
+          let filteredRepResult = filteredRepResultList[0];
+          let idResultList = fuse(
+            filteredRepResult.newEnv,
+            { type: "id" },
+            term
+          );
+          let idResult = idResultList[0];
+          loopItemResultList.push({
+            newEnv: idResult.newEnv,
+            newTermNode: {
+              type: "seq",
+              nodes: [filteredRepResult.newTermNode, idResult.newTermNode],
+            },
+            remainingOperation: { type: "id" },
+          });
+        } else {
+          // try parse insertion with replace fail, rollback to normal.
+        }
+      }
+
+      // 2. nomrmal case
       let varName = term.variable.name;
       let varExp = term.binding[0];
       let varVal = term.binding[1];
@@ -996,36 +1124,52 @@ export function fuse(
         );
       }
 
-      let resultList = fuse(env1, operation, term.body);
-      return resultList.map(({ newEnv, newTermNode, remainingOperation }) => {
-        // 要考虑删除的情况 varName不再newEnv中存在
-        if (varName in newEnv) {
-          let newVarVal = newEnv[varName][0];
-          let newArrVal = env[newArrVarName][0] as Value[]; // must be an array
-          newArrVal.push(newVarVal);
-          env[newArrVarName] = [newArrVal, [newArrVal]];
+      let bodyResultList = fuse(env1, operation, term.body);
+      let optional2LoopitemReulstList = bodyResultList.map(
+        ({ newEnv, newTermNode, remainingOperation }) => {
+          // 要考虑删除的情况 varName不再newEnv中存在
+          if (varName in newEnv) {
+            let newVarVal = newEnv[varName][0];
+            let newArrVal = env[newArrVarName][0] as Value[]; // must be an array
+            newArrVal.push(newVarVal);
+            env[newArrVarName] = [newArrVal, [newArrVal]];
 
-          let { newEnv: updatedEnv, newExp } = fuseExp(env, newVarVal, varExp);
-          return {
-            newEnv: updatedEnv,
-            newTermNode: {
-              type: "lambda",
-              variable: term.variable,
-              body: newTermNode,
-              binding: [newExp, newVarVal],
-              marker: term.marker,
-            },
-            remainingOperation: remainingOperation,
-          };
-        } else {
-          // deleted item
-          return {
-            newEnv: newEnv,
-            newTermNode: {type:'bot'},
-            remainingOperation:remainingOperation
+            let { newEnv: updatedEnv, newExp } = fuseExp(
+              env,
+              newVarVal,
+              varExp
+            );
+            return {
+              newEnv: updatedEnv,
+              newTermNode: {
+                type: "lambda",
+                variable: term.variable,
+                body: newTermNode,
+                binding: [newExp, newVarVal],
+                marker: term.marker,
+              },
+              remainingOperation: remainingOperation,
+            } as {
+              newEnv: Environment;
+              newTermNode: TermNode;
+              remainingOperation: UpdateOperation;
+            };
+          } else {
+            // deleted item
+            return {
+              newEnv: newEnv,
+              newTermNode: { type: "bot" },
+              remainingOperation: remainingOperation,
+            } as {
+              newEnv: Environment;
+              newTermNode: TermNode;
+              remainingOperation: UpdateOperation;
+            };
           }
         }
-      });
+      );
+
+      return loopItemResultList.concat(optional2LoopitemReulstList);
     } else {
       let varName = term.variable.name;
       let varExp = term.binding[0];
@@ -1180,22 +1324,28 @@ export function fuse(
 
     return results.map((result) => {
       return result;
-    //   return {
-    //   newEnv: result.newEnv,
-    //   newTermNode:
-    //     result.newTermNode.type === "seq" &&
-    //     result.newTermNode.nodes.length === 1
-    //       ? result.newTermNode.nodes[0]
-    //       : result.newTermNode,
-    //   remainingOperation: result.remainingOperation,
-    // }
+      //   return {
+      //   newEnv: result.newEnv,
+      //   newTermNode:
+      //     result.newTermNode.type === "seq" &&
+      //     result.newTermNode.nodes.length === 1
+      //       ? result.newTermNode.nodes[0]
+      //       : result.newTermNode,
+      //   remainingOperation: result.remainingOperation,
+      // }
     });
   } else if (term.type === "end") {
     let results: {
       newEnv: Environment;
       newTermNode: TermNode;
       remainingOperation: UpdateOperation;
-    }[] = [{ newEnv: deepCloneEnvironment(env), newTermNode: term, remainingOperation: operation }];
+    }[] = [
+      {
+        newEnv: deepCloneEnvironment(env),
+        newTermNode: term,
+        remainingOperation: operation,
+      },
+    ];
     return results;
   } else {
     throw new Error(
@@ -1322,7 +1472,10 @@ export function fuseExp(
       // construct exp
       let elements = exp.elements;
       let updatedElements = alignAndUpdate(elements, value as Value[]);
-      return {newEnv: {}, newExp: {type:'array', elements: updatedElements}};
+      return {
+        newEnv: {},
+        newExp: { type: "array", elements: updatedElements },
+      };
     default:
       throw new Error(`Unsupported expression type: ${exp.type}`);
   }
@@ -1332,11 +1485,11 @@ function alignAndUpdate(elements: Expr[], valLst: Value[]): Expr[] {
   const updatedElements: Expr[] = [];
 
   for (let i = 0; i < valLst.length; i++) {
-      if (i < elements.length) {
-          updatedElements.push(updateExpr(elements[i], valLst[i]));
-      } else {
-          updatedElements.push(convertToExpr(valLst[i]));
-      }
+    if (i < elements.length) {
+      updatedElements.push(updateExpr(elements[i], valLst[i]));
+    } else {
+      updatedElements.push(convertToExpr(valLst[i]));
+    }
   }
 
   return updatedElements;
@@ -1344,48 +1497,64 @@ function alignAndUpdate(elements: Expr[], valLst: Value[]): Expr[] {
 
 function updateExpr(expr: Expr, value: Value): Expr {
   switch (expr.type) {
-      case 'constant':
-          return { ...expr, value: value as number | boolean | string | [] | null | ObjectLiteral };
-      case 'array':
-          return { ...expr, elements: alignAndUpdate(expr.elements, value as Value[]) };
-      case 'object':
-          return {
-              ...expr,
-              fields: Object.keys(expr.fields).reduce((fields, key) => {
-                  fields[key] = { ...expr.fields[key], value: (value as ObjectValue).fields[key] };
-                  return fields;
-              }, {} as { [key: string]: Constant })
+    case "constant":
+      return {
+        ...expr,
+        value: value as number | boolean | string | [] | null | ObjectLiteral,
+      };
+    case "array":
+      return {
+        ...expr,
+        elements: alignAndUpdate(expr.elements, value as Value[]),
+      };
+    case "object":
+      return {
+        ...expr,
+        fields: Object.keys(expr.fields).reduce((fields, key) => {
+          fields[key] = {
+            ...expr.fields[key],
+            value: (value as ObjectValue).fields[key],
           };
-      // case 'freeze':
-          // return { ...expr, expression: updateExpr(expr.expression, value) };
-      default:
-          throw new Error(`Unsupported expression type: ${(expr as any).type}`);
+          return fields;
+        }, {} as { [key: string]: Constant }),
+      };
+    // case 'freeze':
+    // return { ...expr, expression: updateExpr(expr.expression, value) };
+    default:
+      throw new Error(`Unsupported expression type: ${(expr as any).type}`);
   }
 }
 
 function convertToExpr(value: Value): Expr {
-  if (typeof value === 'number' || typeof value === 'boolean' || typeof value === 'string' || value === null) {
-      return { type: 'constant', value };
+  if (
+    typeof value === "number" ||
+    typeof value === "boolean" ||
+    typeof value === "string" ||
+    value === null
+  ) {
+    return { type: "constant", value };
   }
   if (Array.isArray(value)) {
-      return { type: 'array', elements: value.map(convertToExpr) };
+    return { type: "array", elements: value.map(convertToExpr) };
   }
-  if (typeof value === 'object' && value !== null) {
-      return { type: 'object', fields: Object.keys(value.fields).reduce((fields, key) => {
-          fields[key] = { type: 'constant', value: value.fields[key] };
-          return fields;
-      }, {} as { [key: string]: Constant }) };
+  if (typeof value === "object" && value !== null) {
+    return {
+      type: "object",
+      fields: Object.keys(value.fields).reduce((fields, key) => {
+        fields[key] = { type: "constant", value: value.fields[key] };
+        return fields;
+      }, {} as { [key: string]: Constant }),
+    };
   }
   throw new Error(`Unsupported value type: ${typeof value}`);
 }
-
 
 function strToVal(s: string, v: Value): Value {
   if (typeof v === "number") {
     // parseFloat("0,") = 0
     const parsedNumber = parseFloat(s);
     if (isNaN(parsedNumber)) {
-      throw new Error("convert to number fail: ${s}");
+      throw new Error(`convert to number fail: ` + s);
     } else {
       return parsedNumber;
     }
@@ -1597,10 +1766,20 @@ export function fuseBulk(
   // ending of recursive call
   if (bulkOp.operations.length == 0) {
     return [
-      { newEnv: deepCloneEnvironment(env), newTermNode: term, remainingOperation: { type: "id" } },
+      {
+        newEnv: deepCloneEnvironment(env),
+        newTermNode: term,
+        remainingOperation: { type: "id" },
+      },
     ];
   } else if (term.type === "seq" && term.nodes.length == 0) {
-    return [{ newEnv: deepCloneEnvironment(env), newTermNode: term, remainingOperation: bulkOp }];
+    return [
+      {
+        newEnv: deepCloneEnvironment(env),
+        newTermNode: term,
+        remainingOperation: bulkOp,
+      },
+    ];
   }
 
   const [op1, ...restOps] = bulkOp.operations;
@@ -1641,14 +1820,14 @@ export function fuseBulk(
 
     return results;
   } else if (term.type === "lambda") {
-    return fuse(env, bulkOp, term);
+    let clonedBulkOp = deepCloneOp(bulkOp);
+    return fuse(env, clonedBulkOp, term);
   } else {
     if (
       op1.type === "insert" ||
       op1.type === "delete" ||
       op1.type === "replace"
     ) {
-      const n1 = op1.position;
       // 这里不能简单的fuse整个term，要根据term类型来，就好比上一个if判断是seq，除了seq外，LambdaAppNode需要特殊处理
       const op1Results = fuse(env, op1, term);
       let listOfList = op1Results.map((op1Result) => {
@@ -1695,18 +1874,17 @@ export function fuseBulk(
       });
       return listOfList.reduce((acc, val) => acc.concat(val), []);
     } else if (op1.type === "id") {
-      // case 3: using id through the whole program. 
-      if(restOps.length == 0){
+      // case 3: using id through the whole program.
+      if (restOps.length == 0) {
         return fuse(env, op1, term);
       } else {
-      // case 4
-      // Create a new bulk operation with the remaining operations
-      const newBulkOp: UpdateOperation = {
-        type: "bulk",
-        operations: restOps,
-      };
-      return fuseBulk(env, newBulkOp, term);
-
+        // case 4
+        // Create a new bulk operation with the remaining operations
+        const newBulkOp: UpdateOperation = {
+          type: "bulk",
+          operations: restOps,
+        };
+        return fuseBulk(env, newBulkOp, term);
       }
     }
   }
@@ -1780,15 +1958,19 @@ function isValidValue(value: any): value is Value {
   return false;
 }
 
-
 // 类型保护函数，用于判断一个值是否为 ObjectValue 类型
 function isObjectValue(value: any): value is ObjectValue {
-  return value && typeof value === 'object' && value.type === 'object' && 'fields' in value;
+  return (
+    value &&
+    typeof value === "object" &&
+    value.type === "object" &&
+    "fields" in value
+  );
 }
 
 // 深拷贝函数
 function deepClone(value: Value): Value {
-  if (value === null || typeof value !== 'object') {
+  if (value === null || typeof value !== "object") {
     return value;
   }
 
@@ -1803,7 +1985,7 @@ function deepClone(value: Value): Value {
         clonedFields[key] = deepClone(value.fields[key]);
       }
     }
-    return { type: 'object', fields: clonedFields };
+    return { type: "object", fields: clonedFields };
   }
 
   // 处理普通对象
@@ -1837,22 +2019,42 @@ function deepCloneEnvironment(env: Environment): Environment {
 //   fields: { [key: string]: any };
 // }
 
-
-function initializeMarkerOfVariableInEnv(env: Environment, variableName: string, value: Value): Environment {
-  if (typeof value === 'number' || typeof value === 'boolean' || typeof value === 'string' || value === null) {
-      // 如果是 number, boolean, string 或 null，直接初始化为 [value, []]
-      env[variableName] = [value, []];
+function initializeMarkerOfVariableInEnv(
+  env: Environment,
+  variableName: string,
+  value: Value
+): Environment {
+  if (
+    typeof value === "number" ||
+    typeof value === "boolean" ||
+    typeof value === "string" ||
+    value === null
+  ) {
+    // 如果是 number, boolean, string 或 null，直接初始化为 [value, []]
+    env[variableName] = [value, []];
   } else if (Array.isArray(value)) {
-      // 如果是 Value[]，简单处理为 [value, []]
-      env[variableName] = [value, []];
-  } else if (typeof value === 'object' && value !== null && 'fields' in value) {
-      // 如果是 ObjectValue，生成 [value, [{ field1: [], field2: [] }]]
-      const fieldMarkers = {type:'object', fields: {}} as ObjectValue;
-      for (const field in value.fields) {
-          fieldMarkers.fields[field] = [];
-      }
-      env[variableName] = [value, [fieldMarkers]];
+    // 如果是 Value[]，简单处理为 [value, []]
+    env[variableName] = [value, []];
+  } else if (typeof value === "object" && value !== null && "fields" in value) {
+    // 如果是 ObjectValue，生成 [value, [{ field1: [], field2: [] }]]
+    const fieldMarkers = { type: "object", fields: {} } as ObjectValue;
+    for (const field in value.fields) {
+      fieldMarkers.fields[field] = [];
+    }
+    env[variableName] = [value, [fieldMarkers]];
   }
 
   return env;
+}
+
+// 实现 deepCopy 函数
+function deepCloneOp(operation: UpdateOperation): UpdateOperation {
+  if (operation.type === "bulk") {
+    // 深拷贝 operations 数组中的每个操作
+    const copiedOperations = operation.operations.map(deepCloneOp);
+    return { ...operation, operations: copiedOperations };
+  }
+
+  // 对于其他类型的操作，直接返回浅拷贝
+  return { ...operation };
 }
