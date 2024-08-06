@@ -1,0 +1,4 @@
+«var lst=[1,2,3]»
+«for item in lst front "9
+"»«item»
+«endfor»

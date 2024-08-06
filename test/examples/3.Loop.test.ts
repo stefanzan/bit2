@@ -85,16 +85,27 @@ const exampleInput =
 //   console.log("~~~~~~~~~~~~~~~~~~~~~~~~");
 // });
 
-console.log('--- 7. bulk(insert "9" at 4, insert "," at 5) ------------------');
-BiEval.backward(exampleInput, {type:'bulk', operations:[
-  {type:'insert', str:'9', position:4},
-  {type:'insert', str:',', position:5},
-]}).forEach(updatedCoreAST => {
+// console.log('--- 7. bulk(insert "9" at 4, insert "," at 5) ------------------');
+// BiEval.backward(exampleInput, {type:'bulk', operations:[
+//   {type:'insert', str:'9', position:4},
+//   {type:'insert', str:',', position:5},
+// ]}).forEach(updatedCoreAST => {
+//   console.log(updatedCoreAST);
+//   console.log("~~~~~~~~~~~~~~~~~~~~~~~~");
+// });
+
+
+const exampleInput11 = 
+`«var lst=[1,2,3]»
+«for item in lst»«item»
+«endfor»`;
+
+
+console.log('--- 4. insert "9\n" at 3 ------------------');
+BiEval.backward(exampleInput11, {type:'insert', str:'9\n', position:3}).forEach(updatedCoreAST => {
   console.log(updatedCoreAST);
   console.log("~~~~~~~~~~~~~~~~~~~~~~~~");
 });
-
-
 
 
 // const exampleInput2 = 

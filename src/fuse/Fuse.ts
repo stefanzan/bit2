@@ -80,11 +80,11 @@ export function fuse(
               newTermNode: term,
               remainingOperation: operation,
             },
-            {
-              newEnv: deepCloneEnvironment(env),
-              newTermNode: { ...term, value: str },
-              remainingOperation: { type: "id" },
-            },
+            // {
+            //   newEnv: deepCloneEnvironment(env),
+            //   newTermNode: { ...term, value: str }, // when position not 0, you cannot do this.
+            //   remainingOperation: { type: "id" },
+            // },
           ];
         } else if (position === 0) {
           // 两种更新策略
@@ -839,7 +839,7 @@ export function fuse(
               str: delStr1,
               position: 0,
             } as UpdateOperation;
-            let resultList = fuse(env, op1, term);
+            let resultList = fuse(deepCloneEnvironment(env), op1, term);
             let op2 = {
               type: "delete",
               str: delStr2,
@@ -884,7 +884,7 @@ export function fuse(
         } else if (delPos > valStr.length) {
           const newDelPos = delPos - valStr.length;
           let [{ newEnv, newTermNode, remainingOperation }] = fuse(
-            env,
+            deepCloneEnvironment(env),
             { type: "id" },
             term
           );
@@ -915,14 +915,28 @@ export function fuse(
           if (valStr.startsWith(str1)) {
             const newValStr = str2 + valStr.slice(str1.length);
             const newVal = strToVal(newValStr, val);
-            let { newEnv, newExp } = fuseExp(env, newVal, exp);
+            let { newEnv, newExp } = fuseExp(deepCloneEnvironment(env), newVal, exp);
             // console.log("fuseExp, newVal:", newVal);
             // console.log("newEnv:", newEnv);
             return [
               {
-                newEnv: deepCloneEnvironment(newEnv),
+                newEnv: newEnv,
                 newTermNode: { ...term, binding: [newExp, newVal] },
                 remainingOperation: { type: "id" },
+              },
+            ];
+          } else if(str1.startsWith(valStr)){
+            const newValStr = str2.slice(0, valStr.length);
+            const newVal = strToVal(newValStr, val);
+            let { newEnv, newExp } = fuseExp(deepCloneEnvironment(env), newVal, exp);
+            // Note: simple stragety,same length
+            const restStr1 = str1.slice(valStr.length);
+            const restStr2 = str2.slice(valStr.length);
+            return [
+              {
+                newEnv: newEnv,
+                newTermNode: { ...term, binding: [newExp, newVal] },
+                remainingOperation: { type: "replace", str1:restStr1, str2:restStr2, position:0 },
               },
             ];
           } else {
@@ -932,10 +946,10 @@ export function fuse(
           const newValStr =
             valStr.slice(0, repPos) + str2 + valStr.slice(repPos + str1.length);
           const newVal = strToVal(newValStr, val);
-          let { newEnv, newExp } = fuseExp(env, newVal, exp);
+          let { newEnv, newExp } = fuseExp(deepCloneEnvironment(env), newVal, exp);
           return [
             {
-              newEnv: deepCloneEnvironment(newEnv),
+              newEnv: newEnv,
               newTermNode: { ...term, binding: [newExp, newVal] },
               remainingOperation: { type: "id" },
             },
@@ -943,7 +957,7 @@ export function fuse(
         } else if (repPos >= valStr.length) {
           const newRepPos = repPos - valStr.length;
           let [{ newEnv, newTermNode, remainingOperation }] = fuse(
-            env,
+            deepCloneEnvironment(env),
             { type: "id" },
             term
           );
@@ -1017,12 +1031,17 @@ export function fuse(
                 repResult.remainingOperation.operations[0].type === "id"
             );
             // Note: very adhoc implementation for loop item insertion:
+            // has problem, in case there may be no separtor, you cannot simply swap two ops.
             if (filteredRepResultList.length === 1) {
               let filteredRepResult = filteredRepResultList[0];
               // suppose only two ops and swap them.
               let remainingOps = filteredRepResult.remainingOperation;
+
               //@ts-ignore
-              [remainingOps.operations[0], remainingOps.operations[1]] = [remainingOps.operations[1],remainingOps.operations[0]];
+              if(remainingOps.operations.length>1){
+                //@ts-ignore
+                [remainingOps.operations[0], remainingOps.operations[1]] = [remainingOps.operations[1],remainingOps.operations[0]];
+              }
               let idResultList = fuse(
                 deepCloneEnvironment(filteredRepResult.newEnv),
                 filteredRepResult.remainingOperation,
@@ -1082,14 +1101,14 @@ export function fuse(
           position: 0,
         } as UpdateOperation;
 
-        let repResultList = fuse(env, newReplaceOp, term);
+        let repResultList = fuse(deepCloneEnvironment(env), newReplaceOp, term);
         let filteredRepResultList = repResultList.filter(
           (repResult) => repResult.remainingOperation.type === "id"
         );
         if (filteredRepResultList.length === 1) {
           let filteredRepResult = filteredRepResultList[0];
           let idResultList = fuse(
-            filteredRepResult.newEnv,
+            deepCloneEnvironment(filteredRepResult.newEnv),
             { type: "id" },
             term
           );
@@ -1124,18 +1143,19 @@ export function fuse(
         );
       }
 
-      let bodyResultList = fuse(env1, operation, term.body);
+      let bodyResultList = fuse(deepCloneEnvironment(env1), operation, term.body);
       let optional2LoopitemReulstList = bodyResultList.map(
         ({ newEnv, newTermNode, remainingOperation }) => {
           // 要考虑删除的情况 varName不再newEnv中存在
+          let envCloned = deepCloneEnvironment(env);
           if (varName in newEnv) {
             let newVarVal = newEnv[varName][0];
-            let newArrVal = env[newArrVarName][0] as Value[]; // must be an array
+            let newArrVal = envCloned[newArrVarName][0] as Value[]; // must be an array
             newArrVal.push(newVarVal);
-            env[newArrVarName] = [newArrVal, [newArrVal]];
+            envCloned[newArrVarName] = [newArrVal, [newArrVal]];
 
             let { newEnv: updatedEnv, newExp } = fuseExp(
-              env,
+              envCloned,
               newVarVal,
               varExp
             );
@@ -1183,7 +1203,7 @@ export function fuse(
       // console.log("operation:", operation);
       // console.log("term.body:", term.body);
       // console.log("env1:", env1);
-      let resultList = fuse(env1, operation, term.body);
+      let resultList = fuse(deepCloneEnvironment(env1), operation, term.body);
       return resultList.map(({ newEnv, newTermNode, remainingOperation }) => {
         // console.log("newEnv:", newEnv);
         let newVarVal = newEnv[varName][0];
@@ -1293,7 +1313,7 @@ export function fuse(
         // console.log(result);
         // console.log(subTerm);
         const subResults = fuse(
-          result.newEnv,
+          deepCloneEnvironment(result.newEnv),
           result.remainingOperation,
           subTerm
         );
@@ -1755,7 +1775,7 @@ export function fuseBulk(
 }[] {
   if (bulkOp.type === "id") {
     // console.log("Bulk, term:", term);
-    return fuse(env, bulkOp, term);
+    return fuse(deepCloneEnvironment(env), bulkOp, term);
     // return [{ newEnv: env, newTermNode: term, remainingOperation: { type: 'id' } }];
   }
 
@@ -1821,7 +1841,7 @@ export function fuseBulk(
     return results;
   } else if (term.type === "lambda") {
     let clonedBulkOp = deepCloneOp(bulkOp);
-    return fuse(env, clonedBulkOp, term);
+    return fuse(deepCloneEnvironment(env), clonedBulkOp, term);
   } else {
     if (
       op1.type === "insert" ||
@@ -1829,7 +1849,7 @@ export function fuseBulk(
       op1.type === "replace"
     ) {
       // 这里不能简单的fuse整个term，要根据term类型来，就好比上一个if判断是seq，除了seq外，LambdaAppNode需要特殊处理
-      const op1Results = fuse(env, op1, term);
+      const op1Results = fuse(deepCloneEnvironment(env), op1, term);
       let listOfList = op1Results.map((op1Result) => {
         let op1Prime = op1Result.remainingOperation;
         if (
@@ -1876,7 +1896,7 @@ export function fuseBulk(
     } else if (op1.type === "id") {
       // case 3: using id through the whole program.
       if (restOps.length == 0) {
-        return fuse(env, op1, term);
+        return fuse(deepCloneEnvironment(env), op1, term);
       } else {
         // case 4
         // Create a new bulk operation with the remaining operations
