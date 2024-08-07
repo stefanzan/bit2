@@ -3,36 +3,7 @@ import * as CorePretty from "../../src/core/PrettyPrint";
 import * as BiEval from "../../src/bx/biEval";
 // import * as BiEval from "../../dist/bit2";
 
-// export const loopExample: TermNode = {
-//   type:'seq',
-//   nodes: [
-//     {
-//       type:'declare', name:{type:'variable', name:'lst'}, 
-//       value:{type:'array',elements:[
-//         { type: 'object', fields: { head: {type:"constant", value: "Hello"}, text: {type:"constant", value: "Hello!" } } },
-//         { type: 'object', fields: { head: {type:"constant", value: "Farewell"}, text: {type:"constant", value: "Good Bye!"} } }
-//       ]}
-//     },
-//     {
-//       type:'loop',
-//       lst:{type:'variable', name:'lst'},
-//       separator: {type:'sep', value:','},
-//       front:{type:'front', value:'['},
-//       rear:{type:'rear', value:']'},
-//       body:{type:'lambda', variable:{type:'variable', name:'item'}, 
-//             body: {
-//               type:'seq',
-//               nodes:[
-//                 {type:'exp', expression:{type:'field', object:{type:'variable', name:'item'}, field:'head'}},
-//                 {type: 'const', value: ":"},
-//                 {type:'exp', expression:{type:'field', object:{type:'variable', name:'item'}, field:'text'}},
-//               ]}
-//             }
-//     },
-//     {type:'end'}
-//   ]
-// }
-// console.log(CorePretty.printToSurface(loopExample));
+
 
 const exampleInput = 
 `«var lst=[1,2,3]»
@@ -101,11 +72,11 @@ const exampleInput11 =
 «endfor»`;
 
 
-console.log('--- 4. insert "9\n" at 3 ------------------');
-BiEval.backward(exampleInput11, {type:'insert', str:'9\n', position:3}).forEach(updatedCoreAST => {
-  console.log(updatedCoreAST);
-  console.log("~~~~~~~~~~~~~~~~~~~~~~~~");
-});
+// console.log('--- 4. insert "9\n" at 3 ------------------');
+// BiEval.backward(exampleInput11, {type:'insert', str:'9\n', position:3}).forEach(updatedCoreAST => {
+//   console.log(updatedCoreAST);
+//   console.log("~~~~~~~~~~~~~~~~~~~~~~~~");
+// });
 
 
 // const exampleInput2 = 
@@ -155,16 +126,16 @@ const exampleInput3 =
 
 
 
-// const exampleInput4 = 
-// `«var lst=[{head:"Modeling", text:"UML"},{head:"Programming", text:"Java"}]»
-// «for p in lst»
-// <h1>«p.head»</h1>
-// «endfor»`;
-// console.log("===Forward Evaluation===");
-// console.log(BiEval.forward(exampleInput4));
-// console.log("=== Backward Evaluation===");
-// // console.log('--- 11. replace "Modeling" with "Modeling Tools" at 6 ------------------');
-// // BiEval.backward(exampleInput3, {type:'replace', str1:'Modeling', str2:"Modeling Tools", position:6}).forEach(updatedCoreAST => {
-// //   console.log(updatedCoreAST);
-// //   console.log("~~~~~~~~~~~~~~~~~~~~~~~~");
-// // });
+const exampleInput4 = 
+`«var lst=[{head:"Modeling", text:"UML"},{head:"Programming", text:"Java"}]»
+«for p in lst»
+<h1>«p.head»</h1>
+«endfor»`;
+console.log("===Forward Evaluation===");
+console.log(BiEval.forward(exampleInput4));
+console.log("=== Backward Evaluation===");
+console.log('--- 11. replace "Modeling" with "Modeling Tools" at 6 ------------------');
+BiEval.backward(exampleInput3, {type:'replace', str1:'Modeling', str2:"Modeling Tools", position:6}).forEach(updatedCoreAST => {
+  console.log(updatedCoreAST);
+  console.log("~~~~~~~~~~~~~~~~~~~~~~~~");
+});

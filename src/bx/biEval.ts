@@ -56,8 +56,8 @@ export function backward(str: string, operation: UpdateOperation): string[] {
     try {
       let updatedCoreASTRedundant = UnEvaluation.unPartialEval(partialAST)
       let updatedCoreAST = UnEvaluation.flatten(updatedCoreASTRedundant);
-      console.log("--------updatedCoreAST------------");
-      CorePrint.printAST(updatedCoreAST);
+      // console.log("--------updatedCoreAST------------");
+      // CorePrint.printAST(updatedCoreAST);
       let surfaceText = CorePretty.printToSurface(updatedCoreAST);
       // console.log("result in backward:\n", surfaceText);
       return surfaceText;

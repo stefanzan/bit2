@@ -1,4 +1,8 @@
-«var lst=[1,2,3]»
-«for item in lst front "9
-"»«item»
-«endfor»
+«var paragraphs=[{head:"Greeting", text:"Hello!"},{head:"Farewell", text:"Good Bye!"}]»
+<!DOCTYPE html>
+  <head></head>
+  <body>«var no=1»«for p in paragraphs»
+    «no=1+no»<h1>«no» . «p.head»</h1>
+    <p>«p.text»</p>«endfor»
+  </body>
+</html>
