@@ -37,9 +37,12 @@ env={};
 
 console.log('===================================')
 console.log('3. insert "Bye!" at 0 |> branchend');
+env['age']=[16,[]];
 fuse(env
   , {type:'insert',str: "Bye!",position:0}
-  , { type:'branchend'} as BranchEndNode
+  , { type:'branchend',
+      condition:[{type:'binary', operator:'<=', left:{type:'variable', name:'age'},right:{type:'constant', value:18}},true]
+  } as BranchEndNode
 ).forEach(({newTermNode: newTerm, remainingOperation: newOp}) => {
   console.log('------')
   printNode(newTerm);

@@ -61,7 +61,9 @@ export function fuse(
       let exp = term.lst as Expr;
       if ((exp as Variable).name) {
         let expName = (exp as Variable).name;
-        env[expName] = env[expName + "_new"]; // assign back
+        let newLstVal = env[expName+"_new"][0] as Value[];
+        newLstVal = newLstVal.reverse();
+        env[expName] = [newLstVal,[newLstVal]];
       } else {
         throw new Error(
           "exp is not a Variable with a name property in loopfront"
@@ -1131,7 +1133,8 @@ export function fuse(
       let varExp = term.binding[0];
       let varVal = term.binding[1];
       let env1 = deepCloneEnvironment(env);
-      env1 = initializeMarkerOfVariableInEnv(env, varName, varVal);
+      env1 = initializeMarkerOfVariableInEnv(env1, varName, varVal);
+
 
       let newArrVarName = "";
       if (marker.lst as Variable) {
@@ -1147,18 +1150,27 @@ export function fuse(
       let optional2LoopitemReulstList = bodyResultList.map(
         ({ newEnv, newTermNode, remainingOperation }) => {
           // 要考虑删除的情况 varName不再newEnv中存在
-          let envCloned = deepCloneEnvironment(env);
-          if (varName in newEnv) {
-            let newVarVal = newEnv[varName][0];
+          // let envCloned = deepCloneEnvironment(env);
+          let envCloned = deepCloneEnvironment(newEnv);
+          if (varName in envCloned) {
+            let newVarVal = envCloned[varName][0];
             let newArrVal = envCloned[newArrVarName][0] as Value[]; // must be an array
             newArrVal.push(newVarVal);
-            envCloned[newArrVarName] = [newArrVal, [newArrVal]];
-
+            // envCloned[newArrVarName] = [newArrVal, [newArrVal]];
+            env1[newArrVarName] = [newArrVal, [newArrVal]];
+            // envCloned = deleteFromEnv(deepCloneEnvironment(envCloned), varName);
+            env1 = deleteFromEnv(deepCloneEnvironment(env1), varName);
             let { newEnv: updatedEnv, newExp } = fuseExp(
-              envCloned,
+              env1,
               newVarVal,
               varExp
             );
+
+            // Note: very important, restore the same name var
+            if(env[varName]){
+              updatedEnv[varName] = env[varName];
+            }
+      
             return {
               newEnv: updatedEnv,
               newTermNode: {
@@ -1176,6 +1188,11 @@ export function fuse(
             };
           } else {
             // deleted item
+
+            // Note: very important, restore the same name var
+            if(env[varName]){
+              newEnv[varName] = env[varName];
+            }
             return {
               newEnv: newEnv,
               newTermNode: { type: "bot" },

@@ -4,15 +4,14 @@ import * as BiEval from "../../src/bx/biEval";
 // import * as BiEval from "../../dist/bit2";
 
 
-
 const exampleInput = 
 `«var lst=[1,2,3]»
 «for item in lst separator "," front "[" rear "]"»«item»«endfor»`;
 
-// console.log("===Forward Evaluation===");
-// console.log(BiEval.forward(exampleInput));
+console.log("===Forward Evaluation===");
+console.log(BiEval.forward(exampleInput));
 
-// console.log("=== Backward Evaluation===");
+console.log("=== Backward Evaluation===");
 // console.log('--- 1. id ------------------');
 // BiEval.backward(exampleInput, {type:'bulk', operations:[]}).forEach(updatedCoreAST => {
 //   console.log(updatedCoreAST);
@@ -44,8 +43,8 @@ const exampleInput =
 //   console.log(updatedCoreAST);
 //   console.log("~~~~~~~~~~~~~~~~~~~~~~~~");
 // });
-// Note: output: «var lst=[]»
-// cannot keep «var lst=[1,2,3]»
+// // Note: output: «var lst=[]»
+// // cannot keep «var lst=[1,2,3]»
 
 // console.log('--- 6. bulk(replace "," with ";" at 3, replace "," with ";" at 5) ------------------');
 // BiEval.backward(exampleInput, {type:'bulk', operations:[
@@ -66,10 +65,10 @@ const exampleInput =
 // });
 
 
-const exampleInput11 = 
-`«var lst=[1,2,3]»
-«for item in lst»«item»
-«endfor»`;
+// const exampleInput11 = 
+// `«var lst=[1,2,3]»
+// «for item in lst»«item»
+// «endfor»`;
 
 
 // console.log('--- 4. insert "9\n" at 3 ------------------');
@@ -91,12 +90,12 @@ const exampleInput11 =
 //   console.log("~~~~~~~~~~~~~~~~~~~~~~~~");
 // });
 
-const exampleInput3 = 
-`«var lst=[{head:"Modeling", text:"UML"},{head:"Programming", text:"Java"}]»
-«for p in lst»
-<h1>«p.head»</h1>
-<p>«p.text»</p>
-«endfor»`;
+// const exampleInput3 = 
+// `«var lst=[{head:"Modeling", text:"UML"},{head:"Programming", text:"Java"}]»
+// «for p in lst»
+// <h1>«p.head»</h1>
+// <p>«p.text»</p>
+// «endfor»`;
 // console.log("===Forward Evaluation===");
 // console.log(BiEval.forward(exampleInput3));
 // console.log("=== Backward Evaluation===");
@@ -126,16 +125,16 @@ const exampleInput3 =
 
 
 
-const exampleInput4 = 
-`«var lst=[{head:"Modeling", text:"UML"},{head:"Programming", text:"Java"}]»
-«for p in lst»
-<h1>«p.head»</h1>
-«endfor»`;
-console.log("===Forward Evaluation===");
-console.log(BiEval.forward(exampleInput4));
-console.log("=== Backward Evaluation===");
-console.log('--- 11. replace "Modeling" with "Modeling Tools" at 6 ------------------');
-BiEval.backward(exampleInput3, {type:'replace', str1:'Modeling', str2:"Modeling Tools", position:6}).forEach(updatedCoreAST => {
-  console.log(updatedCoreAST);
-  console.log("~~~~~~~~~~~~~~~~~~~~~~~~");
-});
+// const exampleInput4 = 
+// `«var lst=[{head:"Modeling", text:"UML"},{head:"Programming", text:"Java"}]»
+// «for p in lst»
+// <h1>«p.head»</h1>
+// «endfor»`;
+// console.log("===Forward Evaluation===");
+// console.log(BiEval.forward(exampleInput4));
+// console.log("=== Backward Evaluation===");
+// console.log('--- 11. replace "Modeling" with "Modeling Tools" at 6 ------------------');
+// BiEval.backward(exampleInput3, {type:'replace', str1:'Modeling', str2:"Modeling Tools", position:6}).forEach(updatedCoreAST => {
+//   console.log(updatedCoreAST);
+//   console.log("~~~~~~~~~~~~~~~~~~~~~~~~");
+// });

@@ -12,8 +12,8 @@ const lambdaAST = lambdalize(flatten(partialNode));
 let str = Evaluation.evaluateTermNode(lambdaAST);
 console.log(str);
 
-// console.log("---------------Branch Example--------------")
-// console.log(Evaluation.evaluateTermNode(lambdalize(flatten(partialEval(initialEnvironment, SimpleCoreExample.branchExample)[1]))));
+console.log("---------------Branch Example--------------")
+console.log(Evaluation.evaluateTermNode(lambdalize(flatten(partialEval(initialEnvironment, SimpleCoreExample.branchExample)[1]))));
 
 console.log("---------------Loop Example--------------")
 console.log(Evaluation.evaluateTermNode(lambdalize(flatten(partialEval(initialEnvironment, SimpleCoreExample.loopExample)[1]))));

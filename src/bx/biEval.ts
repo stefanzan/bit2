@@ -1,7 +1,7 @@
 import * as CoreAST from "../core/AST";
 import * as Expr from "../common/Exp";
 import * as LambdaAST from "../lambda/AST";
-import { partialEval } from "../partialEval/peval";
+import { flatten, partialEval } from "../partialEval/peval";
 import { lambdalize } from "../lambdalize/lambdalize";
 import * as Evaluation from "../lambda/Evaluation";
 import * as UnEvaluation from "../../src/partialEval/unpeval";
@@ -18,7 +18,6 @@ import { operationToStr } from "../../src/fuse/Print";
 import { Environment, fuse, printEnvironment } from "../../src/fuse/Fuse";
 import { printNode } from "../../src/lambda/Print";
 import { unLambdalize } from "../../src/lambdalize/unLambdalize";
-import { flatten } from "../../src/partialEval/peval";
 import * as LambdaPrint from "../../src/lambda/Print";
 
 export function evaluateToLambdaAST(core: CoreAST.TermNode): LambdaAST.TermNode {
@@ -26,7 +25,7 @@ export function evaluateToLambdaAST(core: CoreAST.TermNode): LambdaAST.TermNode 
   const [_, partialNode] = partialEval(initialEnvironment, core);
   // console.log("----------------------------");
   // PartialPrint.printNode(partialNode);
-  const lambdaAST = lambdalize(partialNode);
+  const lambdaAST = lambdalize(flatten(partialNode));
   // console.log("----------------------------");
   // LambdaPrint.printNode(lambdaAST);
   return lambdaAST;
@@ -59,11 +58,11 @@ export function backward(str: string, operation: UpdateOperation): string[] {
       // console.log("--------updatedCoreAST------------");
       // CorePrint.printAST(updatedCoreAST);
       let surfaceText = CorePretty.printToSurface(updatedCoreAST);
-      // console.log("result in backward:\n", surfaceText);
+      console.log("biEval backward, success:\n", surfaceText);
       return surfaceText;
     } catch (error) {
       const typedError = error as Error;
-      console.log(typedError.message);
+      console.log("biEval backward, fail:" + typedError.message);
       return "";
     }
   });

@@ -74,7 +74,7 @@ function unSeq(node: PartialAST.SeqNode): CoreAST.TermNode {
       i += branchSeq.length+1;
     } else if (current.type === 'loopfront') {
       let loopfrontNode = current;
-      let looprearNode = {type:'looprear', value:''};
+      let looprearNode = null;
       const updatedLoopSeq = [];
       for (let j = i + 1; j < nodes.length; j++) {
         const next = nodes[j];
@@ -84,6 +84,9 @@ function unSeq(node: PartialAST.SeqNode): CoreAST.TermNode {
         } else {
           updatedLoopSeq.push(flatten(unPartialEval(nodes[j])));
         }
+      }
+      if(looprearNode==null){
+        throw new Error("No looprear matched.");
       }
 
       // case 1: all deleted, including front/rear
