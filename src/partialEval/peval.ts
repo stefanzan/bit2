@@ -307,7 +307,14 @@ export function evaluateExpr(environment: Map<string, any>, expr: Expr.Expr): [M
             if (typeof objectValue !== 'string' && (typeof objectValue !== 'object' || objectValue === null)) {
                 throw new Error(`Cannot access field '${expr.field}' from non-object`);
             }
-            const fieldValue = objectValue.fields[expr.field];
+
+            let fieldValue = undefined;
+            // handle "xxxx".length
+            if(typeof objectValue === 'string'){
+              fieldValue = objectValue[expr.field as keyof String];
+            } else {
+              fieldValue = objectValue.fields[expr.field];
+            }
             if (fieldValue === undefined) {
                 throw new Error(`Field '${expr.field}' not found in object`);
             }

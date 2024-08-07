@@ -1,6 +1,6 @@
 import * as CoreAST from "../../src/core/AST";
 import * as PartialAST from "../../src/partial/AST";
-import { partialEval } from "../../src/partialEval/peval";
+import { flatten, partialEval } from "../../src/partialEval/peval";
 import * as Expr from "../../src/common/Exp";
 import * as SimpleCoreExample from "../core/0.simple.test";
 import { printNode } from "../../src/partial/Print";
@@ -20,10 +20,10 @@ const coreNode: CoreAST.TermNode = {
 // console.log(partialNode); // Output the partially evaluated node
 
 // const [updatedEnv, partialNode] = partialEval(initialEnvironment, SimpleCoreExample.assignmentExample);
-// const [updatedEnv, partialNode] = partialEval(initialEnvironment, SimpleCoreExample.branchExample);
+const [updatedEnv, partialNode] = partialEval(initialEnvironment, SimpleCoreExample.branchExample);
 // const [updatedEnv, partialNode] = partialEval(initialEnvironment, SimpleCoreExample.loopExample);
-const [updatedEnv, partialNode] = partialEval(initialEnvironment, SimpleCoreExample.loopExampleWithAssign);
+// const [updatedEnv, partialNode] = partialEval(initialEnvironment, SimpleCoreExample.loopExampleWithAssign);
 
 // console.log(partialNode);
-printNode(partialNode);
+printNode(flatten(partialNode));
 
