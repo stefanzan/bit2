@@ -3,15 +3,28 @@ import * as CorePretty from "../../src/core/PrettyPrint";
 import * as BiEval from "../../src/bx/biEval";
 // import * as BiEval from "../../dist/bit2";
 
-
-const exampleInput = 
-`«var lst=[1,2,3]»
+const exampleInput0 = 
+`«var lst=[1]»
 «for item in lst separator "," front "[" rear "]"»«item»«endfor»`;
 
 console.log("===Forward Evaluation===");
-console.log(BiEval.forward(exampleInput));
+console.log(BiEval.forward(exampleInput0));
 
-console.log("=== Backward Evaluation===");
+console.log('--- 4. delete "1" at 2 ------------------');
+BiEval.backward(exampleInput0, {type:'delete', str:'1', position:2}).forEach(updatedCoreAST => {
+  console.log(updatedCoreAST);
+  console.log("~~~~~~~~~~~~~~~~~~~~~~~~");
+});
+
+
+// const exampleInput = 
+// `«var lst=[1,2,3]»
+// «for item in lst separator "," front "[" rear "]"»«item»«endfor»`;
+
+// console.log("===Forward Evaluation===");
+// console.log(BiEval.forward(exampleInput));
+
+// console.log("=== Backward Evaluation===");
 // console.log('--- 1. id ------------------');
 // BiEval.backward(exampleInput, {type:'bulk', operations:[]}).forEach(updatedCoreAST => {
 //   console.log(updatedCoreAST);
@@ -32,8 +45,9 @@ console.log("=== Backward Evaluation===");
 //   console.log("~~~~~~~~~~~~~~~~~~~~~~~~");
 // });
 
+
 // console.log('--- 4. delete "1,2,3" at 2 ------------------');
-// BiEval.backward(exampleInput, {type:'delete', str:'[1,2,3]', position:1}).forEach(updatedCoreAST => {
+// BiEval.backward(exampleInput, {type:'delete', str:'1,2,3', position:1}).forEach(updatedCoreAST => {
 //   console.log(updatedCoreAST);
 //   console.log("~~~~~~~~~~~~~~~~~~~~~~~~");
 // });

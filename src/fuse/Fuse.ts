@@ -188,6 +188,8 @@ export function fuse(
                 },
               },
             ];
+          } else {
+            throw new Error("cannot delete, not match. delStr: " + delStr+ ", s_c: " + s_c);
           }
         } else if (
           delPos < s_c.length &&

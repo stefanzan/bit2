@@ -131,7 +131,16 @@ export function partialEval(environment: Map<string, any>, termNode: CoreAST.Ter
                           body:body,
                           separator:separator
                       },
-                      evaluatedBody,
+                      {
+                        type:'lambda',
+                        variable: body.variable,
+                        binding: [{ type: 'constant', value:element }, element],
+                        marker: {
+                          type: 'loopitem',
+                          lst: list
+                        },
+                        body: evaluatedBody
+                      } as PartialAST.LambdaAppNode,
                       {
                           type: 'looprear',
                           lst: list,
@@ -164,9 +173,6 @@ export function partialEval(environment: Map<string, any>, termNode: CoreAST.Ter
                           lst: list
                       }
                   });
-                  // if(i < e_arr_value.length-1){
-                  //   currentNodes.push(termNode.separator);
-                  // }
               }
 
               // translate currentNodes List to nested lambda form
