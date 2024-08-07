@@ -151,7 +151,7 @@ export function partialEval(environment: Map<string, any>, termNode: CoreAST.Ter
                   const variableName = body.variable.name; // Assuming lambda has a variable with a name
                   updatedEnv.set(variableName, element);
       
-                  const [updatedEnv2, evaluatedBody] = partialEval(updatedEnv, body.body); // Evaluate t1 to t1'
+                  const [updatedEnv2, evaluatedBody] = partialEval(updatedEnv, body.body); // Evaluate ti to ti'
                   updatedEnv = updatedEnv2;
 
                   currentNodes.push({
@@ -164,9 +164,23 @@ export function partialEval(environment: Map<string, any>, termNode: CoreAST.Ter
                           lst: list
                       }
                   });
-                  if(i < e_arr_value.length-1){
-                    currentNodes.push(termNode.separator);
-                  }
+                  // if(i < e_arr_value.length-1){
+                  //   currentNodes.push(termNode.separator);
+                  // }
+              }
+
+              // translate currentNodes List to nested lambda form
+              let nestedLambdaNode = currentNodes[currentNodes.length-1] as PartialAST.LambdaAppNode;
+              for(let i = currentNodes.length-2; i >=0; i--){
+                let previousNode = currentNodes[i] as PartialAST.LambdaAppNode;
+                let accNestedLambdaNode = {
+                  type:'lambda',
+                  variable: previousNode.variable,
+                  binding: previousNode.binding,
+                  marker: previousNode.marker,
+                  body: {type:'seq', nodes:[previousNode.body, termNode.separator, nestedLambdaNode]}
+                } as PartialAST.LambdaAppNode;
+                nestedLambdaNode = accNestedLambdaNode;
               }
       
               return [updatedEnv, {
@@ -179,7 +193,7 @@ export function partialEval(environment: Map<string, any>, termNode: CoreAST.Ter
                           body:body,
                           separator:separator
                       },
-                      ...currentNodes,
+                      nestedLambdaNode,
                       {
                           type: 'looprear',
                           lst: list,

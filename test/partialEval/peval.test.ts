@@ -19,9 +19,11 @@ const coreNode: CoreAST.TermNode = {
 // const [updatedEnv, partialNode] = partialEval(initialEnvironment, coreNode);
 // console.log(partialNode); // Output the partially evaluated node
 
-const [updatedEnv, partialNode] = partialEval(initialEnvironment, SimpleCoreExample.assignmentExample);
+// const [updatedEnv, partialNode] = partialEval(initialEnvironment, SimpleCoreExample.assignmentExample);
 // const [updatedEnv, partialNode] = partialEval(initialEnvironment, SimpleCoreExample.branchExample);
 // const [updatedEnv, partialNode] = partialEval(initialEnvironment, SimpleCoreExample.loopExample);
+const [updatedEnv, partialNode] = partialEval(initialEnvironment, SimpleCoreExample.loopExampleWithAssign);
+
 // console.log(partialNode);
 printNode(partialNode);
 
