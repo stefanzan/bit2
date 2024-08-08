@@ -1158,12 +1158,11 @@ export function fuse(
             let newVarVal = envCloned[varName][0];
             let newArrVal = envCloned[newArrVarName][0] as Value[]; // must be an array
             newArrVal.push(newVarVal);
-            // envCloned[newArrVarName] = [newArrVal, [newArrVal]];
-            env1[newArrVarName] = [newArrVal, [newArrVal]];
-            // envCloned = deleteFromEnv(deepCloneEnvironment(envCloned), varName);
-            env1 = deleteFromEnv(deepCloneEnvironment(env1), varName);
+            // except newArrVarName, varName, others may be updated too.
+            envCloned[newArrVarName] = [newArrVal, [newArrVal]];
+            envCloned = deleteFromEnv(deepCloneEnvironment(envCloned), varName);
             let { newEnv: updatedEnv, newExp } = fuseExp(
-              env1,
+              envCloned,
               newVarVal,
               varExp
             );
@@ -1192,10 +1191,10 @@ export function fuse(
             // deleted item
             // Note: very important, restore the same name var
             if(env[varName]){
-              newEnv[varName] = env[varName];
+              envCloned[varName] = env[varName];
             }
             return {
-              newEnv: newEnv,
+              newEnv: envCloned,
               newTermNode: {
                 type: "lambda",
                 variable: term.variable,
@@ -1221,7 +1220,7 @@ export function fuse(
 
       let env1 = deepCloneEnvironment(env);
       // 判断var类型，非基本类型，需要特殊处理
-      env1 = initializeMarkerOfVariableInEnv(env, varName, varVal);
+      env1 = initializeMarkerOfVariableInEnv(env1, varName, varVal);
 
       // console.log("--------lambda----------");
       // console.log("operation:", operation);

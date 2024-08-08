@@ -60,23 +60,23 @@ console.log(BiEval.forward(exampleInput));
 // // Note: output: «var lst=[]»
 // // cannot keep «var lst=[1,2,3]», because '[', ',', and ']' are separators.
 
-console.log('--- 6. bulk(replace "," with ";" at 3, replace "," with ";" at 5) ------------------');
-BiEval.backward(exampleInput, {type:'bulk', operations:[
-  {type:'replace', str1:',', str2:';', position:3},
-  {type:'replace', str1:',', str2:';', position:5},
-]}).forEach(updatedCoreAST => {
-  console.log(updatedCoreAST);
-  console.log("~~~~~~~~~~~~~~~~~~~~~~~~");
-});
-
-// console.log('--- 7. bulk(insert "9" at 4, insert "," at 5) ------------------');
+// console.log('--- 6. bulk(replace "," with ";" at 3, replace "," with ";" at 5) ------------------');
 // BiEval.backward(exampleInput, {type:'bulk', operations:[
-//   {type:'insert', str:'9', position:4},
-//   {type:'insert', str:',', position:5},
+//   {type:'replace', str1:',', str2:';', position:3},
+//   {type:'replace', str1:',', str2:';', position:5},
 // ]}).forEach(updatedCoreAST => {
 //   console.log(updatedCoreAST);
 //   console.log("~~~~~~~~~~~~~~~~~~~~~~~~");
 // });
+
+console.log('--- 7. bulk(insert "9" at 4, insert "," at 5) ------------------');
+BiEval.backward(exampleInput, {type:'bulk', operations:[
+  {type:'insert', str:'9', position:4},
+  {type:'insert', str:',', position:5},
+]}).forEach(updatedCoreAST => {
+  console.log(updatedCoreAST);
+  console.log("~~~~~~~~~~~~~~~~~~~~~~~~");
+});
 
 
 // const exampleInput11 = 
@@ -113,6 +113,7 @@ BiEval.backward(exampleInput, {type:'bulk', operations:[
 // console.log("===Forward Evaluation===");
 // console.log(BiEval.forward(exampleInput3));
 // console.log("=== Backward Evaluation===");
+
 // console.log('--- 8. replace "Modeling" with "Modeling Tools" at 6 ------------------');
 // BiEval.backward(exampleInput3, {type:'replace', str1:'Modeling', str2:"Modeling Tools", position:6}).forEach(updatedCoreAST => {
 //   console.log(updatedCoreAST);
@@ -148,7 +149,7 @@ BiEval.backward(exampleInput, {type:'bulk', operations:[
 // console.log(BiEval.forward(exampleInput4));
 // console.log("=== Backward Evaluation===");
 // console.log('--- 11. replace "Modeling" with "Modeling Tools" at 6 ------------------');
-// BiEval.backward(exampleInput3, {type:'replace', str1:'Modeling', str2:"Modeling Tools", position:6}).forEach(updatedCoreAST => {
+// BiEval.backward(exampleInput4, {type:'replace', str1:'Modeling', str2:"Modeling Tools", position:6}).forEach(updatedCoreAST => {
 //   console.log(updatedCoreAST);
 //   console.log("~~~~~~~~~~~~~~~~~~~~~~~~");
 // });
