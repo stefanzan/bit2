@@ -3,26 +3,26 @@ import * as CorePretty from "../../src/core/PrettyPrint";
 import * as BiEval from "../../src/bx/biEval";
 // import * as BiEval from "../../dist/bit2";
 
-const exampleInput0 = 
-`«var lst=[1]»
-«for item in lst separator "," front "[" rear "]"»«item»«endfor»`;
-
-console.log("===Forward Evaluation===");
-console.log(BiEval.forward(exampleInput0));
-
-console.log('--- 4. delete "1" at 2 ------------------');
-BiEval.backward(exampleInput0, {type:'delete', str:'1', position:2}).forEach(updatedCoreAST => {
-  console.log(updatedCoreAST);
-  console.log("~~~~~~~~~~~~~~~~~~~~~~~~");
-});
-
-
-// const exampleInput = 
-// `«var lst=[1,2,3]»
+// const exampleInput0 = 
+// `«var lst=[1]»
 // «for item in lst separator "," front "[" rear "]"»«item»«endfor»`;
 
 // console.log("===Forward Evaluation===");
-// console.log(BiEval.forward(exampleInput));
+// console.log(BiEval.forward(exampleInput0));
+
+// console.log('--- 4. delete "1" at 2 ------------------');
+// BiEval.backward(exampleInput0, {type:'delete', str:'1', position:2}).forEach(updatedCoreAST => {
+//   console.log(updatedCoreAST);
+//   console.log("~~~~~~~~~~~~~~~~~~~~~~~~");
+// });
+
+
+const exampleInput = 
+`«var lst=[1,2,3]»
+«for item in lst separator "," front "[" rear "]"»«item»«endfor»`;
+
+console.log("===Forward Evaluation===");
+console.log(BiEval.forward(exampleInput));
 
 // console.log("=== Backward Evaluation===");
 // console.log('--- 1. id ------------------');
@@ -47,7 +47,7 @@ BiEval.backward(exampleInput0, {type:'delete', str:'1', position:2}).forEach(upd
 
 
 // console.log('--- 4. delete "1,2,3" at 2 ------------------');
-// BiEval.backward(exampleInput, {type:'delete', str:'1,2,3', position:1}).forEach(updatedCoreAST => {
+// BiEval.backward(exampleInput, {type:'delete', str:'1,2,3', position:2}).forEach(updatedCoreAST => {
 //   console.log(updatedCoreAST);
 //   console.log("~~~~~~~~~~~~~~~~~~~~~~~~");
 // });
@@ -58,16 +58,16 @@ BiEval.backward(exampleInput0, {type:'delete', str:'1', position:2}).forEach(upd
 //   console.log("~~~~~~~~~~~~~~~~~~~~~~~~");
 // });
 // // Note: output: «var lst=[]»
-// // cannot keep «var lst=[1,2,3]»
+// // cannot keep «var lst=[1,2,3]», because '[', ',', and ']' are separators.
 
-// console.log('--- 6. bulk(replace "," with ";" at 3, replace "," with ";" at 5) ------------------');
-// BiEval.backward(exampleInput, {type:'bulk', operations:[
-//   {type:'replace', str1:',', str2:';', position:3},
-//   {type:'replace', str1:',', str2:';', position:5},
-// ]}).forEach(updatedCoreAST => {
-//   console.log(updatedCoreAST);
-//   console.log("~~~~~~~~~~~~~~~~~~~~~~~~");
-// });
+console.log('--- 6. bulk(replace "," with ";" at 3, replace "," with ";" at 5) ------------------');
+BiEval.backward(exampleInput, {type:'bulk', operations:[
+  {type:'replace', str1:',', str2:';', position:3},
+  {type:'replace', str1:',', str2:';', position:5},
+]}).forEach(updatedCoreAST => {
+  console.log(updatedCoreAST);
+  console.log("~~~~~~~~~~~~~~~~~~~~~~~~");
+});
 
 // console.log('--- 7. bulk(insert "9" at 4, insert "," at 5) ------------------');
 // BiEval.backward(exampleInput, {type:'bulk', operations:[

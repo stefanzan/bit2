@@ -1172,13 +1172,13 @@ export function fuse(
             if(env[varName]){
               updatedEnv[varName] = env[varName];
             }
-      
+            
             return {
               newEnv: updatedEnv,
               newTermNode: {
                 type: "lambda",
                 variable: term.variable,
-                body: newTermNode,
+                body: newTermNode.type!='seq' ? {type:'seq', nodes: [newTermNode]} :newTermNode, // always return seq
                 binding: [newExp, newVarVal],
                 marker: term.marker,
               },
@@ -1190,14 +1190,19 @@ export function fuse(
             };
           } else {
             // deleted item
-
             // Note: very important, restore the same name var
             if(env[varName]){
               newEnv[varName] = env[varName];
             }
             return {
               newEnv: newEnv,
-              newTermNode: { type: "bot" },
+              newTermNode: {
+                type: "lambda",
+                variable: term.variable,
+                body: newTermNode.type!='seq' ? {type:'seq', nodes: [newTermNode]} :newTermNode, // always return seq
+                binding: [{type:'constant', value:null}, null],
+                marker: term.marker,
+              },
               remainingOperation: remainingOperation,
             } as {
               newEnv: Environment;

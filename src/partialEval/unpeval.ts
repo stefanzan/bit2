@@ -75,54 +75,39 @@ function unSeq(node: PartialAST.SeqNode): CoreAST.TermNode {
     } else if (current.type === 'loopfront') {
       let loopfrontNode = current;
       let looprearNode = null;
-      const updatedLoopSeq = [];
-      for (let j = i + 1; j < nodes.length; j++) {
-        const next = nodes[j];
-        if (next.type === 'looprear') {
-          looprearNode = next;
-          break;
+      let updatedLambdaBodyNode = null;
+      let updatedSeparatorNode = null;
+
+      let nextNode = nodes[++i];
+      if(nextNode.type === 'looprear'){
+        looprearNode = nextNode;
+      } else {
+        let nextLambdaAppNode = nextNode as PartialAST.LambdaAppNode;
+        [updatedLambdaBodyNode, updatedSeparatorNode] = unNestLambdaLoopItems(nextLambdaAppNode);
+        nextNode = nodes[++i];
+        if(nextNode.type === 'looprear'){
+          looprearNode = nextNode;
         } else {
-          updatedLoopSeq.push(flatten(unPartialEval(nodes[j])));
+          throw new Error("Shall end with looprear node");
         }
-      }
-      if(looprearNode==null){
-        throw new Error("No looprear matched.");
       }
 
       // case 1: all deleted, including front/rear
-      if(loopfrontNode.value==="" && looprearNode.value==="" && (updatedLoopSeq.length==0 || isAllBot(updatedLoopSeq))){
+      if(loopfrontNode.value==="" && looprearNode.value==="" && updatedLambdaBodyNode===null && updatedSeparatorNode===null){
         newNodes.push(CoreAST.bot());
-      } else if (updatedLoopSeq.length==0 || isAllBot(updatedLoopSeq)){
+      } else if (updatedLambdaBodyNode===null || isBotNode(updatedLambdaBodyNode)){
         // case 2: emtpy list
         newNodes.push(CoreAST.loop(loopfrontNode.lst, loopfrontNode.separator, {type:'front', value:current.value}, {type:'rear', value:looprearNode.value},loopfrontNode.body));
-      } else if (updatedLoopSeq.length==1){
-        // case 3: one in list
-        let body = updatedLoopSeq[0];
-        if(body.type==="lambdawithexpr"){
-          newNodes.push(CoreAST.loop(loopfrontNode.lst, loopfrontNode.separator, {type:'front', value:current.value}, {type:'rear', value:looprearNode.value},constructLambda(body)));
+      } else {
+        if(updatedLambdaBodyNode.type === 'bot'){
+          throw new Error("lambda is bot node");
+        }
+        else if(updatedLambdaBodyNode.type==="lambdawithexpr"){
+          newNodes.push(CoreAST.loop(loopfrontNode.lst, updatedSeparatorNode===null? loopfrontNode.separator: updatedSeparatorNode, {type:'front', value:current.value}, {type:'rear', value:looprearNode.value},constructLambda(updatedLambdaBodyNode as CoreAST.LambdaWithExpr)));
         } else {
           throw new Error("Must be lambda in loopitem");
         }
-      } else {
-        // case 4 and case 5
-        let loopNode = CoreAST.loop(loopfrontNode.lst, loopfrontNode.separator, {type:'front', value:current.value}, {type:'rear', value:looprearNode.value}, loopfrontNode.body);
-
-        let sepNodes = filterSepNodesFromTermNodes(updatedLoopSeq);
-        if(areAllSepNodesEqual(sepNodes)){
-          loopNode.separator = sepNodes[0];
-        } else {
-          throw new Error("seperators in loop are not equal.")
-        }
-
-        let filteredUpdatedLoopSeq = filterBotNodesFromTermNodes(updatedLoopSeq);
-        if(areAllLambdaWithExprsEqual(filteredUpdatedLoopSeq)){
-          loopNode.body = constructLambda(filteredUpdatedLoopSeq[0]);
-        } else {
-          throw new Error("\ x.term in loop seq, all terms are not equal.");
-        }
-        newNodes.push(loopNode);
       }
-     i += updatedLoopSeq.length+1;
     } else {
       newNodes.push(unPartialEval(current));
     }
@@ -130,7 +115,7 @@ function unSeq(node: PartialAST.SeqNode): CoreAST.TermNode {
   return CoreAST.seq(...newNodes);
 }
 
-function unPartialEvalLambdaApp(node: PartialAST.LambdaAppNode):CoreAST.TermNode {
+function unPartialEvalLambdaApp(node: PartialAST.LambdaAppNode):CoreAST.LambdaWithExpr {
   let {variable, body, binding, marker} = node;
   let newBody = unPartialEval(body);
   return {
@@ -141,13 +126,83 @@ function unPartialEvalLambdaApp(node: PartialAST.LambdaAppNode):CoreAST.TermNode
   }
 }
 
+// export interface LambdaAppNode {
+//   type: 'lambda';
+//   variable: Variable;
+//   body: TermNode;
+//   binding: Binding;
+//   marker: Marker;
+// }
+// body不分一定是一个seq, 把 seqnode前面的合成一个seq
+
+function unNestLambdaLoopItems(node: PartialAST.LambdaAppNode) : [CoreAST.LambdaWithExpr|PartialAST.BotNode, CoreAST.SepNode|null] {
+  let firstRealLambdaAppNode = node;
+  let nodeBody = node.body as PartialAST.SeqNode;
+  let innerLambdaAppNode = null;
+  let nodesSeq = [] as PartialAST.TermNode[];
+  let firstSepNode = null;
+  for(let nodeItem of nodeBody.nodes){
+    if(nodeItem.type === 'sep'){
+      firstSepNode = nodeItem;
+    } else if (nodeItem.type === 'lambda'){
+      innerLambdaAppNode = nodeItem;
+    } else {
+      nodesSeq.push(nodeItem);
+    }
+  }//endfor
+
+  firstRealLambdaAppNode.body = isAllBot(nodesSeq) ? {type:'bot'} : {
+    type:'seq',
+    nodes: nodesSeq
+  }
+
+  // 如果只有1个item/或则递归到最后了，则sepNode为null。sepNode为null不代表没有sepNode。
+  if(innerLambdaAppNode == null){
+    if(firstRealLambdaAppNode.body.type==='bot'){
+      return [{type:"bot"}, null]
+    } else {
+      return [unPartialEvalLambdaApp(firstRealLambdaAppNode), null];
+    }
+  } else {
+    let [innerRealLambdaAppNode, innerRealSepNode] = unNestLambdaLoopItems(innerLambdaAppNode);
+    if(innerRealLambdaAppNode.type === 'bot' && innerRealSepNode===null){
+    // 最后一个，且被删掉的情形
+      return [unPartialEvalLambdaApp(firstRealLambdaAppNode), firstSepNode];
+    } else if(firstRealLambdaAppNode.body.type ==='bot' && (firstSepNode ===null)){
+      // 倒数第二个被删掉为bot，且sep也删掉变成了bot，合并到body中了,隐藏sepNode为null
+        return [innerRealLambdaAppNode, innerRealSepNode];
+    } else if(firstRealLambdaAppNode.body.type ==='bot' && (firstSepNode?.value ==='')){
+      // 倒数第二个被删掉为bot，且sep也删掉变成了''
+        return [innerRealLambdaAppNode, innerRealSepNode];
+    } else {
+      let firstRealLambdaNode = unPartialEvalLambdaApp(firstRealLambdaAppNode);
+      let innerRealLambdaNode = innerRealLambdaAppNode as CoreAST.LambdaWithExpr;
+      if(areLambdaWithExprsEqual(firstRealLambdaNode, innerRealLambdaNode)){
+      // 判断两个是否相等
+        if(innerRealSepNode === null){
+          return [firstRealLambdaNode, firstSepNode];
+        } else if(firstSepNode!=null && innerRealSepNode.value === firstSepNode.value){
+          return [firstRealLambdaNode, firstSepNode];
+        } else {
+          throw new Error("sepNode not equal");
+        }
+      } else {
+        throw new Error("lambda body not equal");
+      }
+    }
+  }
+
+}
+
+
+
 // Function to check if a given node is a BotNode
-function isBotNode(node: CoreAST.TermNode): boolean {
+function isBotNode(node: PartialAST.TermNode |CoreAST.TermNode): boolean {
   return node.type === 'bot';
 }
 
 // Function to check whether all elements in a list are BotNode
-function isAllBot(nodes: CoreAST.TermNode[]): boolean {
+function isAllBot(nodes: PartialAST.TermNode[] |CoreAST.TermNode[]): boolean {
   return nodes.every(isBotNode);
 }
 
