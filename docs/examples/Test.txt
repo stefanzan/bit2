@@ -1,2 +1,0 @@
-«VAR no = 0»«no = no + 1»«no»
-«no = no + 1»«no»

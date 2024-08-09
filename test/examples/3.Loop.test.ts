@@ -69,6 +69,7 @@ console.log(BiEval.forward(exampleInput));
 //   console.log("~~~~~~~~~~~~~~~~~~~~~~~~");
 // });
 
+// We don't support this case.
 console.log('--- 7. bulk(insert "9" at 4, insert "," at 5) ------------------');
 BiEval.backward(exampleInput, {type:'bulk', operations:[
   {type:'insert', str:'9', position:4},

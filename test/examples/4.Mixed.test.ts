@@ -2,9 +2,9 @@ import { TermNode, ConstNode, SpaceNode, DeclareNode, AssignNode, ExpNode, SeqNo
 import * as CorePretty from "../../src/core/PrettyPrint";
 import * as BiEval from "../../src/bx/biEval";
 
-// const simpleExampleIntput = 
-// `«var lst=[1,2]»«var no=1»«for p in lst »«no=1+no»«no»
-// «endfor»`
+const simpleExampleIntput = 
+`«var lst=[1,2]»«var no=1»«for p in lst »«no=1+no»«no»
+«endfor»`
 
 // console.log("===Forward Evaluation===");
 // console.log(BiEval.forward(simpleExampleIntput));
@@ -20,23 +20,44 @@ import * as BiEval from "../../src/bx/biEval";
 //   console.log("~~~~~~~~~~~~~~~~~~~~~~~~");
 // });
 
-const simpleExampleIntput2 = 
-`«var lst=[1,2]»«var no=1»«for p in lst »«no=1+no»«no»
-«endfor»`
+// 当前的策略是更新binary exp的右侧
+// 因此，如果写成no+1，就会失败
+// const simpleExampleIntput2 = 
+// `«var lst=[1,2]»«var no=1»«for p in lst »«no=1+no»«no»
+// «endfor»`
 
-console.log("===Forward Evaluation===");
-console.log(BiEval.forward(simpleExampleIntput2));
+// console.log("===Forward Evaluation===");
+// console.log(BiEval.forward(simpleExampleIntput2));
 
-console.log("=== Backward Evaluation===");
+// console.log("=== Backward Evaluation===");
 
-console.log('--- 1. bulk(replace "2" with "1" at 0, replace "3" with "2" at 2) ------------------');
-BiEval.backward(simpleExampleIntput2, {type:'bulk', operations:[
-  {type:'replace', str1:'2', str2:'1', position: 0},
-  {type:'replace', str1:'3', str2:'2', position: 2}
-]}).forEach(updatedCoreAST => {
-  console.log(updatedCoreAST);
-  console.log("~~~~~~~~~~~~~~~~~~~~~~~~");
-});
+// console.log('--- 1. bulk(replace "2" with "1" at 0, replace "3" with "2" at 2) ------------------');
+// BiEval.backward(simpleExampleIntput2, {type:'bulk', operations:[
+//   {type:'replace', str1:'2', str2:'1', position: 0},
+//   {type:'replace', str1:'3', str2:'2', position: 2}
+// ]}).forEach(updatedCoreAST => {
+//   console.log(updatedCoreAST);
+//   console.log("~~~~~~~~~~~~~~~~~~~~~~~~");
+// });
+
+
+// const simpleExampleIntput3 = 
+// `«var lst=[1,2]»«var no=1»«for p in lst »«no=no+1»«no»
+// «endfor»`
+
+// console.log("===Forward Evaluation===");
+// console.log(BiEval.forward(simpleExampleIntput3));
+
+// console.log("=== Backward Evaluation===");
+
+// console.log('--- 1. bulk(replace "2" with "1" at 0, replace "3" with "1" at 2) ------------------');
+// BiEval.backward(simpleExampleIntput3, {type:'bulk', operations:[
+//   {type:'replace', str1:'2', str2:'1', position: 0},
+//   {type:'replace', str1:'3', str2:'1', position: 2}
+// ]}).forEach(updatedCoreAST => {
+//   console.log(updatedCoreAST);
+//   console.log("~~~~~~~~~~~~~~~~~~~~~~~~");
+// });
 
 // const exampleInput = 
 // `«var paragraphs = [{head:"Hello", text:"Hello!"}, {head:"Farewell", text:"Good Bye!"}] »
