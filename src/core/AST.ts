@@ -1,6 +1,6 @@
 import {Expr, Constant, Variable, BinaryOperation, UnaryOperation, FieldAccess, ArrayLiteral, FreezeExp, ObjectLiteral, FunctionCall, BinaryOperator, UnaryOperator} from "../common/Exp";
 
-export type TermNode = ConstNode | SpaceNode | DeclareNode | AssignNode 
+export type TermNode = ConstNode | SpaceNode | DeclareNode | DeclareendNode | AssignNode 
     | ExpNode | SeqNode | IfThenElseNode 
     | LoopNode 
     | CallNode | NopNode | BotNode | EndNode
@@ -21,6 +21,11 @@ export interface DeclareNode {
     type: 'declare';
     name: Variable;
     value: Expr;
+}
+
+export interface DeclareendNode {
+    type: 'declareend';
+    name: Variable;
 }
 
 export interface AssignNode {

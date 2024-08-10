@@ -14,6 +14,9 @@ export function printAST(node: TermNode, indent: string = ''): void {
           console.log(`${indent}Declare: ${node.name.name} =`);
           Print.printExpression(node.value, indent + '  ');
           break;
+      case 'declareend':
+          console.log(`${indent}Declareend: ${node.name.name}`);
+          break;
       case 'assign':
           console.log(`${indent}Assign: ${node.name.name} =`);
           Print.printExpression(node.value, indent + '  ');
@@ -37,9 +40,10 @@ export function printAST(node: TermNode, indent: string = ''): void {
       case 'loop':
           console.log(`${indent}Loop:`);
           Print.printExpression(node.lst, indent + '  ');
-          console.log(`${indent}Separator: ${node.separator.value}`);
-          console.log(`${indent}Front: ${node.front.value}`);
-          console.log(`${indent}Rear: ${node.rear.value}`);
+          console.log(`${indent}${indent}Separator: ${node.separator.value}`);
+          console.log(`${indent}${indent}Front: ${node.front.value}`);
+          console.log(`${indent}${indent}Rear: ${node.rear.value}`);
+          console.log(`${indent}${indent}Body:`);
           printLambda(node.body, indent + '  ');
           break;
       case 'call':

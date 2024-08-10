@@ -11,7 +11,13 @@ const simpleExampleIntput =
 
 // console.log("=== Backward Evaluation===");
 
-// console.log('--- 1. bulk(replace "2" with "1" at 0, replace "3" with "2" at 2) ------------------');
+// console.log('--- 1. id ------------------');
+// BiEval.backward(simpleExampleIntput, {type:'bulk', operations:[]}).forEach(updatedCoreAST => {
+//   console.log(updatedCoreAST);
+//   console.log("~~~~~~~~~~~~~~~~~~~~~~~~");
+// });
+
+// console.log('--- 2. bulk(replace "2" with "1" at 0, replace "3" with "2" at 2) ------------------');
 // BiEval.backward(simpleExampleIntput, {type:'bulk', operations:[
 //   {type:'replace', str1:'2', str2:'1', position: 0},
 //   {type:'replace', str1:'3', str2:'2', position: 2}

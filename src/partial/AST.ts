@@ -1,7 +1,7 @@
 import * as CoreAST from "../core/AST";
 import {Expr, Constant, Variable, ObjectLiteral} from "../common/Exp";
 
-export type TermNode = ConstNode | SpaceNode | DeclareNode | AssignNode | ExpNode
+export type TermNode = ConstNode | SpaceNode | DeclareNode | CoreAST.DeclareendNode | AssignNode | ExpNode
     | NopNode | SeqNode | BranchStartNode | BranchEndNode | CoreAST.SepNode | LambdaAppNode
     | LoopFrontNode | LoopRearNode | EndNode | BotNode | CallStartNode | CallEndNode;
 
@@ -20,6 +20,7 @@ export interface DeclareNode {
     name: Variable;
     value: Binding;
 }
+
 
 export interface AssignNode {
     type: 'assign';

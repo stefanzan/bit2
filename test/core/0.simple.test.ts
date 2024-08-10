@@ -99,6 +99,50 @@ export const loopExampleWithAssign: TermNode = {
   ]
 }
 
+
+
+
+export const loopExampleWithAssignAndIF: TermNode = {
+  type:'seq',
+  nodes: [
+    {
+      type:'declare', name:{type:'variable', name:'lst'}, 
+      value:{type:'array',elements:[
+        {type:"constant", value: "Hello"},
+        {type:"constant", value: "Farewell"}
+      ]}
+    },
+    {
+      type:'declare', name:{type:'variable', name:'no'},
+      value:{type:'constant', value: 0}
+    },
+    {
+      type:'loop',
+      lst:{type:'variable', name:'lst'},
+      separator: {type:'sep', value:'\n'},
+      front:{type:'front', value:''},
+      rear:{type:'rear', value:''},
+      body:{type:'lambda', variable:{type:'variable', name:'item'}, 
+            body: {
+              type:'seq',
+              nodes:[
+                {type:'ite',
+                  condition: {type:'binary', operator:"!=", left:{type:'variable', name:'item'}, right:{type:'constant', value:""}},
+                  trueBranch:{type:'seq', nodes:[
+                    {type:'assign',name:{type:'variable', name:'no'}, value:{type:'binary', operator:'+',left:{type:'variable',name:'no'},right:{type:'constant', value:1}}},
+                    {type:'exp', expression:{type:'variable', name:'no'}},
+                    {type: 'const', value: "."},
+                    {type:'exp', expression:{type:'variable', name:'item'}}
+                  ]},
+                  falseBranch:{type:'nop'}
+                }
+              ]}
+            }
+    },
+    {type:'end'}
+  ]
+}
+
 // console.log("--------assignment-----------");
 // Print.printAST(assignmentExample);
 

@@ -75,22 +75,13 @@ export function fuse(
     switch (operation.type) {
       case "insert":
         const { str, position } = operation;
-        if (s_c.length === 0) {
-          return [
-            {
-              newEnv: deepCloneEnvironment(env),
-              newTermNode: term,
-              remainingOperation: operation,
-            },
-            // {
-            //   newEnv: deepCloneEnvironment(env),
-            //   newTermNode: { ...term, value: str }, // when position not 0, you cannot do this.
-            //   remainingOperation: { type: "id" },
-            // },
-          ];
-        } else if (position === 0) {
+         if (position === 0) {
           // 两种更新策略
-          return [
+          let resultList: {
+            newEnv: Environment;
+            newTermNode: TermNode;
+            remainingOperation: UpdateOperation;
+          }[] = [
             {
               newEnv: deepCloneEnvironment(env),
               newTermNode: { ...term, value: str + s_c },
@@ -103,8 +94,18 @@ export function fuse(
                 nodes: [{ type: "const", value: str }, term],
               },
               remainingOperation: { type: "id" },
-            },
+            }
           ];
+          if (s_c.length === 0 ) {
+            resultList.push( 
+              {
+                newEnv: deepCloneEnvironment(env),
+                newTermNode: term,
+                remainingOperation: operation,
+              }
+            );
+          }
+          return resultList; 
         } else if (position < s_c.length) {
           const newStr = s_c.slice(0, position) + str + s_c.slice(position);
           return [
@@ -1031,124 +1032,6 @@ export function fuse(
         remainingOperation: UpdateOperation;
       }[] = [];
 
-      // if (operation.type === "bulk" && operation.operations.length > 0) {
-      //   let ops = operation.operations;
-      //   const [firstOp, ...restOps] = ops;
-      //   if (firstOp.type === "insert" && firstOp.position === 0) {
-      //     // soltuion 0: try to replace the item
-      //     let origianlTermStr = evaluateTermNode(term);
-      //     let newReplaceOp = {
-      //       type: "replace",
-      //       str1: origianlTermStr,
-      //       str2: firstOp.str,
-      //       position: 0,
-      //     } as UpdateOperation;
-      //     let newOps = {
-      //       type: "bulk",
-      //       operations: [newReplaceOp].concat(ops.slice(1)),
-      //     } as UpdateOperation;
-      //     try {
-      //       let repResultList = fuse(deepCloneEnvironment(env), newOps, term);
-      //       let filteredRepResultList = repResultList.filter(
-      //         (repResult) =>
-      //           repResult.remainingOperation.type === "bulk" &&
-      //           repResult.remainingOperation.operations[0].type === "id"
-      //       );
-      //       // Note: very adhoc implementation for loop item insertion:
-      //       // has problem, in case there may be no separtor, you cannot simply swap two ops.
-      //       if (filteredRepResultList.length === 1) {
-      //         let filteredRepResult = filteredRepResultList[0];
-      //         // suppose only two ops and swap them.
-      //         let remainingOps = filteredRepResult.remainingOperation;
-
-      //         //@ts-ignore
-      //         if(remainingOps.operations.length>1){
-      //           //@ts-ignore
-      //           [remainingOps.operations[0], remainingOps.operations[1]] = [remainingOps.operations[1],remainingOps.operations[0]];
-      //         }
-      //         let idResultList = fuse(
-      //           deepCloneEnvironment(filteredRepResult.newEnv),
-      //           filteredRepResult.remainingOperation,
-      //           term
-      //         );
-
-      //         for(const idResult of idResultList) {
-      //           loopItemResultList.push({
-      //             newEnv: idResult.newEnv,
-      //             newTermNode: {
-      //               type: "seq",
-      //               nodes: [filteredRepResult.newTermNode, idResult.newTermNode],
-      //             },
-      //             remainingOperation: idResult.remainingOperation,
-      //           })
-      //         }
-      //       }
-      //     } catch (error) {
-      //       // console.log(error);
-      //     }
-
-      //     // solution 2: insert before
-      //     // 如果postion是0,可以插入一个const(str)在前面，并更新后面的postion值
-      //       let deltaN = firstOp.str.length;
-
-      //       // Adjust positions for the remaining operations
-      //       const adjustedRestOps = restOps.map((op) => {
-      //         if (op.type === "id") {
-      //           return op;
-      //         } else if (!("position" in op)) {
-      //           throw new Error("All operations must have positions");
-      //         } else {
-      //           return { ...op, position: op.position - deltaN };
-      //         }
-      //       });
-      //       // Combine the remaining operations
-      //       let remainingBulkOp: UpdateOperation = {
-      //         type: "bulk",
-      //         operations: adjustedRestOps,
-      //       };
-      //       let resultList = fuse(deepCloneEnvironment(env), remainingBulkOp, term);
-      //       resultList.map((result) => {
-      //         result.newTermNode = {
-      //           type: "seq",
-      //           nodes: [{ type: "sep", value: firstOp.str }, result.newTermNode],
-      //         };
-      //         return result;
-      //       });
-      //       loopItemResultList = loopItemResultList.concat(resultList);
-      //   }
-      // } else if (operation.type === "insert" && operation.position === 0) {
-      //   let origianlTermStr = evaluateTermNode(term);
-      //   let newReplaceOp = {
-      //     type: "replace",
-      //     str1: origianlTermStr,
-      //     str2: operation.str,
-      //     position: 0,
-      //   } as UpdateOperation;
-
-      //   let repResultList = fuse(deepCloneEnvironment(env), newReplaceOp, term);
-      //   let filteredRepResultList = repResultList.filter(
-      //     (repResult) => repResult.remainingOperation.type === "id"
-      //   );
-      //   if (filteredRepResultList.length === 1) {
-      //     let filteredRepResult = filteredRepResultList[0];
-      //     let idResultList = fuse(
-      //       deepCloneEnvironment(filteredRepResult.newEnv),
-      //       { type: "id" },
-      //       term
-      //     );
-      //     let idResult = idResultList[0];
-      //     loopItemResultList.push({
-      //       newEnv: idResult.newEnv,
-      //       newTermNode: {
-      //         type: "seq",
-      //         nodes: [filteredRepResult.newTermNode, idResult.newTermNode],
-      //       },
-      //       remainingOperation: { type: "id" },
-      //     });
-      //   } else {
-      //     // try parse insertion with replace fail, rollback to normal.
-      //   }
-      // }
 
       // 2. nomrmal case
       let varName = term.variable.name;
@@ -1279,7 +1162,7 @@ export function fuse(
           resultList.map((result) => {
             result.newTermNode = {
               type: "seq",
-              nodes: [{ type: "sep", value: firstOp.str }, result.newTermNode],
+              nodes: [{ type: "const", value: firstOp.str }, result.newTermNode],
             };
             return result;
           });
@@ -1294,7 +1177,7 @@ export function fuse(
         resultList.map((result) => {
           result.newTermNode = {
             type: "seq",
-            nodes: [{ type: "sep", value: operation.str }, result.newTermNode],
+            nodes: [{ type: "const", value: operation.str }, result.newTermNode],
           };
           return result;
         });
@@ -1302,7 +1185,7 @@ export function fuse(
       }
 
 
-      // normal case:
+      // solution2: normal case:
       let varName = term.variable.name;
       let varExp = term.binding[0];
       let varVal = term.binding[1];

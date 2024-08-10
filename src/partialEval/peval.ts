@@ -20,7 +20,8 @@ export function partialEval(environment: Map<string, any>, termNode: CoreAST.Ter
             updatedEnvDeclare.set(termNode.name.name, evaluatedValueDeclare);
             // Return updated environment and PartialAST declare node
             return [updatedEnvDeclare, { type: 'declare', name: termNode.name, value: [termNode.value, evaluatedValueDeclare] }];
-
+        case 'declareend':
+            return [environment, termNode];
         case 'assign':
             // Partially evaluate the value expression
             const [updatedEnvAssign, evaluatedValueAssign] = evaluateExpr(environment, termNode.value);

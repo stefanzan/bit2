@@ -22,6 +22,7 @@
     "core": "node dist/test/core/core.test.js",
     "core.0": "node dist/test/core/0.simple.test.js",
     "core.1": "node dist/test/core/1.core.test.js",
+    "scoped": "node dist/test/scopelize/scopelize.test.js",
     "partial": "node dist/test/partial/partial.test.js",
     "peval": "node dist/test/partialEval/peval.test.js",
     "lambda": "node dist/test/lambda/lambda.test.js",

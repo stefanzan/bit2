@@ -1,6 +1,7 @@
 import * as CoreAST from "../core/AST";
 import * as Expr from "../common/Exp";
 import * as LambdaAST from "../lambda/AST";
+import * as Scope from "../scope/scopelize";
 import { flatten, partialEval } from "../partialEval/peval";
 import { lambdalize } from "../lambdalize/lambdalize";
 import * as Evaluation from "../lambda/Evaluation";
@@ -22,10 +23,12 @@ import * as LambdaPrint from "../../src/lambda/Print";
 
 export function evaluateToLambdaAST(core: CoreAST.TermNode): LambdaAST.TermNode {
   const initialEnvironment = new Map<string, any>();
-  const [_, partialNode] = partialEval(initialEnvironment, core);
+  const scopedCore = Scope.scopelize(core);
+  const [_, partialNode] = partialEval(initialEnvironment, scopedCore);
   // console.log("----------------------------");
   // PartialPrint.printNode(partialNode);
-  const lambdaAST = lambdalize(flatten(partialNode));
+  const flattenedPartialNode = flatten(partialNode);
+  const lambdaAST = lambdalize(flattenedPartialNode);
   // console.log("----------------------------");
   // LambdaPrint.printNode(lambdaAST);
   return lambdaAST;
