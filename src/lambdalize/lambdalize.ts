@@ -67,8 +67,8 @@ function lambdalizeSeq(seqNode: PartialAST.SeqNode): LambdaAST.SeqNode {
             if(currentNode.type!='declare'){
                newNodes.push(lastNode);
             }
-            i = nextIndex; 
           }
+          i = nextIndex; 
       } else {
           newNodes.push(lambdalize(currentNode));
       }

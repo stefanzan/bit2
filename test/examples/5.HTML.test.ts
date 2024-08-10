@@ -11,17 +11,17 @@ console.log(BiEval.forward(simpleExampleIntput));
 
 console.log("=== Backward Evaluation===");
 
-// console.log('--- 1. id ------------------');
-// BiEval.backward(simpleExampleIntput, {type:'bulk', operations:[]}).forEach(updatedCoreAST => {
-//   console.log(updatedCoreAST);
-//   console.log("~~~~~~~~~~~~~~~~~~~~~~~~");
-// });
-
-console.log('--- 2. insert "<!DOCTYPE html>\n" at 0 ------------------');
-BiEval.backward(simpleExampleIntput, {type:'bulk', operations:[{type:'insert', str:"<!DOCTYPE html>\n", position:0}]}).forEach(updatedCoreAST => {
+console.log('--- 1. id ------------------');
+BiEval.backward(simpleExampleIntput, {type:'bulk', operations:[]}).forEach(updatedCoreAST => {
   console.log(updatedCoreAST);
   console.log("~~~~~~~~~~~~~~~~~~~~~~~~");
 });
+
+// console.log('--- 2. insert "<!DOCTYPE html>\n" at 0 ------------------');
+// BiEval.backward(simpleExampleIntput, {type:'bulk', operations:[{type:'insert', str:"<!DOCTYPE html>\n", position:0}]}).forEach(updatedCoreAST => {
+//   console.log(updatedCoreAST);
+//   console.log("~~~~~~~~~~~~~~~~~~~~~~~~");
+// });
 
 
 
