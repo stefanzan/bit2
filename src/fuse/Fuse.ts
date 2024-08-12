@@ -804,12 +804,22 @@ export function fuse(
                     newTermNode: { type: "bot" },
                     remainingOperation: { type: "id" },
                   },
+                  {
+                    newEnv: deepCloneEnvironment(env),
+                    newTermNode: { type: "bot" },
+                    remainingOperation: { type: "id" },
+                  },
                 ];
               } else {
                 // delete exp, delete from env
                 return [
                   {
                     newEnv: deleteFromEnv(deepCloneEnvironment(env), x),
+                    newTermNode: { type: "bot" },
+                    remainingOperation: { type: "id" },
+                  },
+                  {
+                    newEnv: deepCloneEnvironment(env), // keep it in the env
                     newTermNode: { type: "bot" },
                     remainingOperation: { type: "id" },
                   },
@@ -831,6 +841,11 @@ export function fuse(
                     newTermNode: { type: "bot" },
                     remainingOperation: { type: "id" },
                   },
+                  {
+                    newEnv: deepCloneEnvironment(env), // object 不动
+                    newTermNode: { type: "bot" },
+                    remainingOperation: { type: "id" },
+                  }
                 ];
               } else {
                 throw new Error(

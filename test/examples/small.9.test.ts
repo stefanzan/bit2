@@ -34,3 +34,8 @@ BiEval.backward(simpleExampleIntput2, {
   console.log(updatedCoreAST);
   console.log("~~~~~~~~~~~~~~~~~~~~~~~~");
 });
+// «var p={sex:"Female", age:18}»
+// <p>, «p.sex»</p>
+// or
+// «var p={name:"Paul", sex:"Female", age:18}»
+// <p>, «p.sex»</p>
