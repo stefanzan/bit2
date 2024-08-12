@@ -819,7 +819,7 @@ export function fuse(
                     remainingOperation: { type: "id" },
                   },
                   // {
-                  //   newEnv: deepCloneEnvironment(env), // keep it in the env
+                  //   newEnv: deepCloneEnvironment(env), // keep it in the env, because of for, cannot
                   //   newTermNode: { type: "bot" },
                   //   remainingOperation: { type: "id" },
                   // },
@@ -842,7 +842,7 @@ export function fuse(
                     remainingOperation: { type: "id" },
                   },
                   // {
-                  //   newEnv: deepCloneEnvironment(env), // object 不动
+                  //   newEnv: deepCloneEnvironment(env), // object 不动, because of for, cannot
                   //   newTermNode: { type: "bot" },
                   //   remainingOperation: { type: "id" },
                   // }
