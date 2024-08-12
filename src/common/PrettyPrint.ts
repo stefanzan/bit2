@@ -26,7 +26,7 @@ export function prettyPrint(node:Exp.Expr): string {
         return field + ":" + prettyPrint(fieldsObj[field]);
       }).join(', ');
       return "{" + fieldsStr  +"}";
-    default:
+    default: // basic types
       return "";
   }
 }

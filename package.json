@@ -45,7 +45,12 @@
     "example.2": "node dist/test/examples/2.Branch.test.js",
     "example.3": "node dist/test/examples/3.Loop.test.js",
     "example.4": "node dist/test/examples/4.Mixed.test.js",
-    "example.5": "node dist/test/examples/5.HTML.test.js"
+    "example.5": "node dist/test/examples/5.HTML.test.js",
+    "example.small.2": "node dist/test/examples/small.2.test.js",
+    "example.small.5": "node dist/test/examples/small.5.test.js",
+    "example.small.6": "node dist/test/examples/small.6.test.js",
+    "example.small.8": "node dist/test/examples/small.8.test.js",
+    "example.small.9": "node dist/test/examples/small.9.test.js"
   },
   "files": [
     "dist/bit2.js",

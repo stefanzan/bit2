@@ -1497,7 +1497,22 @@ export function fuseExp(
         newEnv: {},
         newExp: { type: "array", elements: updatedElements },
       };
+    case "object":
+      let fieldsExp = {};
+      let fieldsValue = (value as ObjectValue).fields;
+      for(const field in fieldsValue) {
+        if(fieldsValue.hasOwnProperty(field)){
+          const value = fieldsValue[field];
+          //@ts-ignore
+          fieldsExp[field] = {type:'constant', value: value};
+        }
+      }
+      return {
+        newEnv: {},
+        newExp: {type:'object', fields: fieldsExp} 
+      }
     default:
+      //@ts-ignore
       throw new Error(`Unsupported expression type: ${exp.type}`);
   }
 }
