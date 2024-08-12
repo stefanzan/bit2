@@ -1,3 +1,1 @@
-«var cList=[{i:1, n:"Female"},{i:2, n:"Male"}]»
-«for c in cList»<p>«c.i».«c.n»</p>
-«endfor»
+Hello Boys and Girls!

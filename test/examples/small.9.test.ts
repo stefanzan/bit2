@@ -36,6 +36,6 @@ BiEval.backward(simpleExampleIntput2, {
 });
 // «var p={sex:"Female", age:18}»
 // <p>, «p.sex»</p>
-// or
+// cannot support the following, because of foritems deletion needs to be deleted.
 // «var p={name:"Paul", sex:"Female", age:18}»
 // <p>, «p.sex»</p>

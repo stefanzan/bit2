@@ -1,6 +1,6 @@
 1. template program 
 «var lst= [{i:1, n: “Female”}, {i:2, n: “Male}]»
-«FOR c: lst»
+«FOR c in lst»
 «IF c.i%2==0»
 <p>«c.n»</p>
 «ENDIF»

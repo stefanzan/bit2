@@ -370,8 +370,9 @@ function areTermNodesEqual(node1: CoreAST.TermNode, node2: CoreAST.TermNode): bo
     case 'exp':
       return areExprEqual((node1 as CoreAST.ExpNode).expression, (node2 as CoreAST.ExpNode).expression);
     case 'seq':
-      const seq1 = (node1 as CoreAST.SeqNode).nodes;
-      const seq2 = (node2 as CoreAST.SeqNode).nodes;
+      // preprocessing, remove const("")
+      const seq1 = (node1 as CoreAST.SeqNode).nodes.filter(node => {return !(node.type === 'const' && node.value === "");});
+      const seq2 = (node2 as CoreAST.SeqNode).nodes.filter(node => {return !(node.type === 'const' && node.value === "");});
       if (seq1.length !== seq2.length) {
         return false;
       }
