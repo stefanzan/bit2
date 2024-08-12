@@ -2,55 +2,89 @@ import { TermNode, ConstNode, SpaceNode, DeclareNode, AssignNode, ExpNode, SeqNo
 import * as CorePretty from "../../src/core/PrettyPrint";
 import * as BiEval from "../../src/bx/biEval";
 
+
+
+
 const simpleExampleIntput = 
-`«var paragraphs =[1,2] »«var no = 0»«for p in paragraphs»«if p != 0»«no = no + 1»«no»«endif»
-«endfor»`
+`«var paragraphs =[{head:"Hello", text:"Hello!"}, {head:"Farewell", text:"Good Bye!"}] »
+<html>
+    <body>«var no = 0»«for p in paragraphs»
+      «if p.head != ""»«no = no + 1»<h1>«no».«p.head»</h1>«endif»
+        <p>
+          «p.text»
+        </p>«endfor»
+    </body>
+</html>`
 
 console.log("===Forward Evaluation===");
 console.log(BiEval.forward(simpleExampleIntput));
 
 console.log("=== Backward Evaluation===");
 
-console.log('--- 1. id ------------------');
-BiEval.backward(simpleExampleIntput, {type:'bulk', operations:[]}).forEach(updatedCoreAST => {
-  console.log(updatedCoreAST);
-  console.log("~~~~~~~~~~~~~~~~~~~~~~~~");
-});
-
-// console.log('--- 2. insert "<!DOCTYPE html>\n" at 0 ------------------');
-// BiEval.backward(simpleExampleIntput, {type:'bulk', operations:[{type:'insert', str:"<!DOCTYPE html>\n", position:0}]}).forEach(updatedCoreAST => {
+// console.log('--- 1. id ------------------');
+// BiEval.backward(simpleExampleIntput, {type:'bulk', operations:[]}).forEach(updatedCoreAST => {
 //   console.log(updatedCoreAST);
 //   console.log("~~~~~~~~~~~~~~~~~~~~~~~~");
 // });
-
-
-
-
-
-// const simpleExampleIntput = 
-// `«var paragraphs =[{head:"Hello", text:"Hello!"}, {head:"Farewell", text:"Good Bye!"}] »
-// <html>
-//     <body>«var no = 0»«for p in paragraphs»
-//       «if p.head != ""»«no = no + 1»<h1>«no».«p.head»</h1>«endif»
-//         <p>
-//           «p.text»
-//         </p>«endfor»
-//     </body>
-// </html>`
-
-// console.log("===Forward Evaluation===");
-// console.log(BiEval.forward(simpleExampleIntput));
-
-// console.log("=== Backward Evaluation===");
-
-// // console.log('--- 1. id ------------------');
-// // BiEval.backward(simpleExampleIntput, {type:'bulk', operations:[]}).forEach(updatedCoreAST => {
-// //   console.log(updatedCoreAST);
-// //   console.log("~~~~~~~~~~~~~~~~~~~~~~~~");
-// // });
 
 // console.log('--- 2. insert "<!DOCTYPE html>\n" at 1 ------------------');
 // BiEval.backward(simpleExampleIntput, {type:'insert', str:"<!DOCTYPE html>\n", position:1}).forEach(updatedCoreAST => {
 //   console.log(updatedCoreAST);
 //   console.log("~~~~~~~~~~~~~~~~~~~~~~~~");
 // });
+
+// console.log('--- 3. insert "<head></head>\n" at 8 ------------------');
+// BiEval.backward(simpleExampleIntput, {type:'insert', str:"<head></head>\n", position:8}).forEach(updatedCoreAST => {
+//   console.log(updatedCoreAST);
+//   console.log("~~~~~~~~~~~~~~~~~~~~~~~~");
+// });
+
+// 在"1.HELLO"的"1"后面插入1个空格
+// console.log('--- 4. insert " " at 30 ------------------');
+// BiEval.backward(simpleExampleIntput, {type:'insert', str:" ", position:44}).forEach(updatedCoreAST => {
+//   console.log(updatedCoreAST);
+//   console.log("~~~~~~~~~~~~~~~~~~~~~~~~");
+// });
+// // no result, since lambda body not equal
+
+// console.log('--- 4. insert "Greeting" at 30 ------------------');
+// BiEval.backward(simpleExampleIntput, {type:'insert', str:"Greeting", position:44}).forEach(updatedCoreAST => {
+//   console.log(updatedCoreAST);
+//   console.log("~~~~~~~~~~~~~~~~~~~~~~~~");
+// });
+
+
+// 在"1.HELLO"的"O"后面插入1个空格
+// console.log('--- 5. insert " " at 36 ------------------');
+// BiEval.backward(simpleExampleIntput, {type:'insert', str:" ", position:36}).forEach(updatedCoreAST => {
+//   console.log(updatedCoreAST);
+//   console.log("~~~~~~~~~~~~~~~~~~~~~~~~");
+// });
+
+// 删除"<html>"中的"t"
+// console.log('--- 6. delete "t" at 3 ------------------');
+// BiEval.backward(simpleExampleIntput, {type:'delete', str:"t", position:3}).forEach(updatedCoreAST => {
+//   console.log(updatedCoreAST);
+//   console.log("~~~~~~~~~~~~~~~~~~~~~~~~");
+// });
+
+// 删除"<html>\n"
+// console.log('--- 7. delete "<html>\n" at 1 ------------------');
+// BiEval.backward(simpleExampleIntput, {type:'delete', str:"<html>\n", position:1}).forEach(updatedCoreAST => {
+//   console.log(updatedCoreAST);
+//   console.log("~~~~~~~~~~~~~~~~~~~~~~~~");
+// });
+
+console.log('--- 8. bulk(delete "<html>" at 1, delete "\n" at  1) ------------------');
+BiEval.backward(simpleExampleIntput, {
+  type:'bulk',
+  operations:[
+    {type:'delete', str:"<html>", position:1},
+    {type:'delete', str:"\n", position:1}
+  ]
+}).forEach(updatedCoreAST => {
+  console.log(updatedCoreAST);
+  console.log("~~~~~~~~~~~~~~~~~~~~~~~~");
+});
+// 因为const("<html>\n")整个是一个term, 因此第一个deletion做完之后，第二个op被更新为 delete "\n" at -1
+// 当前解法：将字符串以\n来切割，切得更细

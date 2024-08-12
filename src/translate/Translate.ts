@@ -54,7 +54,17 @@ function convertStringToNodes(str: string): Core.TermNode[] {
   for (let char of str) {
     if (char === ' ') {
       if (buffer.length > 0) {
-        nodes.push(Core.constNode(buffer));
+        if(buffer.endsWith("\n")){
+          // 以\n切割
+          const parts = buffer.split(/(\n)/);
+          for(const part of parts){
+            if(part!=''){
+              nodes.push(Core.constNode(part));
+            }
+          }
+        } else {
+          nodes.push(Core.constNode(buffer));
+        }
         buffer = '';
       }
       nodes.push(Core.space(1)); // Add SpaceNode for each space
@@ -64,7 +74,17 @@ function convertStringToNodes(str: string): Core.TermNode[] {
   }
 
   if (buffer.length > 0) {
-    nodes.push(Core.constNode(buffer));
+    if(buffer.endsWith("\n")){
+      // 以\n切割
+      const parts = buffer.split(/(\n)/);
+      for(const part of parts){
+        if(part!=''){
+          nodes.push(Core.constNode(part));
+        }
+      }
+    } else {
+      nodes.push(Core.constNode(buffer));
+    }
   }
 
   return nodes;
