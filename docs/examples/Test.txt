@@ -1,2 +1,3 @@
-«var p={name:"Paul", sex:"Female", age:18}»
-<p>«p.name», «p.sex»</p>
+«var cList=[{i:1, n:"Female"},{i:2, n:"Male"}]»
+«for c in cList»<p>«c.i».«c.n»</p>
+«endfor»

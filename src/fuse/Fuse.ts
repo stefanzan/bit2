@@ -818,11 +818,11 @@ export function fuse(
                     newTermNode: { type: "bot" },
                     remainingOperation: { type: "id" },
                   },
-                  {
-                    newEnv: deepCloneEnvironment(env), // keep it in the env
-                    newTermNode: { type: "bot" },
-                    remainingOperation: { type: "id" },
-                  },
+                  // {
+                  //   newEnv: deepCloneEnvironment(env), // keep it in the env
+                  //   newTermNode: { type: "bot" },
+                  //   remainingOperation: { type: "id" },
+                  // },
                 ];
               }
             } else if (exp as FieldAccess) {
@@ -841,11 +841,11 @@ export function fuse(
                     newTermNode: { type: "bot" },
                     remainingOperation: { type: "id" },
                   },
-                  {
-                    newEnv: deepCloneEnvironment(env), // object 不动
-                    newTermNode: { type: "bot" },
-                    remainingOperation: { type: "id" },
-                  }
+                  // {
+                  //   newEnv: deepCloneEnvironment(env), // object 不动
+                  //   newTermNode: { type: "bot" },
+                  //   remainingOperation: { type: "id" },
+                  // }
                 ];
               } else {
                 throw new Error(
@@ -1076,9 +1076,19 @@ export function fuse(
           // let envCloned = deepCloneEnvironment(env);
           let envCloned = deepCloneEnvironment(newEnv);
           if (varName in envCloned) {
-            let newVarVal = envCloned[varName][0];
+            let newVarVal = envCloned[varName][0] as Value;
             let newArrVal = envCloned[newArrVarName][0] as Value[]; // must be an array
-            newArrVal.push(newVarVal);
+
+            if(typeof newVarVal === 'object' && newVarVal !==null && 'type' in newVarVal){
+              if(newVarVal.type === 'object' && Object.keys(newVarVal.fields).length === 0) {
+                // not push
+              } else {
+                newArrVal.push(newVarVal);
+              }
+            } else {
+              newArrVal.push(newVarVal);
+            }
+
             // except newArrVarName, varName, others may be updated too.
             envCloned[newArrVarName] = [newArrVal, [newArrVal]];
             envCloned = deleteFromEnv(deepCloneEnvironment(envCloned), varName);

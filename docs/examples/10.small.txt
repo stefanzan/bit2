@@ -1,6 +1,6 @@
 1. template program 
-«var cList = [{i: 1, n: “Female”}, {i:2, n: “Male}]»
-«FOR c: cList »
+«var cList = [{i: 1, n: "Female"}, {i:2, n: "Male"}]»
+«FOR c in cList »
 <p>«c.i».«c.n»</p>
 «ENDFOR»
 
