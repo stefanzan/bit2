@@ -1,6 +1,9 @@
-«var c={name:"Person", properties:[object Object],[object Object]}»
-class «c.name» {
-  «var props=c.properties»«for p in props»
-  private «p.typeName» «p.name»;
-  «endfor»
-}
+«var paragraphs=[{head:"Hello", text:"Hello!"},{head:"Farewell", text:"Good Bye!"}]»
+<html>
+    <body>«var no=0»«for p in paragraphs»
+        «if p.head!=""»«no=no+1»<h1>«no».<b>«p.head»</b></h1>«endif»
+        <p>
+          «p.text»
+        </p>«endfor»
+    </body>
+</html>

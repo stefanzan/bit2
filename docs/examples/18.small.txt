@@ -1,17 +1,11 @@
 1. template program 
-var paragraphs = freeze([{head:"Hello", text:"Hello!"}, {head:"Farewell", text:"Good Bye!"}]) »
+«var paragraphs = [{head:"Hello", text:"Hello!"}, {head:"Farewell", text:"Good Bye!"}]»
 <html>
-    <body>
-      «var no = 0»
-      «for p: paragraphs»
-        «if p.head != null»
-          «no = no + 1»
-          <h1>«no».«p.head.toUpperCase»</h1>
-        «endif»
+    <body>«var no = 0»«for p in paragraphs»
+        «if p.head != ""»«no = no + 1»<h1>«no».«p.head»</h1>«endif»
         <p>
           «p.text»
-        </p>
-      «endfor»
+        </p>«endfor»
     </body>
 </html>
 
