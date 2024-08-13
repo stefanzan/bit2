@@ -1,0 +1,6 @@
+«var v="stefanzantao"»
+«if v.length>10»
+«v»...
+«else»
+«v»
+«endif»

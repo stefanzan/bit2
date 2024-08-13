@@ -1,0 +1,8 @@
+«var age=19»
+«var count=1»
+«if age>=18»
+  Wow! An adult! «count» 
+«else»
+  Hi! A little boy! «count»
+«endif»
+«count»

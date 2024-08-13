@@ -1,0 +1,4 @@
+«var count=1»
+Before: «count»
+«count=count+1»
+After: «count»

@@ -1,0 +1,4 @@
+«VAR no = 0»
+Before: «no»
+«no = no + 1»
+After: «no»

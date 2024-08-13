@@ -19,6 +19,6 @@
     "declaration": true,
     "declarationDir": "./dist"
   },
-  "include": ["src/**/*.ts", "test/**/*.ts"],
+  "include": ["src/**/*.ts", "test/**/*.ts", "test/templates/**/*.ts", "test/templates/2.Branch.bit2", "test/templates/3.Loop.bit2"],
   "exclude": ["node_modules"]
 }

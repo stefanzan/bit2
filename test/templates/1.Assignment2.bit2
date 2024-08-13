@@ -1,0 +1,4 @@
+«VAR no = 100»
+Before: «no»
+«no = no + -88»
+After: «no»

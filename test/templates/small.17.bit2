@@ -1,0 +1,6 @@
+«var c={name:"Person", properties:[{typeName:"String", name:"name"},{typeName:"String", name:"tel"}]}»
+class «c.name» {
+  «var props=c.properties»«for p in props»
+  public «p.typeName» «p.name»;
+  «endfor»
+}

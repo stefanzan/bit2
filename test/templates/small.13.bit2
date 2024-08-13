@@ -1,0 +1,2 @@
+«var time=8»
+«if time<12»Good Afternoon«endif»Good Morning

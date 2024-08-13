@@ -1,0 +1,2 @@
+«var lst=[1,2]»«var no=1»«for p in lst »«no=1+no»«no»
+«endfor»

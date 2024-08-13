@@ -1,0 +1,3 @@
+«var paragraphs =[1,2] »«var no = 1»«for p in paragraphs»«if p != 0»«no = 1 + no»«no»«endif»
+«endfor»
+

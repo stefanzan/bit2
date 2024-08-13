@@ -1,0 +1,2 @@
+«var p={name:"Paul", sex:"Female", age:18}»
+<p>«p.name», «p.sex»</p>

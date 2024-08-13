@@ -1,0 +1,10 @@
+«var paragraphs=[{head:"Hello", text:"Hello!"},{head:"Farewell", text:"Good Bye!"}]»
+<html>
+    <body>«var no=0»
+    «for p in paragraphs»
+        «no=no+1»<h1>«no».«p.head»</h1>
+        <p>
+          «p.text»
+        </p>«endfor»
+    </body>
+</html>
