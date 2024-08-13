@@ -1,1 +1,6 @@
-Hello Boys and Girls!
+«var c={name:"Person", properties:[object Object],[object Object]}»
+class «c.name» {
+  «var props=c.properties»«for p in props»
+  private «p.typeName» «p.name»;
+  «endfor»
+}

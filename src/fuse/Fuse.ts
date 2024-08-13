@@ -1529,7 +1529,7 @@ export function fuseExp(
         if(fieldsValue.hasOwnProperty(field)){
           const value = fieldsValue[field];
           //@ts-ignore
-          fieldsExp[field] = {type:'constant', value: value};
+          fieldsExp[field] = convertToExpr(value);
         }
       }
       return {

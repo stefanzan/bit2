@@ -3,12 +3,24 @@ import * as Exp from "./Exp";
 export function prettyPrint(node:Exp.Expr): string {
   switch(node.type){
     case 'constant':
-      if(typeof node.value === 'string') {
-        return '"' + String(node.value) + '"';
+      let val = node.value;
+      if(typeof val === 'string') {
+        return '"' + String(val) + '"';
+      } else if(typeof val === 'object' && val !== null){
+         if(Array.isArray(val)) { 
+          if( val.length === 0){
+            return "[]";
+          } else if(val.length !== 0){
+            return '[' + (val as Exp.Expr[]).map(prettyPrint).join(', ') + ']';
+          } 
+        } else {
+            return prettyPrint(val as Exp.Expr);
+        }
       } else {
-        return String(node.value);
+        return String(val);
       }
     case 'variable':
+      //@ts-ignore
       return node.name;
     case 'binary':
       return prettyPrint(node.left) + prettyPrintBinaryOperator(node.operator) + prettyPrint(node.right);

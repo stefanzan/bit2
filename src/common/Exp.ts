@@ -6,7 +6,7 @@ export type Expr = Constant | Variable | BinaryOperation | UnaryOperation
 
 export interface Constant {
     type: 'constant';
-    value: number | boolean | string | [] | null | ObjectLiteral;
+    value: number | boolean | string | [] | null | ObjectLiteral | ObjectLiteral[];
 }
 
 export interface Variable {

@@ -1,4 +1,4 @@
-import { Constant } from "../common/Exp";
+import { Constant, Expr } from "../common/Exp";
 import { Binding, Value, ObjectValue } from "../partial/AST";
 import * as LambdaAST from "./AST";
 
@@ -37,7 +37,7 @@ function evaluateConstant(constant: Constant): string {
   } else if (typeof value === 'number' || typeof value === 'boolean' || typeof value === 'string') {
     return String(value);
   } else if (Array.isArray(value)) {
-    return `[${value.map(item => String(item)).join(', ')}]`;
+    return `[${(value as Expr[]).map(item => String(item)).join(', ')}]`;
   } else if (typeof value === 'object' && value.type === 'object') {
     const fields = Object.entries(value.fields).map(([key, val]) => `${key}: ${evaluateConstant(val)}`);
     return `{ ${fields.join(', ')} }`;
