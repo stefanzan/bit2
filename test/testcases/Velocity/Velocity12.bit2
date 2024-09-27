@@ -1,0 +1,6 @@
+«var boogie=[]»
+«!«
+«for woogie in boogie»
+  nothing will happen to «woogie»
+«endfor»
+»!»

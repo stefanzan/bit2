@@ -1,0 +1,6 @@
+template case5()
+'''
+«!«
+«if dying»Still alive.«/if»
+»!»
+'''

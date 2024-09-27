@@ -1,0 +1,4 @@
+«var repo=[{name:"Alice"}, {name:"Bob"}]»
+«for r in repo»
+<b>«r.name»</b> 
+«endfor»

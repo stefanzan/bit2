@@ -1,0 +1,70 @@
+load edu.ustb.sei.stlens.lib.bit.ArrayLib
+
+config {
+  scope {}
+}
+
+type Port = {name:String}
+type Connector = {source:String, target:String}
+type Component = {name:String, inPorts:[Port], outPorts:[Port]}
+type Model = {components:[Component], connectors:[Connector]}
+
+regex QID = $[.a-zA-Z0-9]+$
+template genPortCell(port:Port)
+'''
+«IF port==null»
+<td cellpadding='2' align='left'></td>
+«ELSE»
+<td cellpadding='2' align='left' port='«port.name|ID»'><font color1='#727372' point-size='9'>«port.name|ID»</font></td>
+«ENDIF»
+'''
+
+template genComponentDot(component : Component)
+'''
+«component.name|ID» [shape=plaintext, label=<
+  <table border="0" cellspacing="0" cellpadding="0">
+    <tr>
+      <td border="1">
+        <table border="0" cellspacing="0" cellpadding="0" bgcolor="azure">
+          <tr>
+            <td>&nbsp;</td><td>&nbsp;</td><td cellpadding="2" align="right"></td>
+          </tr>
+          «FOR pair:(Port,Port) IN component.inPorts.zip(component.outPorts)»
+          <tr>
+            «genPortCell(pair.get(0))»
+            <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+            «genPortCell(pair.get(1))»
+          </tr>
+          <tr>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+          </tr>
+          «ENDFOR»
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <td cellpadding="5">«component.name|ID»</td>
+    </tr>
+  </table>
+  >];
+'''
+
+template genModel(model:Model)
+'''
+digraph G {
+	node[fontname=Tahoma, fontsize=10]
+	edge[fontname=Tahoma, fontsize=10]
+	
+	rankdir=LR
+	
+	«FOR c:Component IN model.components»
+    «genComponentDot(c)»
+    «ENDFOR»
+	
+	«FOR c:Connector IN model.connectors»
+    «c.source|QID» -> «c.target|QID»
+    «ENDFOR»
+}
+'''

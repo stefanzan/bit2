@@ -1,0 +1,3 @@
+«var employees= [1,2,3]»
+«var total = employees.length»
+«total» employee«if total>1»s«endif»

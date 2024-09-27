@@ -1,0 +1,4 @@
+«var fruits =[{fruit:"apple", color:"red"}, {fruit:"banana", color:"yellow"}]»
+«for f in fruits »
+Did you know that «f.fruit» is «f.color»?
+«endfor»

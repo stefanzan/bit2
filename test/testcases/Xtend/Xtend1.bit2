@@ -1,0 +1,6 @@
+«var content="Example1"»
+<html>
+  <body>
+    «content»
+  </body>
+</html>

@@ -1,0 +1,17 @@
+load edu.ustb.sei.stlens.lib.ArrayLib
+load edu.ustb.sei.stlens.lib.StringLib
+
+regex ATTRIBUTE = $[^\"]*$
+
+template case4(name : string, value : string, _type : string)
+'''
+«field(name, value, _type)»
+'''
+
+template field(name : string, value : string, _type : string)
+'''
+<div class="field">
+  <input type="«_type | ID»" name="«name | ID»"
+      value="«value | ATTRIBUTE»" />
+</div>
+'''

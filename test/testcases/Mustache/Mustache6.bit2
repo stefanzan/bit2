@@ -1,0 +1,8 @@
+«var repo=[{name:"Alice"}, {name:"Bob"}]»
+«if repo.length==0»
+No repos...
+«else»
+«for r in repo»
+<b>«r.name»</b> 
+«endfor»
+«endif»

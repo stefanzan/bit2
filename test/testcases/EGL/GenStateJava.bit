@@ -1,0 +1,53 @@
+type Transition = {from:String,to:String}
+type State = {name:String}
+type StateMachine = {name:String, states:[State], transitions:[Transition]}
+
+
+
+template genStateJava(sm:StateMachine)
+'''
+public class App {
+	
+	public static void main(String[] args) {
+		App app = new App();
+		
+		// The statement below will succeed
+		app.process("AABC"); 
+		
+		// The statement below will fail because
+		// there is no transition from A to C
+		// in the state machine
+		app.process("ACB"); 
+	}
+	
+	public void process(String str) {
+		if (str.isEmpty()) return;
+		
+		«FOR s : State IN sm.states»
+		if (str.charAt(0) == '«s.name|ID»') {
+			state«s.name|ID»(str.substring(1));
+			return;
+		}
+		«ENDFOR»
+		
+		throw new IllegalStateException();
+	}
+
+	«FOR s : State IN sm.states»
+	public void state«s.name|ID»(String str) {
+		if (str.isEmpty()) return;
+		
+		«FOR t:Transition IN sm.transitions.filter((x:Transition)->x.from==s.name)»
+		if (str.charAt(0) == '«t.to|ID»') {
+			state«t.to|ID»(str.substring(1));
+			return;
+		}
+		«ENDFOR»
+		
+		throw new IllegalStateException();
+	}
+
+	«ENDFOR»
+
+}
+'''

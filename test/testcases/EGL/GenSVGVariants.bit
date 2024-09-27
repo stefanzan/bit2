@@ -1,0 +1,79 @@
+
+type Color = {name:String, hex:String}
+type Combination = {id:String, foreground:Color, background:Color, invertible:boolean}
+type Group = {name:String, combinations:[Combination]}
+
+regex HEX = $[A-Z0-9]+$
+
+template genSVGVariants(groups:[Group])
+'''
+<html>
+<head>
+[*Bootstrap CSS*]
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css">
+</head>
+«VAR combinationNumber : int = 0»
+<body style="padding:10px">
+«FOR g : Group IN groups»
+<h1>«g.name|ID»</h1>
+<div style="display:flex;flex-wrap:wrap">
+«FOR c : Combination IN g.combinations»
+«combinationNumber = combinationNumber + 1»
+«VAR cls : String = "triangle"+c.id»
+<div style="padding:5px">
+<h5>Option «combinationNumber|INT»</h5>
+<svg xmlns="http://www.w3.org/2000/svg" style="padding:20px;background-color:#«c.background.hex|HEX»" viewBox="0 0 112.2 151.14" width="100px">
+   <defs>
+      <style>.«cls|ID»{fill:#«c.foreground.hex|HEX»;stroke-width: 1px;stroke: #«c.background.hex|HEX»;}</style>
+   </defs>
+   <g id="Layer_2" data-name="Layer 2">
+      <g id="Layer_1-2" data-name="Layer 1">
+         <polygon class="«cls|ID»" points="112.2 21.59 112.2 64.77 74.8 43.18 112.2 21.59" />
+         <polygon class="«cls|ID»" points="74.8 86.36 112.2 64.77 112.2 107.96 74.8 86.37 74.8 86.36" />
+         <polygon class="«cls|ID»" points="74.8 0 112.2 21.59 74.8 43.18 74.8 0" />
+         <polygon class="«cls|ID»" points="112.2 107.96 74.8 129.55 74.8 86.37 112.2 107.96" />
+         <polygon class="«cls|ID»" points="37.4 21.59 74.8 0 74.8 43.18 37.4 21.59" />
+         <polygon class="«cls|ID»" points="37.4 64.78 0 43.18 37.4 21.59 37.4 64.78" />
+         <polygon class="«cls|ID»" points="0 86.37 0 43.19 37.4 64.78 0 86.37" />
+         <polygon class="«cls|ID»" points="74.8 86.37 37.4 107.96 37.4 64.78 74.8 86.36 74.8 86.37" />
+         <polygon class="«cls|ID»" points="0 129.55 0 86.37 37.4 107.96 0 129.55" />
+         <polygon class="«cls|ID»" points="0 86.37 0 86.36 37.4 64.78 37.4 107.96 0 86.37" />
+         <polygon class="«cls|ID»" points="112.2 64.77 74.8 86.36 74.8 43.18 112.2 64.77" />
+         <polygon class="«cls|ID»" points="37.4 151.14 0 129.55 37.4 107.96 37.4 151.14" />
+      </g>
+   </g>
+</svg>
+</div>
+«IF c.invertible»
+«combinationNumber = combinationNumber + 1»
+<div style="padding:5px">
+<h5>Option «combinationNumber|INT»</h5>
+<svg xmlns="http://www.w3.org/2000/svg" style="padding:20px;background-color:#«c.background.hex|HEX»" viewBox="0 0 112.2 151.14" width="100px">
+   <defs>
+      <style>.«cls|ID»-inv{fill:#«c.background.hex|HEX»;stroke-width: 1px;stroke: #«c.foreground.hex|HEX»;}</style>
+   </defs>
+   <g id="Layer_2" data-name="Layer 2">
+      <g id="Layer_1-2" data-name="Layer 1">
+         <polygon class="«cls|ID»-inv" points="112.2 21.59 112.2 64.77 74.8 43.18 112.2 21.59" />
+         <polygon class="«cls|ID»-inv" points="74.8 86.36 112.2 64.77 112.2 107.96 74.8 86.37 74.8 86.36" />
+         <polygon class="«cls|ID»-inv" points="74.8 0 112.2 21.59 74.8 43.18 74.8 0" />
+         <polygon class="«cls|ID»-inv" points="112.2 107.96 74.8 129.55 74.8 86.37 112.2 107.96" />
+         <polygon class="«cls|ID»-inv" points="37.4 21.59 74.8 0 74.8 43.18 37.4 21.59" />
+         <polygon class="«cls|ID»-inv" points="37.4 64.78 0 43.18 37.4 21.59 37.4 64.78" />
+         <polygon class="«cls|ID»-inv" points="0 86.37 0 43.19 37.4 64.78 0 86.37" />
+         <polygon class="«cls|ID»-inv" points="74.8 86.37 37.4 107.96 37.4 64.78 74.8 86.36 74.8 86.37" />
+         <polygon class="«cls|ID»-inv" points="0 129.55 0 86.37 37.4 107.96 0 129.55" />
+         <polygon class="«cls|ID»-inv" points="0 86.37 0 86.36 37.4 64.78 37.4 107.96 0 86.37" />
+         <polygon class="«cls|ID»-inv" points="112.2 64.77 74.8 86.36 74.8 43.18 112.2 64.77" />
+         <polygon class="«cls|ID»-inv" points="37.4 151.14 0 129.55 37.4 107.96 37.4 151.14" />
+      </g>
+   </g>
+</svg>
+</div>
+«ENDIF»
+«ENDFOR»
+</div>
+«ENDFOR»
+</body>
+</html>
+'''

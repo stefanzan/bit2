@@ -119,7 +119,7 @@ export function parseTokens(
 
           case "FOR":
             // 定义正则表达式来匹配各个部分
-            const regex = /(\bfor\b|\bin\b|\bseparator\b|\bfront\b|\brear\b|[\[\],])|(\w+)|"([^"]*)"|\[([^\]]*)\]/gi;
+            const regex = /(\bfor\b|\bin\b|\bseparator\b|\bfront\b|\brear\b|[\[\],])|((?:\w+(?:\.\w*)?)+)|"([^"]*)"|\[([^\]]*)\]/gi;
             const forMatch: string[] = [];
             let match: RegExpExecArray | null;
             while ((match = regex.exec(directiveContent)) !== null) {

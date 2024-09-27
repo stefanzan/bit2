@@ -1,0 +1,6 @@
+«var athlete_list=["","",""]»
+«if athlete_list.length() > 1»
+    Team: «for a in athlete_list separator ","» «a»«endfor» 
+«else»
+    Athlete: «athlete_list[0]»
+«endif»

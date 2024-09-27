@@ -1,0 +1,20 @@
+«var customer = {name:"John", purchased:["Cake", "Paper", "Water"]}»
+«var onSpecial = ["Paper", "Water"]»
+<html>
+  <body>
+    Hello «customer.name»!
+    <table>
+    «for mud in customer.purchased»
+      «for special in onSpecial»
+      «if mud == special»
+      <tr>
+        <td>
+          «mud»
+        </td>
+      </tr>
+      «endif»
+      «endfor»
+    «endfor»
+    </table>
+  </body>
+</html>

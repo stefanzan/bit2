@@ -1,0 +1,37 @@
+load edu.ustb.sei.stlens.lib.bit.DictLab
+
+config {
+	scope {}
+}
+
+type Person = {name:String}
+type Effort = {person:String, percentage:int}
+type Task = {title:String, start:int, duration:int,effort:[Effort]}
+type Project = {title:String, description:String, tasks:[Task], people:[Person]}
+
+regex TEXT = $((?!\\s*(<|\\z)).)*$
+regex UUID = $[a-zA-Z0-9_]+$
+
+helper getTaskNodeId(t:Task) = t.map_get("id", (x:Task)->x.gen_uuid())
+helper getPersonNodeId(p:String) = p.map_get("id", (x:String)->x.gen_uuid())
+
+template genEffortGraph(proj:Project)
+'''
+digraph G {
+  node[fontname="Arial",style="filled",fillcolor="azure"]
+  edge[fontname="Arial"]
+
+  «FOR p : Person IN proj.people»
+  «p.name.getPersonNodeId()|UUID»[label="«p.name|ID»"]
+  «ENDFOR»
+
+  «FOR t : Task IN proj.tasks»
+  «t.getTaskNodeId()|UUID»[label="«t.title|ID»", fillcolor="wheat"]
+
+  «FOR e : Effort IN t.effort»
+  «e.person.getPersonNodeId()|UUID»->«t.getTaskNodeId()|UUID»[label="«e.percentage|INT»"]
+  «ENDFOR»
+
+  «ENDFOR»
+}
+'''

@@ -1,0 +1,13 @@
+load edu.ustb.sei.stlens.lib.ArrayLib
+
+regex CONTENT = $((?!\\s*(<|\\z)).)*$
+
+template case4(name : string)
+'''
+«wrapped(name+" is awesome.")»
+'''
+
+template wrapped(text : string)
+'''
+<b>«text|CONTENT»</b>
+'''

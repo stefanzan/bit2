@@ -1,0 +1,21 @@
+
+config {
+	scope {}
+}
+
+type Variant = {style:String, mood:String}
+type Image = {subject:String, variants:[Variant]}
+
+
+template genPrompty(i:Image)
+'''
+«FOR v : Variant IN i.variants»
+Please generate an image of «i.subject|ID».
+«IF v.style != null»
+The style should be «v.style|ID».
+«ENDIF»
+«IF v.mood != null»
+The mood should be «v.mood|ID».
+«ENDIF»
+«ENDFOR»
+'''

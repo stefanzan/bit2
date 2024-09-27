@@ -1,0 +1,7 @@
+«var customerList=[{name:"Alice"}, {name:"Bob"}, {name:"Mark"}]»
+«if customerList.length()==0»
+Nobody around
+«else»
+There are customer:
+«for c in customerList separator ","»«c.name»«endfor»
+«endif»

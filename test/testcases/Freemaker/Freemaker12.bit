@@ -1,0 +1,8 @@
+template case10()
+'''
+«!«
+  «FOR animal IN animals»
+  <tr><td>«animal.name»<td>«animal.price» Euros
+  «ENDFOR»
+»!»
+'''

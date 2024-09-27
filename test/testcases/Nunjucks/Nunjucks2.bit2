@@ -1,0 +1,8 @@
+«var items = [{title:""}, {title:""}]»
+«if items.length==0»
+  <li>This would display if the "item" collection were empty</li>
+«else»
+«for item in items »
+  <li>«item.title»</li>
+«endfor»
+«endif»

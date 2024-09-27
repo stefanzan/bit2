@@ -1,0 +1,6 @@
+«var allProducts=[{key:, value:}, {key:, value:}]»
+<ul>
+  «for p in allProducts»
+  <li>Key : «p.key» -> Value : «p.value»</li>
+  «endfor»
+</ul>

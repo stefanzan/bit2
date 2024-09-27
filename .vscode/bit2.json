@@ -1,0 +1,19 @@
+{
+  "scopeName": "source.bit2",
+  "patterns": [
+    {
+      "name": "keyword.control.bit2",
+      "match": "\\b(var|for|in|if|endif|endfor|front|rear|separator)\\b"
+    },
+    {
+      "name": "string.quoted.double.bit2",
+      "match": "\".*?\""
+    },
+    {
+      "name": "comment.line.double-slash.bit2",
+      "match": "//.*"
+    }
+  ],
+  "repository": {},
+  "name": "bit2"
+}

@@ -1,0 +1,61 @@
+«var table={name:"HelloWorld", package:"cn.edu.lyun", columns:[{name:"", type:"", searchable:true}]}»
+package «table.package»;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.Collections;
+
+public class «table.name» {
+
+    protected List<Row> rows = new ArrayList<>();
+
+    public Row add(«for c in table.columns separator ", "»«c.type» «c.name»«endfor») {
+
+        Row row = new Row(«for c in table.columns separator ", "»«c.name»«endfor»);
+        
+        «for column in table.columns»
+        «if column.searchable»
+        List<Row> «colum.name»IndexValues = «column.name»Index.get(«column.name»);
+        if (!«column.name|=>$Index$»Index.containsKey(«column.name|ID»)) {
+            «column.name|=>$IndexValues$»IndexValues = new ArrayList<>();
+            «column.name|=>$Index$»Index.put(«column.name|ID», «column.name|=>$IndexValues$»IndexValues);
+        }
+        «column.name|=>$IndexValues$»IndexValues.add(row);
+        «else»
+        // skip «column.name|ID»
+		«endif»
+        «endfor»
+
+        rows.add(row);
+        return row;
+    }
+
+    public List<Row> getRows() {
+        return Collections.unmodifiableList(rows);
+    }
+    
+    «for column:Column in table.columns.filter((c:Column)->c.searchable)»
+    protected LinkedHashMap<«column._type|QID», List<Row>> «column.name|=>$Index$»Index = new LinkedHashMap<>();
+
+    public List<Row> searchBy«column.name|ID»(«column._type|QID» «column.name|ID») {
+        return «column.name|=>$Index$»Index.get(«column.name|ID»);
+    }
+	«endfor»
+
+    public class Row {
+
+        «for column : Column in table.columns»
+        protected «column._type|QID» «column.name|ID»;
+        
+        public «column._type|QID» get«column.name|ID»() {
+            return this.«column.name|ID»;
+        }
+		«endfor»
+
+        public Row(«for c:Column in table.columns separator ", "»«c._type|QID» «c.name|ID»«endfor») {
+            «for column : Column in table.columns»
+            this.«column.name|ID» = «column.name|ID»;
+            «endfor»
+        }
+    }
+}

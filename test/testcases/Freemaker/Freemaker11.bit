@@ -1,0 +1,15 @@
+load edu.ustb.sei.stlens.lib.ArrayLib
+
+template case11()
+'''
+«x()»
+'''
+
+template myMacro() '''foo'''
+
+template x()
+'''
+«FOR n : int IN [1,2,3]»
+«n|INT» «myMacro()»
+«ENDFOR»
+'''

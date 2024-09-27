@@ -1,0 +1,14 @@
+«var user = ""»
+«var latestProduct = {name:"", url:""}»
+<html>
+<head>
+  <title>Welcome!</title>
+</head>
+<body>
+  <h1>
+    Welcome «user»«if user=="Big Joe"», our beloved leader«endif»!
+  </h1>
+  <p>Our latest product:
+  <a href="«latestProduct.url»">«latestProduct.name»</a>!
+</body>
+</html>

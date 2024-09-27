@@ -1,0 +1,11 @@
+«var foo = 10 »
+«var bar = 5 »
+«if foo < 10»
+**Go North**
+«elseif foo == 10»
+**Go East**
+«elseif bar == 6»
+**Go South**
+«else»
+**Go West**
+«endif»

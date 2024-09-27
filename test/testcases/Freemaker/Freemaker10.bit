@@ -1,0 +1,11 @@
+load edu.ustb.sei.stlens.lib.ArrayLib
+
+template case10()
+'''
+«greet("Fred", "black")»
+'''
+
+template greet(person : string, color : string)
+'''
+<font size="+2" color="«color|ID»">Hello «person|ID»!</font>
+'''

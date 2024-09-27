@@ -1,0 +1,9 @@
+«var athlete_list=["","",""]»
+«var athlete_in_locker_room_list=["","",""]»
+«if athlete_list.length()>0»
+    Number of athletes: «athlete_list.length()»
+«else athlete_in_locker_room_list.length()>0»
+    Athletes should be out of the locker room soon!
+«else»
+    No athletes.
+«endif»

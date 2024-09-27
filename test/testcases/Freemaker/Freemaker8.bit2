@@ -1,0 +1,10 @@
+«var animal={size:"small"}»
+«if animal.size == "small"»
+  This will be processed if it is small
+«elseif animal.size == "medium"»
+  This will be processed if it is medium
+«elseif animal.size == "large"»
+  This will be processed if it is large
+«else»
+  This will be processed if it is neither
+«endif»

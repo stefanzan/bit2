@@ -1,0 +1,32 @@
+load edu.ustb.sei.stlens.lib.ArrayLib
+
+type {
+  type Node = Element | A | Contents
+  type Element = {tagName : string, children : [Node]}
+  type A = {content : string, href : string}
+  type Contents = {content : string}
+}
+
+
+regex CONTENT = $[^<]*$
+regex NONEMPTYCONTENT = $((?!\\s*(<|\\z)).)+$
+regex ATTRIBUTE = $[^\"]*$
+
+template case2(node : Node)
+'''
+«IF node instanceof Element»
+<«node.tagName | ID»>
+«case2p(node.children)»
+</«node.tagName | ID»>
+«ELSEIF node instanceof A»<a href="«node.href | ATTRIBUTE»">«node.content | CONTENT»</a>
+«ELSEIF node instanceof Contents»«node.content | NONEMPTYCONTENT»
+«ELSE»undefined!
+«ENDIF»
+'''
+
+template case2p(nodes : [Node])
+'''
+«FOR n : Node IN nodes»
+«case2(n)»
+«ENDFOR»
+'''

@@ -1,0 +1,15 @@
+regex CONTENT = $((?!\\s*(<|\\z)).)*$
+
+template case7(names : [string])
+'''
+<h2>Names</h2>
+
+«FOR n : string IN names»
+«case7p(n)»
+«ENDFOR»
+'''
+
+template case7p(name : string)
+'''
+<strong>«name|CONTENT»</strong>
+'''

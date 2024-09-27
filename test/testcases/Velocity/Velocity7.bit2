@@ -1,0 +1,9 @@
+«var foo »
+«var bar »
+«foo = "deoxyribonucleic acid"»
+«bar = "ribonucleic acid"»
+«if foo == bar»
+  In this case it is clear they are not equivalent. So...
+«else»
+  They are not equivalent and this will be the output.
+«endif»

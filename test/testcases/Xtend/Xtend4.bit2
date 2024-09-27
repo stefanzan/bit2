@@ -1,0 +1,13 @@
+«var paragraphs=[{headline:"", text:""}, {headline:"", text:""}]»
+<html>
+  <body>
+  «for p in paragraphs front "<div>" rear "</div>" separator "</div><div>"»
+    «if p.headline != null»
+    <h1>«p.headline»</h1>
+    «endif»
+    <p>
+    «p.text»
+    </p>
+  «endfor»
+  </body>
+</html>

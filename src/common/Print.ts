@@ -28,7 +28,8 @@ export function printExpression(expr: Expr, indent: string = ''): void {
       case 'object':
           console.log(`${indent}ObjectLiteral:`);
           Object.keys(expr.fields).forEach(field => {
-              console.log(`${indent}${field} = ${expr.fields[field].value}`);
+              console.log(`${indent}  ${field} = `);
+              printExpression(expr.fields[field], indent + '  ')
           });
           break;
       case 'freeze':
