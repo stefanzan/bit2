@@ -3,8 +3,7 @@ public class «c.name» {
   public «c.name»(«for a in c.fields separator ","»«a.type» «a.name»«endfor») {
   «for a in c.fields»
     this.«a.name»=«a.name»;
-  «endfor»
-  }
+  «endfor»}
   «for a in c.fields»
   final private «a.type» «a.name»;
   public «a.type» get«a.name»() {

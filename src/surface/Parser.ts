@@ -120,6 +120,7 @@ export function parseTokens(
           case "FOR":
             // 定义正则表达式来匹配各个部分
             const regex = /(\bfor\b|\bin\b|\bseparator\b|\bfront\b|\brear\b|[\[\],])|((?:\w+(?:\.\w*)?)+)|"([^"]*)"|\[([^\]]*)\]/gi;
+            // const regex =  /(\bfor\b|\bin\b|\bseparator\b|\bfront\b|\brear\b|[\[\],])|(\w+)|"([^"]*)"|\[([^\]]*)\]/gi;
             const forMatch: string[] = [];
             let match: RegExpExecArray | null;
             while ((match = regex.exec(directiveContent)) !== null) {
@@ -142,22 +143,22 @@ export function parseTokens(
             }
             
             // 处理可选的 separator 部分
-            const separatorMatch = directiveContent.match(/separator\s*"([^"]*)"/i);
-            if (separatorMatch && separatorMatch[1]) {
-              forMatch.push('separator', separatorMatch[1]);
-            }
+            // const separatorMatch = directiveContent.match(/separator\s*"([^"]*)"/i);
+            // if (separatorMatch && separatorMatch[1]) {
+            //   forMatch.push('separator', separatorMatch[1]);
+            // }
             
-            // 处理可选的 front 部分
-            const frontMatch = directiveContent.match(/front\s*(?:\[([^\]]*)\])?/i);
-            if (frontMatch && frontMatch[1]) {
-              forMatch.push('front', frontMatch[1]);
-            }
+            // // 处理可选的 front 部分
+            // const frontMatch = directiveContent.match(/front\s*(?:\[([^\]]*)\])?/i);
+            // if (frontMatch && frontMatch[1]) {
+            //   forMatch.push('front', frontMatch[1]);
+            // }
             
-            // 处理可选的 rear 部分
-            const rearMatch = directiveContent.match(/rear\s*(?:\[([^\]]*)\])?/i);
-            if (rearMatch && rearMatch[1]) {
-              forMatch.push('rear', rearMatch[1]);
-            }
+            // // 处理可选的 rear 部分
+            // const rearMatch = directiveContent.match(/rear\s*(?:\[([^\]]*)\])?/i);
+            // if (rearMatch && rearMatch[1]) {
+            //   forMatch.push('rear', rearMatch[1]);
+            // }
             
             if (forMatch) {
               const loopTokens: (Surface.Literal | string)[] = [];
