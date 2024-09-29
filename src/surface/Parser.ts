@@ -333,6 +333,19 @@ function parseExpr(input: string): Expr {
       return { type: "constant", value: tokens[pos++].slice(1, -1) } as Constant;
     }
 
+    // handle boolean true/false and null case
+    switch(tokens[pos]){
+      case "null":
+        pos++;
+        return {type:"constant", value:null};
+      case "true":
+        pos++;
+        return {type:"constant", value:true};
+      case "false":
+        pos++;
+        return {type:"constant", value: false};
+    }
+
     if (/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(tokens[pos])) {
       let variable = { type: "variable", name: tokens[pos++] } as Variable;
       

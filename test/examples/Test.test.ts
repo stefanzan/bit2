@@ -60,6 +60,8 @@ fileName = './test/testcases/Xtend/Xtend1.bit2';
 fileName = './test/testcases/Xtend/Xtend3.bit2';
 fileName = './test/testcases/Xtend/Xtend4.bit2';
 
+fileName = './test/testcases/Xtend/Xtend3.bit2';
+
 fs.readFile(fileName, 'utf8')
   .then(data =>{
      console.log("===Forward Evaluation===");

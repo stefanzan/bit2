@@ -1,10 +1,10 @@
 «var name ="Alice"»
 «var value =1500»
-«var in_ca ="true"»
+«var in_ca =true»
 «var taxed_value =1498»
 Hello «name»
 You have just won «value» dollars!
-«if in_ca=="true"»
+«if in_ca==true»
 Well, «taxed_value» dollars, after taxes.
 «else»
 «endif»

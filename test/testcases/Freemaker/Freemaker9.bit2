@@ -1,11 +1,11 @@
-«var mouse = ""»
-«if mouse != ""»
+«var mouse = null»
+«if mouse != null»
   Mouse found
 «else»
   No mouse found
 «endif»
 «mouse  = "Jerry"»
-«if mouse != ""»
+«if mouse != null»
   Mouse found
 «else»
   No mouse found

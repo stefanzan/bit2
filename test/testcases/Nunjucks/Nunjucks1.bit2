@@ -1,8 +1,8 @@
-«var hungry = "true"»
-«var tired = "false"»
-«IF hungry=="true"»
+«var hungry = true»
+«var tired = false»
+«IF hungry»
   I am hungry
-«ELSEIF tired=="true"»
+«ELSEIF tired»
   I am tired
 «ELSE»
   I am good!

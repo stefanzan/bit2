@@ -1,6 +1,6 @@
-«var person="true"»
+«var person=true»
 Shown.
-«if person=="true"»
+«if person»
   Never shown!
 «else»
 «endif»

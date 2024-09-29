@@ -1,6 +1,6 @@
-«var animals=[{name:"python", price:1500, protected:"false"}, {name: "elephant", price:3500, protected:"true"}]»
+«var animals=[{name:"python", price:1500, protected : false}, {name: "elephant", price:3500, protected : true}]»
 «for animal in animals»
-<div«if animal.protected=="true"» class="protected"«endif»>
+<div«if animal.protected» class="protected"«endif»>
   «animal.name» for «animal.price» Euros
 </div>
 «endfor»
