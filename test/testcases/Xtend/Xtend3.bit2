@@ -1,8 +1,8 @@
-«var paragraphs=[{headline:"", text:""}, {headline:"", text:""}]»
+«var paragraphs=[{headline:"Greeting", text:"Good Morning"}, {headline:"Weather", text:"Sunny"}]»
 <html>
   <body>
   «for p in paragraphs»
-    «if p.headline != null»
+    «if p.headline != ""»
     <h1>«p.headline»</h1>
     «else»
     «endif»

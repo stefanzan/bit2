@@ -1,4 +1,4 @@
-«var animal={size:"small"}»
+«var animal={size:"large"}»
 «if animal.size == "small"»
   This will be processed if it is small
 «elseif animal.size == "medium"»

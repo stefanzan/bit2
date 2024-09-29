@@ -1,5 +1,5 @@
-«var foo »
-«var bar »
+«var foo = "" »
+«var bar = "" »
 «foo = "deoxyribonucleic acid"»
 «bar = "ribonucleic acid"»
 «if foo == bar»

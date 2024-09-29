@@ -1,6 +1,6 @@
 <html>
   <body>
-  «var foo»
+  «var foo=""»
   «foo="Velocity"»
   Hello «foo» World!
   </body>

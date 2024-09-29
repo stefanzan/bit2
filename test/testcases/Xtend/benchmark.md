@@ -2,7 +2,7 @@
 The Xtend benchmark consists of the examples in the official [Xtend tutorial](https://www.eclipse.org/xtend/documentation/203_xtend_expressions.html#templates). The benchmark contains 4 Xtend templates. We list these templates as follows.
 
 ## Template 1
-The Xtend template (7 lines of code) is as follows. The BIT implementation can be found at `src/edu/ustb/sei/bit/test/temp/Xtend1.bit`, consisting of 10 lines of code.
+The Xtend template (7 lines of code) is as follows. The BIT implementation can be found at `Xtend1.bit2`, consisting of 6 lines of code.
 
 ```velocity
 def someHTML(String content) '''
@@ -17,7 +17,7 @@ def someHTML(String content) '''
 This template is a welcoming example in the Xtend tutorial.
 
 ## Template 2
-The Xtend template (13 lines of code) is as follows. The BIT implementation can be found at `src/edu/ustb/sei/bit/test/temp/Xtend2.bit`, consisting of 26 lines of code.
+The Xtend template (13 lines of code) is as follows. The BIT implementation can be found at `Xtend2.bit2`, consisting of 26 lines of code.
 
 ```velocity
 def toText(Node n) {
@@ -39,7 +39,7 @@ This template shows the combination of template expressions and normal expressio
 
 
 ## Template 3
-The Xtend template (14 lines of code) is as follows. The BIT implementation can be found at `src/edu/ustb/sei/bit/test/temp/Xtend3.bit`, consisting of 20 lines of code.
+The Xtend template (14 lines of code) is as follows. The BIT implementation can be found at `Xtend3.bit2`, consisting of 14 lines of code.
 
 ```velocity
 def someHTML(List<Paragraph> paragraphs) '''
@@ -61,7 +61,7 @@ def someHTML(List<Paragraph> paragraphs) '''
 This template is a comprehensive example in the Xtend tutorial.
 
 ## Template 4
-The Xtend template (13 lines of code) is as follows. The BIT implementation can be found at `src/edu/ustb/sei/bit/test/temp/Xtend4.bit`, consisting of 19 lines of code.
+The Xtend template (13 lines of code) is as follows. The BIT implementation can be found at `Xtend4.bit2`, consisting of 13 lines of code.
 
 ```velocity
 def someHTML(List<Paragraph> paragraphs) '''

@@ -1,4 +1,4 @@
-«var items = [{title:""}, {title:""}]»
+«var items = [{title:"Poke5"}, {title:"Phone"}]»
 «if items.length==0»
   <li>This would display if the "item" collection were empty</li>
 «else»

@@ -1,8 +1,10 @@
 «var animals={python:{price:1500}, elephant:{price:3500}}»
-«if animals.python.price < animals.elephant.price»
+«var python=animals.python»
+«var elephant=animals.elephant»
+«if python.price < elephant.price»
   Pythons are cheaper than elephants today.
-«elseif animals.elephant.price < animals.python.price»
+«elseif elephant.price < python.price»
   Elephants are cheaper than pythons today.
-«elseif animals.python.price == animals.elephant.price»
+«elseif python.price == elephant.price»
   Elephants and pythons cost the same today.
 «endif»

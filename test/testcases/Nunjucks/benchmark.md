@@ -2,7 +2,7 @@
 The Nunjucks benchmark consists of the examples in the official [Nunjucks tutorial](https://mozilla.github.io/nunjucks/templating.html). The benchmark contains 9 Nunjucks templates, 5 of which is implemented in BIT. We list these templates as follows.
 
 ## Template 1
-The Nunjucks template (7 lines of code) is as follows. The BIT implementation can be found at `src/edu/ustb/sei/bit/test/temp/Nunjucks1.bit`, consisting of 10 lines of code.
+The Nunjucks template (7 lines of code) is as follows. The BIT implementation can be found at `Nunjucks1.bit2`, consisting of 9 lines of code.
 
 ```nunjucks
 {% if hungry %}
@@ -17,7 +17,7 @@ The Nunjucks template (7 lines of code) is as follows. The BIT implementation ca
 This template shows the feature of **conditionals**.
 
 ## Template 2
-The Nunjucks template (8 lines of code) is as follows. The BIT implementation can be found at `src/edu/ustb/sei/bit/test/temp/Nunjucks2.bit`, consisting of 17 lines of code.
+The Nunjucks template (8 lines of code) is as follows. The BIT implementation can be found at `Nunjucks2.bit2`, consisting of 8 lines of code.
 
 ```nunjucks
 <h1>Posts</h1>
@@ -33,7 +33,7 @@ The Nunjucks template (8 lines of code) is as follows. The BIT implementation ca
 This template shows the features of **conditionals** and **loops**.
 
 ## Template 3
-The Nunjucks template (3 lines of code) is as follows. The BIT implementation can be found at `src/edu/ustb/sei/bit/test/temp/Nunjucks3.bit`, consisting of 11 lines of code.
+The Nunjucks template (3 lines of code) is as follows. The BIT implementation can be found at `Nunjucks3.bit2`, consisting of 4 lines of code.
 
 ```nunjucks
 {% for fruit, color in fruits %}
@@ -45,7 +45,7 @@ This template shows the feature of **loops**.
 
 
 ## Template 4
-The Nunjucks template (6 lines of code) is as follows. The BIT implementation can be found at `src/edu/ustb/sei/bit/test/temp/Nunjucks4.bit`, consisting of 17 lines of code.
+The Nunjucks template (6 lines of code) is as follows. The BIT implementation can be found at `Nunjucks4.bit2`, consisting of 17 lines of code.
 
 ```nunjucks
 {% macro field(name, value='', type='text') %}
@@ -59,7 +59,7 @@ The Nunjucks template (6 lines of code) is as follows. The BIT implementation ca
 This template shows the feature of **template calls**.
 
 ## Template 5
-The Nunjucks template (6 lines of code) is as follows. The BIT implementation can be found at `src/edu/ustb/sei/bit/test/temp/Nunjucks5.bit`, consisting of 12 lines of code.
+The Nunjucks template (6 lines of code) is as follows. The BIT implementation can be found at `Nunjucks5.bit2`, consisting of 4 lines of code.
 
 ```nunjucks
 {{ username }}

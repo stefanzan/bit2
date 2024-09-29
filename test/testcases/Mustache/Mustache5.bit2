@@ -1,5 +1,5 @@
 «var person = {name:"Alice"} »
-«if person != null»
+«if person != ""»
 Hi «person.name»!
 «else»
 «endif»

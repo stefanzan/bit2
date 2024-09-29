@@ -1,4 +1,4 @@
-«var allProducts=[{key:, value:}, {key:, value:}]»
+«var allProducts=[{key:"meal", value:"Fried Chicken"}, {key:"drink", value:"Soda"}]»
 <ul>
   «for p in allProducts»
   <li>Key : «p.key» -> Value : «p.value»</li>

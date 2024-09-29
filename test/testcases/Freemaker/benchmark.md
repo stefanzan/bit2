@@ -2,7 +2,7 @@
 The Freemaker benchmark consists of the examples in the official [Freemaker tutorial](https://freemarker.apache.org/docs/index.html). The benchmark contains 15 Freemaker templates, 12 of which are implemented in BIT. We list these templates as follows.
 
 ## Template 1
-The Freemaker template (10 lines of code) is as follows. The BIT implementation can be found at `src/edu/ustb/sei/bit/test/temp/Freemaker1.bit`, consisting of 20 lines of code.
+The Freemaker template (10 lines of code) is as follows. The BIT implementation can be found at `Freemaker1.bit2`, consisting of 12 lines of code.
 
 ```freemaker
 <html>
@@ -20,7 +20,7 @@ The Freemaker template (10 lines of code) is as follows. The BIT implementation 
 This template is a comprehensive example in the Freemaker tutorial.
 
 ## Template 2
-The Freemaker template (12 lines of code) is as follows. The BIT implementation can be found at `src/edu/ustb/sei/bit/test/temp/Freemaker2.bit`, consisting of 22 lines of code.
+The Freemaker template (12 lines of code) is as follows. The BIT implementation can be found at `Freemaker2.bit2`, consisting of 14 lines of code.
 
 ```freemaker
 <html>
@@ -41,7 +41,7 @@ This template demonstrates the feature of **conditionals**.
 
 
 ## Template 3
-The Freemaker template (7 lines of code) is as follows. The BIT implementation can be found at `src/edu/ustb/sei/bit/test/temp/Freemaker3.bit`, consisting of 15 lines of code.
+The Freemaker template (7 lines of code) is as follows. The BIT implementation can be found at `Freemaker3.bit2`, consisting of 10 lines of code.
 
 ```freemaker
 <#if animals.python.price < animals.elephant.price>
@@ -57,7 +57,7 @@ This template demonstrates the feature of multiple **conditionals**.
 
 
 ## Template 4
-The Freemaker template (6 lines of code) is as follows. The BIT implementation can be found at `src/edu/ustb/sei/bit/test/temp/Freemaker4.bit`, consisting of 13 lines of code.
+The Freemaker template (6 lines of code) is as follows. The BIT implementation can be found at `Freemaker4.bit2`, consisting of 7 lines of code.
 
 ```freemaker
 <p>We have these animals:
@@ -71,7 +71,7 @@ The Freemaker template (6 lines of code) is as follows. The BIT implementation c
 This template demonstrates the feature of **loops**.
 
 ## Template 5
-The Freemaker template (5 lines of code) is as follows. The BIT implementation can be found at `src/edu/ustb/sei/bit/test/temp/Freemaker5.bit`, consisting of 10 lines of code.
+The Freemaker template (5 lines of code) is as follows. The BIT implementation can be found at `Freemaker5.bit2`, consisting of 6 lines of code.
 
 ```freemaker
 <ul>
@@ -84,7 +84,7 @@ The Freemaker template (5 lines of code) is as follows. The BIT implementation c
 This template demonstrates the feature of **loops**.
 
 ## Template 6
-The Freemaker template (10 lines of code) is as follows. The BIT implementation can be found at `src/edu/ustb/sei/bit/test/temp/Freemaker6.bit`, consisting of 12 lines of code.
+The Freemaker template (10 lines of code) is as follows. The BIT implementation can be found at `Freemaker6.bit2`, consisting of 8 lines of code.
 
 ```freemaker
 <#list misc.fruits>
@@ -102,7 +102,7 @@ The Freemaker template (10 lines of code) is as follows. The BIT implementation 
 This template demonstrates the feature of default **loop** branches. We realize it with conditionals.
 
 ## Template 7
-The Freemaker template (5 lines of code) is as follows. The BIT implementation can be found at `src/edu/ustb/sei/bit/test/temp/Freemaker7.bit`, consisting of 12 lines of code.
+The Freemaker template (5 lines of code) is as follows. The BIT implementation can be found at `Freemaker7.bit2`, consisting of 6 lines of code.
 
 ```freemaker
 <#list animals as animal>
@@ -115,7 +115,7 @@ The Freemaker template (5 lines of code) is as follows. The BIT implementation c
 This template demonstrates the combination of **loop** and **conditionals**.
 
 ## Template 8
-The Freemaker template (13 lines of code) is as follows. The BIT implementation can be found at `src/edu/ustb/sei/bit/test/temp/Freemaker8.bit`, consisting of 16 lines of code.
+The Freemaker template (13 lines of code) is as follows. The BIT implementation can be found at `Freemaker8.bit2`, consisting of 10 lines of code.
 
 ```freemaker
 <#switch animal.size>
@@ -136,7 +136,7 @@ The Freemaker template (13 lines of code) is as follows. The BIT implementation 
 This template demonstrates the combination of **switches**.
 
 ## Template 9
-The Freemaker template (12 lines of code) is as follows. The BIT implementation can be found at `src/edu/ustb/sei/bit/test/temp/Freemaker9.bit`, consisting of 17 lines of code.
+The Freemaker template (12 lines of code) is as follows. The BIT implementation can be found at `Freemaker9.bit2`, consisting of 12 lines of code.
 
 ```freemaker
 <#if mouse??>

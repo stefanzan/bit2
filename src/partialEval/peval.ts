@@ -319,6 +319,12 @@ export function evaluateExpr(environment: Map<string, any>, expr: Expr.Expr): [M
             // handle "xxxx".length
             if(typeof objectValue === 'string'){
               fieldValue = objectValue[expr.field as keyof String];
+            } else if(Array.isArray(objectValue)){
+              if(expr.field==='length'){
+                fieldValue = objectValue.length;
+              }else {
+                //TODO
+              }
             } else {
               fieldValue = objectValue.fields[expr.field];
             }

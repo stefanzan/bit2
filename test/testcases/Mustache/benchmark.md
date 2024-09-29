@@ -2,7 +2,7 @@
 The Mustache benchmark consists of the examples in the official [Mustache tutorial](https://mustache.github.io/mustache.5.html). The benchmark contains 7 Mustache templates. We list these templates as follows.
 
 ## Template 1
-The Mustache template (5 lines of code) is as follows. The BIT implementation can be found at `src/edu/ustb/sei/bit/test/temp/Mustache1.bit`, consisting of 12 lines of code.
+The Mustache template (5 lines of code) is as follows. The BIT implementation can be found at `Mustache1.bit2`, consisting of 10 lines of code.
 
 ```mustache
 Hello {{name}}
@@ -15,7 +15,7 @@ Well, {{taxed_value}} dollars, after taxes.
 This template shows the feature of **conditionals**.
 
 ## Template 2
-The Mustache template (4 lines of code) is as follows. The BIT implementation can be found at `src/edu/ustb/sei/bit/test/temp/Mustache2.bit`, consisting of 10 lines of code.
+The Mustache template (4 lines of code) is as follows. The BIT implementation can be found at `Mustache2.bit2`, consisting of 6 lines of code.
 
 ```mustache
 Shown.
@@ -27,7 +27,7 @@ Shown.
 This template shows the feature of **conditionals**.
 
 ## Template 3
-The Mustache template (3 lines of code) is as follows. The BIT implementation can be found at `src/edu/ustb/sei/bit/test/temp/Mustache3.bit`, consisting of 12 lines of code.
+The Mustache template (3 lines of code) is as follows. The BIT implementation can be found at `Mustache3.bit2`, consisting of 4 lines of code.
 
 ```mustache
 {{#repo}}
@@ -38,7 +38,7 @@ The Mustache template (3 lines of code) is as follows. The BIT implementation ca
 This template shows the feature of **loops**.
 
 ## Template 4
-The Mustache template (3 lines of code) is as follows. The BIT implementation can be found at `src/edu/ustb/sei/bit/test/temp/Mustache4.bit`, consisting of 13 lines of code.
+The Mustache template (3 lines of code) is as follows. The BIT implementation can be found at `Mustache4.bit2`, consisting of 13 lines of code.
 
 ```mustache
 {{#wrapped}}
@@ -61,7 +61,7 @@ where `wrapped` is a function as follows
 This template shows the feature of **function calls**. We realized it using template calls.
 
 ## Template 5
-The Mustache template (3 lines of code) is as follows. The BIT implementation can be found at `src/edu/ustb/sei/bit/test/temp/Mustache5.bit`, consisting of 13 lines of code.
+The Mustache template (3 lines of code) is as follows. The BIT implementation can be found at `Mustache5.bit2`, consisting of 5 lines of code.
 
 ```mustache
 {{#person?}}
@@ -72,7 +72,7 @@ The Mustache template (3 lines of code) is as follows. The BIT implementation ca
 This template shows the feature of **conditionals**. 
 
 ## Template 6
-The Mustache template (6 lines of code) is as follows. The BIT implementation can be found at `src/edu/ustb/sei/bit/test/temp/Mustache6.bit`, consisting of 16 lines of code.
+The Mustache template (6 lines of code) is as follows. The BIT implementation can be found at `Mustache6.bit2`, consisting of 8 lines of code.
 
 ```mustache
 {{#repo}}
@@ -87,7 +87,7 @@ This template shows the features of **conditionals** and **loops**.
 
 
 ## Template 7
-The Mustache template (5 lines of code) is as follows. The BIT implementation can be found at `src/edu/ustb/sei/bit/test/temp/Mustache7.bit`, consisting of 15 lines of code.
+The Mustache template (5 lines of code) is as follows. The BIT implementation can be found at `Mustache7.bit2`, consisting of 15 lines of code.
 
 ```mustache
 base.mustache:
