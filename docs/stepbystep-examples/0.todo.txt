@@ -28,11 +28,11 @@
 [√] forloop中的sep("")从某种角度等于bot，可以在uneval的时候起到和bot一样的作用 10.small.txt
 [√] simplify loopstart, loopend to loopfront(), looprear() ?
 
-[] boolean «var animals=[{name:"python", price:1500, protected:"false"}, {name: "elephant", price:3500, protected:"true"}]»
+[√] boolean «var animals=[{name:"python", price:1500, protected:false}, {name: "elephant", price:3500, protected:true}]»
 
 [] surface to core，当这一行是if for endif endfor 这样的关键字，该行包括换行不计入程序输出，但是如果是《expr》则需要考虑前后空格以及换行
 
-[] not support null value
+[√] not support null value
 
 [] 是否需要类型信息？template name(name1,name2) or template name(name1:type1, name2:type2)
 
@@ -51,7 +51,7 @@
 [] forloop中insert newitem，together with separator; perhaps insert more than one item.
    Now, only can support term that has no if, nested for
 
-[] Example 15, 15-2 有涉及到complement of If （即将If的条件放到outptu中）, 变量output可见等等，用户可见，可改。可考虑列为extension, furture work?
+[] Example 15, 15-2 有涉及到complement of If （即将If的条件放到output中）, 变量output可见等等，用户可见，可改。可考虑列为extension, furture work?
 
 
 [√] Previously, the condition e in branchstart() is different from current design.
