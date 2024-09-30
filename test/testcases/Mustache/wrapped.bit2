@@ -1,0 +1,4 @@
+export template wrapped(text)
+'''
+<b>«text»</b>
+'''

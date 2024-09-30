@@ -1,13 +1,9 @@
-load edu.ustb.sei.stlens.lib.ArrayLib
+«load "./wrapped.bit2"»
+«var name = "Clark"»
+«var text = name+ " is awesome."»
+«wrapped(text)»
 
-regex CONTENT = $((?!\\s*(<|\\z)).)*$
-
-template case4(name : string)
+template wrapped(text)
 '''
-«wrapped(name+" is awesome.")»
-'''
-
-template wrapped(text : string)
-'''
-<b>«text|CONTENT»</b>
+<b>«text»</b>
 '''
