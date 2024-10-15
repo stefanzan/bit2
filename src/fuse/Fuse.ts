@@ -1519,7 +1519,7 @@ export function fuseExp(
       let elements = exp.elements;
       let updatedElements = alignAndUpdate(elements, value as Value[]);
       return {
-        newEnv: {},
+        newEnv: env,
         newExp: { type: "array", elements: updatedElements },
       };
     case "object":
@@ -1533,7 +1533,7 @@ export function fuseExp(
         }
       }
       return {
-        newEnv: {},
+        newEnv: env,
         newExp: {type:'object', fields: fieldsExp} 
       }
     default:

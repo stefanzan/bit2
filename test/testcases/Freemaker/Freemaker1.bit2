@@ -1,5 +1,5 @@
-«var user = "Alice"»
-«var latestProduct = {name:"LiveT",url:"https://www.livet.com"}»
+«var user="Alice"»
+«var latestProduct={name:"LiveT", url:"https://www.livet.com"}»
 <html>
 <head>
   <title>Welcome!</title>

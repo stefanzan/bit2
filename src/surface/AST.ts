@@ -5,19 +5,12 @@ import {Expr} from "../common/Exp";
 export type Name = string;
 export type Literal = string; // Any char sequence that does not contain « and """
 
-// // AST Nodes
-// interface Template {
-//     type: 'Template';
-//     name: Name;
-//     parameter: Name[];
-//     fragment: Fragment;
-// }
 
 export type Fragment = Literal | Directive | FragmentList;
 
 export interface Directive {
     type: 'Directive';
-    content: DeclareDirective | AssignDirective | ExprDirective | IfDirective | ForDirective;
+    content: DeclareDirective | AssignDirective | ExprDirective | IfDirective | ForDirective | TemplateDefDirective | TemplateCallDirective;
 }
 
 export interface DeclareDirective {
@@ -79,4 +72,17 @@ export interface Rear {
 export interface FragmentList {
     type: 'fragmentList';
     fragments: Fragment[];
+}
+
+export interface TemplateDefDirective {
+  type: 'template';
+  name: string;
+  parameters: string[];
+  fragment: Fragment;
+}
+
+export interface TemplateCallDirective {
+  type: 'templateCall';
+  name: string;
+  arguments: Expr[];
 }

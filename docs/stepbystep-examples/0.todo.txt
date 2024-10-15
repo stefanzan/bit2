@@ -67,3 +67,7 @@
    再来一次id更新？貌似这个目前只会对branch condition产生切换的影响，在当前策略下会把t1给更新了，也不算错，先跳过吧
    id |> {count -> (18,[])} |- seq(branchstart((count>=18,true),t1,t2),const("Hi! A little boy!"),branchend,exp((count,17)))
    06.12: 会报错，因为第一个replacement， count->(n,[n]),第二个replacement尝试改动count的值，从而失败。
+
+[] `for a in fields`  supported, but `for a in c.fields` cannot. 
+
+[] Parser problem:

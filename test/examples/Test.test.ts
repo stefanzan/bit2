@@ -60,6 +60,7 @@ fileName = './test/testcases/Xtend/Xtend1.bit2';
 fileName = './test/testcases/Xtend/Xtend3.bit2';
 fileName = './test/testcases/Xtend/Xtend4.bit2';
 
+fileName = './test/testcases/Freemaker/Freemaker1.bit2';
 
 fs.readFile(fileName, 'utf8')
   .then(data =>{
@@ -67,7 +68,7 @@ fs.readFile(fileName, 'utf8')
      console.log(BiEval.forward(data));
 
 
-// console.log("=== Backward Evaluation===");
+console.log("=== Backward Evaluation===");
 
 // console.log('--- 1. id  ------------------');
 // BiEval.backward(simpleExampleIntput2, {
@@ -80,17 +81,16 @@ fs.readFile(fileName, 'utf8')
 //   console.log("~~~~~~~~~~~~~~~~~~~~~~~~");
 // });
 
-// console.log('--- 2. bulk(delete "Boys" at 6, insert "Buddies" at 6) ------------------');
-// BiEval.backward(simpleExampleIntput2, {
-//   type:'bulk',
-//   operations:[
-//     {type:'delete', str:"Boyes", position:6},
-//     {type:'insert', str:"Buddies", position:6},
-//   ]
-// }).forEach(updatedCoreAST => {
-//   console.log(updatedCoreAST);
-//   console.log("~~~~~~~~~~~~~~~~~~~~~~~~");
-// });
+  console.log('--- 2. bulk(insert "</p>" at 107) ------------------');
+  BiEval.backward(data, {
+    type:'bulk',
+    operations:[
+      {type:'insert', str:"</p>", position: 107},
+    ]
+  }).forEach(updatedCoreAST => {
+    console.log(updatedCoreAST);
+    console.log("~~~~~~~~~~~~~~~~~~~~~~~~");
+  });
 
 
 

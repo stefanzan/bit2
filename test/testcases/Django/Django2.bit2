@@ -1,8 +1,8 @@
-«var athlete_list=["Alice", "Clark"]»
+«var athlete_list=["Alice","Clark"]»
 «var athlete_in_locker_room_list=["Bob"]»
 «if athlete_list.length>0»
     Number of athletes: «athlete_list.length»
-«else athlete_in_locker_room_list.length>0»
+«else»
     Athletes should be out of the locker room soon!
 «else»
     No athletes.
