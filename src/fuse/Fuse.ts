@@ -1459,6 +1459,8 @@ export function fuseExp(
           const newEnv: Environment = deepCloneEnvironment(env);
           newEnv[objExp.name] = [newObjValue, [newMarks]];
           return { newEnv, newExp: exp };
+        } else if(typeof objValue === 'object'){ // either list or null value, e.g. call list.length 
+          return { newEnv: deepCloneEnvironment(env), newExp: exp };
         } else {
           throw new Error("Field access's value is not an object");
         }
