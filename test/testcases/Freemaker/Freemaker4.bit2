@@ -1,4 +1,4 @@
-«var animals=[{name:"python", price:1500}, {name: "elephant", price:3500}]»
+«var animals=[{name:"python", price:1500},{name:"elephant", price:3500}]»
 <p>We have these animals:
 <table border=1>
   «for animal in animals»

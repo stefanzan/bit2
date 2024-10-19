@@ -1,8 +1,9 @@
-«var fruits =["banana", "apple", "mango"]»
+«var fruits=["banana","apple","mango"]»
 «if fruits.length==0»
 <p>We have no fruits.</p>
 «else»
-«for fruit in fruits separator "and" front "<p>Fruits:\n<ul>\n" rear "</ul>" »
+«for fruit in fruits separator "and" front "<p>Fruits:
+<ul>" rear "</ul>"»
   <li>«fruit»</li>
 «endfor»
 «endif»

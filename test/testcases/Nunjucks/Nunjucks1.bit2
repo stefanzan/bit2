@@ -1,5 +1,5 @@
-«var hungry = true»
-«var tired = false»
+«var hungry=true»
+«var tired=false»
 «if hungry»
   I am hungry
 «elseif tired»

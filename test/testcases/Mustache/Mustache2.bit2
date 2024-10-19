@@ -1,6 +1,7 @@
-«var person=true»
+«var person=false»
 Shown.
 «if person»
-  Never shown!
+Never shown!
 «else»
+No Person!
 «endif»

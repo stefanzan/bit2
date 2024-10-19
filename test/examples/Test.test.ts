@@ -60,7 +60,8 @@ fileName = './test/testcases/Xtend/Xtend1.bit2';
 fileName = './test/testcases/Xtend/Xtend3.bit2';
 fileName = './test/testcases/Xtend/Xtend4.bit2';
 
-fileName = './test/testcases/Freemaker/Freemaker1.bit2';
+// Test 
+fileName = './test/testcases/Django/Django4.bit2';
 
 fs.readFile(fileName, 'utf8')
   .then(data =>{
@@ -81,11 +82,11 @@ console.log("=== Backward Evaluation===");
 //   console.log("~~~~~~~~~~~~~~~~~~~~~~~~");
 // });
 
-  console.log('--- 2. bulk(insert "</p>" at 107) ------------------');
+  console.log('--- 2. bulk(replace "employee" with "member" at 4) ------------------');
   BiEval.backward(data, {
     type:'bulk',
     operations:[
-      {type:'insert', str:"</p>", position: 107},
+      {type:'replace', str1:"employee", str2:"member", position: 4},
     ]
   }).forEach(updatedCoreAST => {
     console.log(updatedCoreAST);

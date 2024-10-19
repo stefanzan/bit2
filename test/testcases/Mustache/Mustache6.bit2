@@ -1,4 +1,4 @@
-«var repo=[{name:"Alice"}, {name:"Bob"}]»
+«var repo=[{name:"Alice"},{name:"Bob"}]»
 «if repo.length==0»
 No repos...
 «else»

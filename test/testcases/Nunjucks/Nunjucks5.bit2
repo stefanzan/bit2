@@ -1,4 +1,4 @@
 «var username="Alice"»
 «username»
-«username = "Joe"»
+«username="Joe"»
 «username»

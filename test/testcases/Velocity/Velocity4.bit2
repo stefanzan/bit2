@@ -1,4 +1,4 @@
-«var customerList=[{name:"Alice"}, {name:"Bob"}, {name:"Mark"}]»
+«var customerList=[{name:"Alice"},{name:"Bob"},{name:"Mark"}]»
 «var counter=0»
 <table>
   «for c in customerList»

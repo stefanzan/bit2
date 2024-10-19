@@ -1,8 +1,8 @@
-«var customerList=[{name:"Alice"}, {name:"Bob"}, {name:"Mark"},{name:"Clark"}, {name:"Deamon"}, {name:"Frank"}]»
+«var customerList=[{name:"Alice"},{name:"Bob"},{name:"Mark"},{name:"Clark"},{name:"Deamon"},{name:"Frank"}]»
 «var counter=1»
 <table>
   «for c in customerList»
-  «if counter <= 5»
+  «if counter<=5»
     <tr><td>«counter»</td><td>«c.name»</td></tr>
   «endif»
   «counter=counter+1»
