@@ -295,7 +295,10 @@ function areExprEqual(expr1: Exp.Expr, expr2: Exp.Expr): boolean {
     case 'constant':
       const constant1 = expr1 as Exp.Constant;
       const constant2 = expr2 as Exp.Constant;
-      if (typeof constant1.value === 'object' && typeof constant2.value === 'object') {
+      // handle the special 'null' case
+      if(constant1.value===null && constant2.value===null){
+        return true;
+      }else if (typeof constant1.value === 'object' && typeof constant2.value === 'object') {
         return areExprEqual(constant1.value as Exp.Expr, constant2.value as Exp.Expr);
       }
       return constant1.value === constant2.value;
