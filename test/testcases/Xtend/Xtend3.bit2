@@ -2,9 +2,8 @@
 <html>
   <body>
   «for p in paragraphs»
-    «if p.headline != null»
+    «if p.headline!=null»
     <h1>«p.headline»</h1>
-    «else»
     «endif»
     <p>
     «p.text»

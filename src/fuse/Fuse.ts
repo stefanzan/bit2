@@ -71,6 +71,10 @@ export function fuse(
       }
     }
 
+    if(term.type==="sep"){
+      console.log("break");
+    }
+
     const s_c = term.value;
     switch (operation.type) {
       case "insert":
@@ -1912,6 +1916,7 @@ export function fuseBulk(
               throw new Error("All operations must have positions");
             } else {
               return { ...op, position: op.position - deltaN };
+              // if op.position - deltaN <0, then needs special method to handle.
             }
           });
           // Combine the remaining operations

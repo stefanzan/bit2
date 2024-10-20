@@ -54,7 +54,8 @@
     "example.small.10": "node dist/test/examples/small.10.test.js",
     "example.small.13": "node dist/test/examples/small.13.test.js",
     "example.small.17": "node dist/test/examples/small.17.test.js",
-    "example.test": "node dist/test/examples/Test.test.js"
+    "example.test": "node dist/test/examples/Test.test.js",
+    "example.simple": "node dist/test/examples/Test.simple.test.js"
   },
   "files": [
     "dist/bit2.js",

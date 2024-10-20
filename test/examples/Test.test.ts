@@ -61,7 +61,9 @@ fileName = './test/testcases/Xtend/Xtend3.bit2';
 fileName = './test/testcases/Xtend/Xtend4.bit2';
 
 // Test 
-fileName = './test/testcases/Django/Django4.bit2';
+// fileName = './test/testcases/Velocity/Velocity4.bit2';
+// fileName = './test/testcases/Xtend/Xtend3.bit2';
+fileName = './test/testcases/Xtend/Xtend4.bit2';
 
 fs.readFile(fileName, 'utf8')
   .then(data =>{
@@ -69,29 +71,45 @@ fs.readFile(fileName, 'utf8')
      console.log(BiEval.forward(data));
 
 
-console.log("=== Backward Evaluation===");
+    console.log("=== Backward Evaluation===");
 
-// console.log('--- 1. id  ------------------');
-// BiEval.backward(simpleExampleIntput2, {
-//   type:'bulk',
-//   operations:[
-//     {type:'id'},
-//   ]
-// }).forEach(updatedCoreAST => {
-//   console.log(updatedCoreAST);
-//   console.log("~~~~~~~~~~~~~~~~~~~~~~~~");
-// });
+    // console.log('--- 1. id  ------------------');
+    // BiEval.backward(data, {
+    //   type:'bulk',
+    //   operations:[
+    //     {type:'id'},
+    //   ]
+    // }).forEach(updatedCoreAST => {
+    //   console.log(updatedCoreAST);
+    //   console.log("~~~~~~~~~~~~~~~~~~~~~~~~");
+    // });
 
-  console.log('--- 2. bulk(replace "employee" with "member" at 4) ------------------');
+  console.log('--- 2. bulk(insert "\n" at 99, insert "  " at 100) ------------------');
   BiEval.backward(data, {
     type:'bulk',
     operations:[
-      {type:'replace', str1:"employee", str2:"member", position: 4},
+      {type:'insert', str:"\n", position: 99},
+      {type:'insert', str:"  ", position: 100},
     ]
   }).forEach(updatedCoreAST => {
     console.log(updatedCoreAST);
     console.log("~~~~~~~~~~~~~~~~~~~~~~~~");
   });
+
+
+
+  // console.log('--- 2. bulk(replace "employee" with "member" at 4) ------------------');
+  // BiEval.backward(data, {
+  //   type:'bulk',
+  //   operations:[
+  //     {type:'replace', str1:"0", str2:"1", position: 25},
+  //     {type:'replace', str1:"1", str2:"2", position: 71},
+  //     {type:'replace', str1:"2", str2:"3", position: 115},
+  //   ]
+  // }).forEach(updatedCoreAST => {
+  //   console.log(updatedCoreAST);
+  //   console.log("~~~~~~~~~~~~~~~~~~~~~~~~");
+  // });
 
 
 
