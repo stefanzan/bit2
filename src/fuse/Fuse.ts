@@ -71,10 +71,6 @@ export function fuse(
       }
     }
 
-    if(term.type==="sep"){
-      console.log("break");
-    }
-
     const s_c = term.value;
     switch (operation.type) {
       case "insert":
@@ -664,7 +660,7 @@ export function fuse(
     }
   } else if (term.type === "exp") {
     const expTerm = term as ExpNode;
-    const binding = term.binding;
+    const binding = expTerm.binding;
     const exp = binding[0];
     const val = binding[1];
     const valStr = valToStr(val);
@@ -787,7 +783,7 @@ export function fuse(
             return [
               {
                 newEnv: deepCloneEnvironment(newEnv),
-                newTermNode: { ...term, binding: [newExp, newVal] },
+                newTermNode: { ...term, binding: [newExp, newVal]},
                 remainingOperation: { type: "id" },
               },
             ];
@@ -800,7 +796,7 @@ export function fuse(
                 return [
                   {
                     newEnv: deepCloneEnvironment(newEnv),
-                    newTermNode: { ...term, binding: [newExp, ""] },
+                    newTermNode: { ...term, binding: [newExp, ""]},
                     remainingOperation: { type: "id" },
                   },
                   {
@@ -884,7 +880,7 @@ export function fuse(
           return [
             {
               newEnv: deepCloneEnvironment(newEnv),
-              newTermNode: { ...term, binding: [newExp, newVal] },
+              newTermNode: { ...term, binding: [newExp, newVal]},
               remainingOperation: { type: "id" },
             },
           ];
@@ -899,7 +895,7 @@ export function fuse(
           return [
             {
               newEnv: deepCloneEnvironment(newEnv),
-              newTermNode: { ...term, binding: [newExp, newVal] },
+              newTermNode: { ...term, binding: [newExp, newVal]},
               remainingOperation: {
                 type: "delete",
                 str: remainingDelStr,
@@ -951,7 +947,7 @@ export function fuse(
             return [
               {
                 newEnv: newEnv,
-                newTermNode: { ...term, binding: [newExp, newVal] },
+                newTermNode: { ...term, binding: [newExp, newVal]},
                 remainingOperation: { type: "id" },
               },
             ];
@@ -969,7 +965,7 @@ export function fuse(
             return [
               {
                 newEnv: newEnv,
-                newTermNode: { ...term, binding: [newExp, newVal] },
+                newTermNode: { ...term, binding: [newExp, newVal]},
                 remainingOperation: {
                   type: "replace",
                   str1: restStr1,
@@ -993,7 +989,7 @@ export function fuse(
           return [
             {
               newEnv: newEnv,
-              newTermNode: { ...term, binding: [newExp, newVal] },
+              newTermNode: { ...term, binding: [newExp, newVal]},
               remainingOperation: { type: "id" },
             },
           ];
@@ -1231,33 +1227,54 @@ export function fuse(
       let resultList = bodyResultList.map(({ newEnv, newTermNode, remainingOperation }) => {
         // console.log("newEnv:", newEnv);
         let newVarVal = newEnv[varName][0];
+        let isNewVarVal = newEnv[varName][1].length > 0;
         delete (newEnv as any)[varName];
         let updatedOldEnv = updateEnvByEnv(env, newEnv);
-        let { newEnv: updatedEnv, newExp } = fuseExp(
-          updatedOldEnv,
-          newVarVal,
-          varExp
-        );
-        // console.log("lambda, newVarVal:", newVarVal);
-        // console.log("updatedOldEnv:", updatedOldEnv);
-        // console.log("exp:", varExp);
-        // console.log("newExp:", newExp);
-        // console.log("updatedEnv:", updatedEnv);
-        return {
-          newEnv: updatedEnv,
-          newTermNode: {
-            type: "lambda",
-            variable: term.variable,
-            body: newTermNode,
-            binding: [newExp, newVarVal],
-            marker: term.marker,
-          },
-          remainingOperation: remainingOperation,
-        } as {
-          newEnv: Environment;
-          newTermNode: TermNode;
-          remainingOperation: UpdateOperation;
-        };
+        if(!isNewVarVal){
+          return {
+            newEnv: updatedOldEnv,
+            newTermNode: {
+              type: "lambda",
+              variable: term.variable,
+              body: newTermNode,
+              binding: [varExp, varVal],
+              isBindingUpdated:false,
+              marker: term.marker,
+            },
+            remainingOperation: remainingOperation,
+          } as {
+            newEnv: Environment;
+            newTermNode: TermNode;
+            remainingOperation: UpdateOperation;
+          };
+        } else {
+          let { newEnv: updatedEnv, newExp } = fuseExp(
+            updatedOldEnv,
+            newVarVal,
+            varExp
+          );
+          // console.log("lambda, newVarVal:", newVarVal);
+          // console.log("updatedOldEnv:", updatedOldEnv);
+          // console.log("exp:", varExp);
+          // console.log("newExp:", newExp);
+          // console.log("updatedEnv:", updatedEnv);
+          return {
+            newEnv: updatedEnv,
+            newTermNode: {
+              type: "lambda",
+              variable: term.variable,
+              body: newTermNode,
+              binding: [newExp, newVarVal],
+              isBindingUpdated:true,
+              marker: term.marker,
+            },
+            remainingOperation: remainingOperation,
+          } as {
+            newEnv: Environment;
+            newTermNode: TermNode;
+            remainingOperation: UpdateOperation;
+          };
+        }
       });
       loopItemResultList = loopItemResultList.concat(resultList);
       return loopItemResultList;

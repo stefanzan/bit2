@@ -19,7 +19,7 @@ export function partialEval(environment: Map<string, any>, termNode: CoreAST.Ter
             // Update environment with the evaluated value
             updatedEnvDeclare.set(termNode.name.name, evaluatedValueDeclare);
             // Return updated environment and PartialAST declare node
-            return [updatedEnvDeclare, { type: 'declare', name: termNode.name, value: [termNode.value, evaluatedValueDeclare] }];
+            return [updatedEnvDeclare, { type: 'declare', name: termNode.name, value: [termNode.value, evaluatedValueDeclare], isBindingUpdated:false }];
         case 'declareend':
             return [environment, termNode];
         case 'assign':
@@ -28,7 +28,7 @@ export function partialEval(environment: Map<string, any>, termNode: CoreAST.Ter
             // Update environment with the evaluated value
             updatedEnvAssign.set(termNode.name.name, evaluatedValueAssign);
             // Return updated environment and PartialAST assign node
-            return [updatedEnvAssign, { type: 'assign', name: termNode.name, value: [termNode.value, evaluatedValueAssign] }];
+            return [updatedEnvAssign, { type: 'assign', name: termNode.name, value: [termNode.value, evaluatedValueAssign], isBindingUpdated:false}];
 
         case 'exp':
             // Partially evaluate the expression
@@ -169,6 +169,7 @@ export function partialEval(environment: Map<string, any>, termNode: CoreAST.Ter
                       variable: body.variable,
                       body: evaluatedBody,
                       binding: [{ type: 'constant', value:element }, element],
+                      isBindingUpdated:false,
                       marker: {
                           type: 'loopitem',
                           lst: list

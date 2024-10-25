@@ -10,7 +10,8 @@ const testConstNode: ConstNode = {
 const testDeclareNode: DeclareNode = {
     type: 'declare',
     name: {type:"variable", name:'x'},
-    value: [{ type: 'constant', value: '5' }, 5]
+    value: [{ type: 'constant', value: '5' }, 5],
+    isBindingUpdated:false
 };
 
 const testSeqNode: SeqNode = {

@@ -12,6 +12,7 @@ const exampleAST: LambdaAST.TermNode = {
       variable: {type:'variable',name:'x'},
       body: { type: 'const', value:'world'},
       binding: [{ type: 'variable', name: 'x' }, 'valueX' ],
+      isBindingUpdated:false,
       marker: { type: 'loopitem', lst: { type: 'variable', name: 'arr' } }
     },
     {
@@ -19,6 +20,7 @@ const exampleAST: LambdaAST.TermNode = {
       variable: {type:'variable',name:'y'},
       body: { type: 'const', value: 'test'},
       binding: [ { type: 'variable', name: 'y' }, 'valueY' ],
+      isBindingUpdated:false,
       // @ts-ignore
       marker: { type: 'declare' }
     },
@@ -27,6 +29,7 @@ const exampleAST: LambdaAST.TermNode = {
       variable: {type:'variable',name:'z'},
       body: { type: 'const', value: 'example'},
       binding: [{ type: 'variable', name: 'z' }, 'valueZ' ],
+      isBindingUpdated:false,
       // @ts-ignore
       marker: { type: 'assign' }
     },

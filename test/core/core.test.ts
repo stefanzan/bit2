@@ -5,13 +5,13 @@ import * as Print from "../../src/core/Print";
 const exampleAST: TermNode = {
     type: 'seq',
     nodes: [
-        { type: 'declare', name: {type:"variable", name: "x"}, value: { type: 'constant', value: 42 } },
-        { type: 'assign', name: {type:"variable", name: "x"}, value: { type: 'binary', operator: '+', left: { type: 'variable', name: 'x' }, right: { type: 'constant', value: 1 } } },
+        { type: 'declare', name: {type:"variable", name: "x"}, value: { type: 'constant', value: 42 },isBindingUpdated:false },
+        { type: 'assign', name: {type:"variable", name: "x"}, value: { type: 'binary', operator: '+', left: { type: 'variable', name: 'x' }, right: { type: 'constant', value: 1 } },isBindingUpdated:false },
         {
             type: 'ite',
             condition: { type: 'binary', operator: '>', left: { type: 'variable', name: 'x' }, right: { type: 'constant', value: 10 } },
-            trueBranch: { type: 'assign', name: {type:"variable", name: "x"}, value: { type: 'constant', value: 10 } },
-            falseBranch: { type: 'assign', name: {type:"variable", name: "x"}, value: { type: 'constant', value: 0 } }
+            trueBranch: { type: 'assign', name: {type:"variable", name: "x"}, value: { type: 'constant', value: 10 },isBindingUpdated:false },
+            falseBranch: { type: 'assign', name: {type:"variable", name: "x"}, value: { type: 'constant', value: 0 },isBindingUpdated:false }
         },
         {type:'end'}
     ]

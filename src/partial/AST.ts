@@ -19,6 +19,7 @@ export interface DeclareNode {
     type: 'declare';
     name: Variable;
     value: Binding;
+    isBindingUpdated:boolean;
 }
 
 
@@ -26,6 +27,7 @@ export interface AssignNode {
     type: 'assign';
     name: Variable;
     value: Binding;
+    isBindingUpdated:boolean;
 }
 
 export interface ExpNode {
@@ -60,6 +62,7 @@ export interface LambdaAppNode {
   variable: Variable;
   body: TermNode;
   binding: Binding;
+  isBindingUpdated:boolean;
   marker: Marker;
 }
 

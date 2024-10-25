@@ -5,7 +5,7 @@ import * as PartialAST from "../partial/AST";
 export function unLambdalize(lambdaNode: LambdaAST.TermNode): PartialAST.TermNode {
   switch (lambdaNode.type) {
     case 'lambda': {
-      const { variable, body, binding, marker } = lambdaNode;
+      const { variable, body, binding, marker, isBindingUpdated } = lambdaNode;
       let newBody: PartialAST.TermNode;
 
       switch (marker.type) {
@@ -19,6 +19,7 @@ export function unLambdalize(lambdaNode: LambdaAST.TermNode): PartialAST.TermNod
                 type: 'declare',
                 name: variable,
                 value: binding,
+                isBindingUpdated:isBindingUpdated
               },
               newBody,
             ],
@@ -35,6 +36,7 @@ export function unLambdalize(lambdaNode: LambdaAST.TermNode): PartialAST.TermNod
                 type: 'assign',
                 name: variable,
                 value: binding,
+                isBindingUpdated:isBindingUpdated
               },
               newBody,
             ],
@@ -42,7 +44,7 @@ export function unLambdalize(lambdaNode: LambdaAST.TermNode): PartialAST.TermNod
         }
 
         default: {
-          return {type:'lambda', variable: variable, body:unLambdalize(body), binding:binding, marker:marker }
+          return {type:'lambda', variable: variable, body:unLambdalize(body), binding:binding, isBindingUpdated:isBindingUpdated, marker:marker }
         }
       }
     }

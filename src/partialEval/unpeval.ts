@@ -15,9 +15,9 @@ export function unPartialEval(node: PartialAST.TermNode): CoreAST.TermNode {
     case 'space':
       return CoreAST.space(node.width);
     case 'declare':
-      return CoreAST.declare(node.name, getExpr(node.value));
+      return CoreAST.declare(node.name, getExpr(node.value), node.isBindingUpdated);
     case 'assign':
-      return CoreAST.assign(node.name, getExpr(node.value));
+      return CoreAST.assign(node.name, getExpr(node.value), node.isBindingUpdated);
     case 'exp':
       return CoreAST.exp(getExpr(node.binding));
     case 'nop':
@@ -178,6 +178,7 @@ function unNestLambdaLoopItems(node: PartialAST.LambdaAppNode) : [CoreAST.Lambda
       let firstRealLambdaNode = unPartialEvalLambdaApp(firstRealLambdaAppNode);
       let innerRealLambdaNode = innerRealLambdaAppNode as CoreAST.LambdaWithExpr;
       if(areLambdaWithExprsEqual(firstRealLambdaNode, innerRealLambdaNode)){
+        // the proboem described in 1.modifiableChecking only happens in the last one.
       // 判断两个是否相等
         if(innerRealSepNode === null){
           return [firstRealLambdaNode, firstSepNode];
@@ -365,11 +366,19 @@ function areTermNodesEqual(node1: CoreAST.TermNode, node2: CoreAST.TermNode): bo
     case 'declare':
       const declare1 = node1 as CoreAST.DeclareNode;
       const declare2 = node2 as CoreAST.DeclareNode;
-      return areVariablesEqual(declare1.name, declare2.name) && areExprEqual(declare1.value, declare2.value);
+      if(!declare1.isBindingUpdated || !declare2.isBindingUpdated){
+        return true;
+      } else {
+        return areVariablesEqual(declare1.name, declare2.name) && areExprEqual(declare1.value, declare2.value);
+      }
     case 'assign':
       const assign1 = node1 as CoreAST.AssignNode;
       const assign2 = node2 as CoreAST.AssignNode;
-      return areVariablesEqual(assign1.name, assign2.name) && areExprEqual(assign1.value, assign2.value);
+      if(!assign1.isBindingUpdated || !assign2.isBindingUpdated){
+        return true;
+      } else {
+        return areVariablesEqual(assign1.name, assign2.name) && areExprEqual(assign1.value, assign2.value);
+      }
     case 'exp':
       return areExprEqual((node1 as CoreAST.ExpNode).expression, (node2 as CoreAST.ExpNode).expression);
     case 'seq':

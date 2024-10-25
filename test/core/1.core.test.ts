@@ -43,13 +43,14 @@ const paragraphs = declare({ type: 'variable', name: 'paragraphs' }, { type: 'fr
   { type: 'object', fields: { head: {type:"constant", value: "Hello"}, text: {type:"constant", value: "Hello!" } } },
   { type: 'object', fields: { head: {type:"constant", value: "Farewell"}, text: {type:"constant", value: "Good Bye!"} } }
   ]}
-});
+}, false
+);
 
 // Define sequence of commands
 export const documentStructure: SeqNode = seq(
   paragraphs,
   htmlStart, constNode("\\n"), space(4), bodyStart, constNode("\\n"),
-  declare({ type: 'variable', name: 'no' }, { type:'constant', value:0} ),
+  declare({ type: 'variable', name: 'no' }, { type:'constant', value:0},false ),
   loop({ type: 'variable', name: 'paragraphs' }, { type: 'sep', value: "" }, { type: 'front', value: "" }, { type: 'rear', value: "" },
     {
       type: 'lambda',
@@ -58,7 +59,7 @@ export const documentStructure: SeqNode = seq(
         ite(
             { type: 'binary', operator: '!=', left: { type: 'field', object: {type: 'variable',name: "p"}, field: 'head' }, right: { type: 'constant', value: null } },
             seq(
-                assign({ type: 'variable', name: 'no' }, { type: 'binary', operator: '+', left: { type: 'variable', name: 'no' }, right: {type:'constant',value:1} }),
+                assign({ type: 'variable', name: 'no' }, { type: 'binary', operator: '+', left: { type: 'variable', name: 'no' }, right: {type:'constant',value:1} }, false),
                 space(9), constNode("<h1>"), exp({ type: 'variable', name: 'no' }), constNode("."), exp({ type: 'field', object: {type: 'variable',name: "p"}, field: 'head' }), constNode("</h1>"), constNode("\\n")
             ),
             nop()

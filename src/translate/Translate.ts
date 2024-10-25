@@ -17,9 +17,9 @@ function translateFragment(fragment: Surface.Fragment): Core.TermNode[] {
     case 'Directive':
       switch (fragment.content.type) {
         case 'declare':
-          return [Core.declare({type: 'variable', name: fragment.content.name}, fragment.content.expr)];
+          return [Core.declare({type: 'variable', name: fragment.content.name}, fragment.content.expr, false)];
         case 'assign':
-          return [Core.assign({type: 'variable', name: fragment.content.name}, fragment.content.expr)];
+          return [Core.assign({type: 'variable', name: fragment.content.name}, fragment.content.expr, false)];
         case 'exp':
           return [Core.exp(fragment.content.expr)];
         case 'if':

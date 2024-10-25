@@ -21,6 +21,7 @@ export interface DeclareNode {
     type: 'declare';
     name: Variable;
     value: Expr;
+    isBindingUpdated:boolean;
 }
 
 export interface DeclareendNode {
@@ -32,6 +33,7 @@ export interface AssignNode {
     type: 'assign';
     name: Variable;
     value: Expr;
+    isBindingUpdated:boolean;
 }
 
 export interface ExpNode {
@@ -123,8 +125,8 @@ export function space(width: number): SpaceNode {
   return { type: 'space', width };
 }
 
-export function declare(name: Variable, value: Expr): DeclareNode {
-  return { type: 'declare', name, value };
+export function declare(name: Variable, value: Expr, isBindingUpdated:boolean): DeclareNode {
+  return { type: 'declare', name, value, isBindingUpdated};
 }
 
 export function exp(expression: Expr): ExpNode {
@@ -139,8 +141,8 @@ export function ite(condition: Expr, trueBranch: TermNode, falseBranch: TermNode
   return { type: 'ite', condition, trueBranch, falseBranch };
 }
 
-export function assign(name: Variable, value: Expr): AssignNode {
-  return { type: 'assign', name, value };
+export function assign(name: Variable, value: Expr, isBindingUpdated:boolean): AssignNode {
+  return { type: 'assign', name, value, isBindingUpdated };
 }
 
 export function sep(value: string): SepNode {

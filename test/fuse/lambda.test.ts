@@ -22,6 +22,7 @@ let lambdaAppDeclare: LambdaAppNode = {
   variable: {type:'variable', name:'x'},
   body:{type:'exp', binding:[{type:'variable',name:'x'}, 1]},
   binding:[{type:'constant', value:1},1],
+  isBindingUpdated:false,
   marker: {type:'declare'} as DeclareMarker
 }
 fuse(env
@@ -45,6 +46,7 @@ let lambdaAppAssign: LambdaAppNode = {
   variable: {type:'variable', name:'x'},
   body:{type:'exp', binding:[{type:'variable',name:'x'}, 11]},
   binding:[{type:'binary', operator:"+", left:{type:'variable', name:'y'}, right:{type:'constant', value:10}},11],
+  isBindingUpdated:false,
   marker: {type:'assign'} as AssignMarker
 }
 fuse(env
@@ -68,6 +70,7 @@ let lambdaAppAssign2: LambdaAppNode = {
   variable: {type:'variable', name:'x'},
   body:{type:'exp', binding:[{type:'variable',name:'x'}, 11]},
   binding:[{type:'binary', operator:"+", right:{type:'variable', name:'y'}, left:{type:'constant', value:10}}, 11],
+  isBindingUpdated:false,
   marker: {type:'assign'} as AssignMarker
 }
 fuse(env
@@ -95,10 +98,12 @@ let lambdaAppDeclareAssign: LambdaAppNode = {
       variable:{type:'variable', name:'x'},
       body:{type:'exp', binding:[{type:'variable',name:'x'}, 2]},
       binding:[{type:'binary', operator:"+", left:{type:'variable', name:'x'}, right:{type:'constant', value:1}}, 2],
+      isBindingUpdated:false,
       marker: {type:'assign'} as AssignMarker
     } 
   ]},
   binding:[{type:'constant', value:1},1],
+  isBindingUpdated:false,
   marker: {type:'declare'} as DeclareMarker
 }
 fuse(env
@@ -127,10 +132,12 @@ let lambdaAppDeclareAssign2: LambdaAppNode = {
       variable:{type:'variable', name:'x'},
       body:{type:'exp', binding:[{type:'variable',name:'x'}, 2]},
       binding:[{type:'binary', operator:"+", left:{type:'variable', name:'x'}, right:{type:'constant', value:1}}, 2],
+      isBindingUpdated:false,
       marker: {type:'assign'} as AssignMarker
     } 
   ]},
   binding:[{type:'constant', value:1},1],
+  isBindingUpdated:false,
   marker: {type:'declare'} as DeclareMarker
 }
 fuse(env

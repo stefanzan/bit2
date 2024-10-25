@@ -19,6 +19,7 @@ export function lambdalize(partialAST: PartialAST.TermNode) : LambdaAST.TermNode
       variable: lambdaAppNode.variable,
       body: translatedBody,
       binding: lambdaAppNode.binding,
+      isBindingUpdated: lambdaAppNode.isBindingUpdated,
       marker: lambdaAppNode.marker
     };
     return newLambdaAppNode;
@@ -52,6 +53,7 @@ function lambdalizeSeq(seqNode: PartialAST.SeqNode): LambdaAST.SeqNode {
               variable: declareNode.name,
               body: {type:'seq', nodes: updatedInnerNodes},
               binding: declareNode.value,
+              isBindingUpdated:false,
               marker: { type: currentNode.type }
             };
             newNodes.push(lambdaNode);
@@ -61,6 +63,7 @@ function lambdalizeSeq(seqNode: PartialAST.SeqNode): LambdaAST.SeqNode {
               variable: declareNode.name,
               body: {type:'seq', nodes: updatedInnerNodes},
               binding: declareNode.value,
+              isBindingUpdated: false,
               marker: { type: currentNode.type }
             };
             newNodes.push(lambdaNode); 

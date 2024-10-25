@@ -54,10 +54,12 @@ let seq2: SeqNode = {
             {type:'exp', binding:[{type:'variable', name:'no'}, 2]},
           ]},
           binding:[{type:'binary', operator:"+", left:{type:'variable', name:'no'}, right:{type:'constant', value:1}}, 2],
+          isBindingUpdated:false,
           marker: {type:'assign'} as AssignMarker
         }
       ]},
       binding:[{type:'constant', value:1}, 1],
+      isBindingUpdated:false,
       marker: {type:'declare'} as DeclareMarker
     }
   ]

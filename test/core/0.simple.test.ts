@@ -4,10 +4,10 @@ import * as Print from "../../src/core/Print";
 export const assignmentExample: TermNode = {
   type: 'seq',
   nodes: [
-    {type:'declare', name:{type:'variable', name:'v'}, value:{type:'constant',value:0}},
+    {type:'declare', name:{type:'variable', name:'v'}, value:{type:'constant',value:0}, isBindingUpdated:false},
     {type:'exp', expression:{type:'variable', name:'v'}},
     {type:'space', width:1},
-    {type:'assign',name:{type:'variable', name:'v'}, value:{type:'binary', operator:'+',left:{type:'variable',name:'v'},right:{type:'constant', value:1}}},
+    {type:'assign',name:{type:'variable', name:'v'}, value:{type:'binary', operator:'+',left:{type:'variable',name:'v'},right:{type:'constant', value:1}}, isBindingUpdated:false},
     {type:'space', width:1},
     {type:'exp', expression:{type:'variable', name:'v'}},
     {type:'end'}
@@ -17,7 +17,7 @@ export const assignmentExample: TermNode = {
 export const branchExample: TermNode = {
   type:'seq',
   nodes:[
-    {type:'declare', name:{type:'variable', name:'v'}, value:{type:'constant',value:"stefanzantao"}},
+    {type:'declare', name:{type:'variable', name:'v'}, value:{type:'constant',value:"stefanzantao"}, isBindingUpdated:false},
     {
       type:'ite',
       condition:{type:'binary', operator:">", left:{type:'field', object:{type:'variable', name:'v'}, field:'length'}, right:{type:'constant', value:10}},
@@ -40,7 +40,8 @@ export const loopExample: TermNode = {
       value:{type:'array',elements:[
         { type: 'object', fields: { head: {type:"constant", value: "Hello"}, text: {type:"constant", value: "Hello!" } } },
         { type: 'object', fields: { head: {type:"constant", value: "Farewell"}, text: {type:"constant", value: "Good Bye!"} } }
-      ]}
+      ]},
+      isBindingUpdated:false
     },
     {
       type:'loop',
@@ -72,11 +73,13 @@ export const loopExampleWithAssign: TermNode = {
       value:{type:'array',elements:[
         {type:"constant", value: "Hello"},
         {type:"constant", value: "Farewell"}
-      ]}
+      ]},
+      isBindingUpdated:false
     },
     {
       type:'declare', name:{type:'variable', name:'no'},
-      value:{type:'constant', value: 0}
+      value:{type:'constant', value: 0},
+      isBindingUpdated:false
     },
     {
       type:'loop',
@@ -88,7 +91,7 @@ export const loopExampleWithAssign: TermNode = {
             body: {
               type:'seq',
               nodes:[
-                {type:'assign',name:{type:'variable', name:'no'}, value:{type:'binary', operator:'+',left:{type:'variable',name:'no'},right:{type:'constant', value:1}}},
+                {type:'assign',name:{type:'variable', name:'no'}, value:{type:'binary', operator:'+',left:{type:'variable',name:'no'},right:{type:'constant', value:1}},isBindingUpdated:false},
                 {type:'exp', expression:{type:'variable', name:'no'}},
                 {type: 'const', value: "."},
                 {type:'exp', expression:{type:'variable', name:'item'}}
@@ -110,11 +113,13 @@ export const loopExampleWithAssignAndIF: TermNode = {
       value:{type:'array',elements:[
         {type:"constant", value: "Hello"},
         {type:"constant", value: "Farewell"}
-      ]}
+      ]},
+      isBindingUpdated:false
     },
     {
       type:'declare', name:{type:'variable', name:'no'},
-      value:{type:'constant', value: 0}
+      value:{type:'constant', value: 0},
+      isBindingUpdated:false
     },
     {
       type:'loop',
@@ -129,7 +134,7 @@ export const loopExampleWithAssignAndIF: TermNode = {
                 {type:'ite',
                   condition: {type:'binary', operator:"!=", left:{type:'variable', name:'item'}, right:{type:'constant', value:""}},
                   trueBranch:{type:'seq', nodes:[
-                    {type:'assign',name:{type:'variable', name:'no'}, value:{type:'binary', operator:'+',left:{type:'variable',name:'no'},right:{type:'constant', value:1}}},
+                    {type:'assign',name:{type:'variable', name:'no'}, value:{type:'binary', operator:'+',left:{type:'variable',name:'no'},right:{type:'constant', value:1}},isBindingUpdated:false},
                     {type:'exp', expression:{type:'variable', name:'no'}},
                     {type: 'const', value: "."},
                     {type:'exp', expression:{type:'variable', name:'item'}}

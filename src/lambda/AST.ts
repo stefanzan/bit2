@@ -18,6 +18,7 @@ export interface LambdaAppNode {
   variable: Variable;
   body: TermNode;
   binding: PartilAST.Binding;
+  isBindingUpdated:boolean;
   marker: Marker;
 }
 
