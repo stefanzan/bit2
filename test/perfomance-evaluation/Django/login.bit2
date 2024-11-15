@@ -1,0 +1,98 @@
+«var banner = "Join our workshop to for a live demo of Sentry's new AI tools on Dec. 10." »
+«var op = "login" »
+«var csrfname = "csrfmiddlewaretoken" »
+«var csrfvalue = "CDVB1MtXu2wQ1Bn148ApzF9GQp3N035WyVAX6kr6ZeqJzgfvF3YENePnVKgxgurJ" »
+«var sentryAccountRecover = "/account/recover/"»
+«var google_login_link = "sentry.io/identity/login/google/"»
+«var github_login_link = "sentry.io/identity/login/github/"»
+«var vsts_login_link = "sentry.io/identity/login/vsts/"»
+«var server_hostname = "sentry.io"»
+  « if banner != "" »
+    <h2 class="m-t-1 m-l-1 m-b-0">«banner»</h2>
+  « endif »
+
+  <div class="auth-container p-t-1 border-bottom">
+    <h3>Sign in to continue</h3>
+    <ul class="nav nav-tabs auth-toggle m-b-0">
+      <li« if op == "login" » class="active"« endif »>
+        <a href="#login" data-toggle="tab">Sign In</a>
+      </li>
+     <li« if op == "sso" » class="active"« endif »>
+        <a href="#sso" data-toggle="tab">Single Sign-On</a>
+      </li>
+    </ul>
+  </div>
+  <div class="tab-content">
+    <div class="tab-pane« if op == "login" » active« endif »" id="login">
+      <div class="auth-container">
+        <div class="auth-form-column">
+          <form class="form-stacked" action="" method="post" autocomplete="off">
+           
+            <input type="hidden" name="«csrfname»" value="«csrfvalue»">
+            <input type="hidden" name="op" value="login" />
+            «var login_form = [{id:"div_id_username", labelFor:"id_username", label:"账户", inputType:"text", inputName:"username", inputPlaceholder:"用户名或邮箱", inputRequiredId:"id_username"}, {id:"div_id_password", labelFor:"id_password", label:"密码", inputType:"password", inputName:"password", inputPlaceholder:"密码", inputRequiredId:"id_password"}] »
+            «for field in login_form »
+               <div id="«field.id»" class="form-group">
+                   <label for="«field.labelFor»" class="control-label  requiredField">«field.label»<span class="asteriskField">*</span></label>
+                   <div class="controls ">
+                        <input type="«field.inputType»" name="«field.inputName»" placeholder="«field.inputPlaceholder»" tabindex="1" maxlength="128" class="textinput textInput form-control" required id="«field.inputRequiredId»">
+                    </div> 
+                </div>
+            «endfor»
+
+            <div class="auth-footer m-t-1">
+              <button type="submit" class="btn btn-primary">Continue</button>
+              <a class="secondary" href="«sentryAccountRecover»">Lost your password?</a>
+            </div>
+          </form>
+        </div>
+          <div class="auth-provider-column">
+            « if google_login_link != null »
+              <p>
+                <a class="btn btn-default btn-login-google" href="« google_login_link »" style="display: block">
+                  <span class="provider-logo google"></span> Sign in with Google
+                </a>
+              </p>
+            « endif »
+
+            « if github_login_link != null»
+              <p>
+                <a class="btn btn-default btn-login-github" href="« github_login_link »" style="display: block">
+                  <span class="provider-logo github"></span> Sign in with GitHub
+                </a>
+              </p>
+            « endif »
+
+            « if vsts_login_link != null»
+              <p>
+                <a class="btn btn-default btn-login-vsts" href="« vsts_login_link »" style="display: block">
+                  <span class="provider-logo vsts"></span> Sign in with Azure DevOps
+                </a>
+              </p>
+            « endif »
+          </div>
+      </div>
+    </div>
+
+    <div class="tab-pane« if op == "sso" » active« endif »" id="sso">
+      <div class="auth-container">
+        <div class="auth-form-column">
+          <form class="form-stacked" method="post">
+          <input type="hidden" name="«csrfname»" value="«csrfvalue»">
+            <input type="hidden" name="op" value="sso" />
+
+            <div class="control-group required">
+              <div class="controls">
+                <label class="control-label">Organization ID</label>
+                <input type="text" class="form-control" name="organization" placeholder="acme" required>
+                <p class="help-block">Your ID is the slug either before or after the hostname. For example, <code><strong>acme</strong></code> is the slug in either <code>« server_hostname »/<strong>acme</strong>/</code> or <code><strong>acme</strong>.« server_hostname »/</code>.</p>
+              </div>
+            </div>
+            <div class="auth-footer m-t-1">
+              <button class="btn btn-primary">Continue</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>

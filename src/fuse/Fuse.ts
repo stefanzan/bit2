@@ -1171,7 +1171,8 @@ export function fuse(
             } else if (!("position" in op)) {
               throw new Error("All operations must have positions");
             } else {
-              return { ...op, position: op.position - deltaN };
+              return { ...op, position: op.position - deltaN }; 
+              // since creating a new term, position-deltaN cannot be negative.
             }
           });
           // Combine the remaining operations
