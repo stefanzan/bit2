@@ -1,0 +1,64 @@
+«var collections={code:[{url:"/code/windows-95/", data:{height:600, background:"#eccfd1", mobile:true, button:false, title:"Windows 95", size:0, filters:["retro","ui"], width:0, category:"code", uri:"MWqRZzp", types:[]}, page:{date:"2023-09-19", fileSlug:"windows-95"}},{url:"/code/pokemon-quest/", data:{height:600, background:"#333", mobile:true, button:false, title:"CSS-Only Pokémon Quest Icon Sort", size:0, filters:["only","gaming"], width:0, category:"code", uri:"KKQwydY", types:[]}, page:{date:"2022-05-10", fileSlug:"pokemon-quest"}}]}»
+
+<section class="posts-container">
+	<div class="posts" data-grid>
+    «var code=collections.code»
+		«for post in code»
+      «var data=post.data»
+      «var page=post.page»
+      «var filters=data.filters»
+			<article class="post post-code «if data.size>0» post-size-«data.size»«endif» data-anim data-grid-item" «if data.width>0»style="max-width: «data.width»"«endif»>
+				<div class="post-inner">
+					<header class="post-header «if data.category=="code"»inline-header«endif»">
+						<div class="post-header-content">
+							<div class="post-header-left">
+								<h2 class="post-headline">
+									«if data.uri!=""»
+										<a href="https://codepen.io/gabriellewee/pen/«data.uri»"><span>«data.title»</span></a>
+									«else»
+										«data.title»
+									«endif»
+								</h2>
+                «var types=data.types»
+								«if types.length>0»
+									<div class="post-tags">
+										«for type in types»
+											<u class="tag-«type»">#«type»</u>
+										«endfor»
+									</div>
+								«endif»
+							</div>
+							<div class="post-header-right">
+								<time class="time «if data.category!="code"»time-default«endif» «if data.category=="social"»time-external«endif»" datetime="«page.date»" data-time="«page.date»">«page.date»</time>
+								<a class="expand" id="«page.date»-«page.fileSlug»" aria-label="Expand preview of «data.title»" role="button" href="#«page.date»-«page.fileSlug»-lightbox" data-media-expand></a>
+								<a class="external-expand" href="«post.url»" aria-label="View «data.category» in new window" target="_blank"></a>
+							</div>
+						</div>
+					</header>
+
+					<div class="post-content «if data.category=="writing"»post-text«endif»">
+						«if data.mobile==false»
+							<a class="post-mobile-button button" href="«post.url»" target="_blank"><span>View animation</span></a>
+						«endif»
+						«if data.button==true»
+							<button class="reload button" data-reload hidden><span>«data.button»</span></button>
+						«endif»
+						«if post.url!=""»
+							<div class="frame-wrapper" style="background: «data.background»">
+								<noscript class="warning"><p><em>Please enable Javascript to view this code demo.</em></p></noscript>
+								<iframe class="frame " src="«post.url»" width="600" height="«data.height»" title="«data.title»" loading="lazy" tabindex="-1" onload="this.style.opacity = 1;"></iframe>
+							</div>
+						«else»
+							«post.content»
+						«endif»
+					</div>
+				</div>
+			</article>
+		«endfor»
+	</div>
+
+	<nav class="pagination" aria-label="Pagination">
+		<a class="button" href="https://codepen.io/gabriellewee"><span>View more</span></a>
+	</nav>
+</section>
+

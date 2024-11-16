@@ -23,7 +23,7 @@
         </tr>
         </table>
         </form>
-           «var medicalhistorys = [{id: 1123, patientname:"Alice", name:"cold", time:"2023-10-01", doctorname:"Dr.Josh"}, {id: 1893, patientname:"Bob", name:"Flue", time:"2024-2-11", doctorname:"Dr.Mike"}]»
+           «var medicalhistorys=[{id:1123, patientname:"Alice", name:"cold", time:"2023-10-01", doctorname:"Dr.Josh"},{id:1893, patientname:"Bob", name:"Flue", time:"2024-2-11", doctorname:"Dr.Mike"}]»
             <table class="layui-table">
                 <thead>
                 <tr>
@@ -38,8 +38,8 @@
                 </tr>
                 </thead>
                 <tbody>
+                «var index=1»
                 «for m in medicalhistorys»
-                «var index = 1 »
                     <tr>
                         <td>«index»</td>
                         <td>«m.patientname»</td>
@@ -51,7 +51,7 @@
                             <button class="layui-btn" onclick="del('/admin/medicalhistory/',«m.id»)"><i class="layui-icon">&#xe640;</i></button>
                         </td>
                     </tr>
-                «index = index + 1 »
+                «index=index+1»
                 «endfor»
                 </tbody>
             </table>

@@ -1,4 +1,6 @@
-«var c={name:"Person", fields:[{name:"name", type:"String"},{name:"tel", type:"String"}, {name:"geneder", type:"String"}], operations:[{name:"isMale", type:"boolean"}, {name:"lengthOfTel", type:"int"}]}»
+«var import="import java.util.ArrayList;"»
+«var c={name:"Person", fields:[{name:"name", type:"String"},{name:"tel", type:"String"},{name:"geneder", type:"String"}], operations:[{name:"isMale", type:"boolean"},{name:"lengthOfTel", type:"int"}]}»
+«import»
 «var fields=c.fields»
 public class «c.name» {
   public «c.name»(«for a in fields separator ","»«a.type» «a.name»«endfor») {

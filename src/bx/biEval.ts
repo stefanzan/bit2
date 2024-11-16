@@ -61,16 +61,16 @@ export function backward(str: string, operation: UpdateOperation): string[] {
       // console.log("--------updatedCoreAST------------");
       // CorePrint.printAST(updatedCoreAST);
       let surfaceText = CorePretty.printToSurface(updatedCoreAST);
-      console.log("biEval backward, success:\n", surfaceText);
+      // console.log("biEval backward, success:\n", surfaceText);
       return surfaceText;
     } catch (error) {
       const typedError = error as Error;
-      console.log("biEval backward, fail:" + typedError.message);
+      // console.log("biEval backward, fail:" + typedError.message);
       return "";
     }
   });
 
-  console.log("solution list:", resultList);
+  // console.log("solution list:", resultList);
   resultList = resultList.filter(result => result != (""))
   // remove redundant/identical results
   return Array.from(new Set(resultList));

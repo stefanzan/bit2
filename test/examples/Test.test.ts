@@ -5,7 +5,7 @@ import {promises as fs} from "fs";
 
 // Benchmarks
 // 1. Acceleo
-let fileName = './test/testcases/Acceleo/Acceleo1.bit2'
+let fileName = './test/testcases/Acceleo/generate.bit2'
 
 // 2. Django
 fileName = './test/testcases/Django/Django1.bit2';

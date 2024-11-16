@@ -7,7 +7,7 @@
       «var data = post.data»
       «var page = post.page»
       «var filters = data.filters»
-			<article class="post post-code «if data.size>0» post-size-«data.size»«endif» «for filter in filters» filter-«filter»«endfor»" data-anim data-grid-item «if data.width>0»style="max-width: «data.width»"«endif»>
+			<article class="post post-code «if data.size>0» post-size-«data.size»«endif» «for filter in filters» filter-«filter»«endfor» data-anim data-grid-item" «if data.width>0»style="max-width: «data.width»"«endif»>
 				<div class="post-inner">
 					<header class="post-header «if data.category == 'code'»inline-header«endif»">
 						<div class="post-header-content">
@@ -35,7 +35,8 @@
 							</div>
 						</div>
 					</header>
-					<div class="post-content« if data.category == 'writing' » post-text« endif »">
+
+					<div class="post-content «if data.category == 'writing'»post-text«endif»">
 						« if data.mobile == false »
 							<a class="post-mobile-button button" href="«post.url»" target="_blank"><span>View animation</span></a>
 						« endif »
@@ -45,7 +46,7 @@
 						« if post.url != "" »
 							<div class="frame-wrapper" style="background: «data.background»">
 								<noscript class="warning« for type in types » «type»« endfor »"><p><em>Please enable Javascript to view this code demo.</em></p></noscript>
-								<iframe class="frame« for type in types » «type»« endfor »" src="«post.url»" width="600" height="«data.height»" title="«data.title»" loading="lazy" tabindex="-1" onload="this.style.opacity = 1;"></iframe>
+								<iframe class="frame «for type in types»«type»«endfor»" src="«post.url»" width="600" height="«data.height»" title="«data.title»" loading="lazy" tabindex="-1" onload="this.style.opacity = 1;"></iframe>
 							</div>
 						« else »
 							«post.content»

@@ -6,7 +6,7 @@
       "request": "launch",
       "name": "Launch Program",
       "skipFiles": ["<node_internals>/**"],
-      "program": "${workspaceFolder}/test/examples/Test.simple.test.ts",
+      "program": "${workspaceFolder}/test/performance/runPerformance.ts",
       "preLaunchTask": "tsc: build - tsconfig.json",
       "outFiles": ["${workspaceFolder}/dist/**/*.js"],
       "runtimeExecutable": "/usr/local/bin/node"
