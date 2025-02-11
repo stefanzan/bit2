@@ -108,7 +108,7 @@ let django_bulk_constant_3_ops = {
     ]
   } as UpdateOperation;
 
-let django_bulk_constant_6_ops = {
+let django_bulk_constant_6_ops_3 = {
     type:'bulk',
     operations:[
       {type:'delete', str:" to continue", position: 195},
@@ -119,6 +119,19 @@ let django_bulk_constant_6_ops = {
       {type:'replace', str1:"Continue", str2:"Proceed", position: 4102},
     ]
   } as UpdateOperation;
+
+  let django_bulk_constant_6_ops = {
+    type:'bulk',
+    operations:[
+      {type:'delete', str:" to continue", position: 195},
+      {type:'replace', str1:"-", str2:" ", position:404},
+      {type:'replace', str1:"账户", str2:"账号", position:1045},
+      {type:'delete', str:"用户名或", position: 1207},
+      {type:'insert', str:" an", position: 3771},
+      {type:'replace', str1:"Continue", str2:"Proceed", position: 4171},
+    ]
+  } as UpdateOperation;
+
 
 let django_bulk_constant_6_ops_2 = {
     type:'bulk',
@@ -409,7 +422,7 @@ let nunjuncks_bulk_for_items_6_ops = {
 
 // XTend
 
-let fileName = nunjuncks;
+let fileName = freemaker;
 
 fs.readFile(fileName, 'utf8')
   .then(data =>{
@@ -421,12 +434,12 @@ fs.readFile(fileName, 'utf8')
 
     console.log("=== Backward Evaluation===");
     let start = process.hrtime();
-    BiEval.backward(data, nunjuncks_bulk_decl_6_ops);
+    BiEval.backward(data, freemaker_bulk_for_items_6_ops);
     let end = process.hrtime(start);
-    BiEval.backward(data, nunjuncks_bulk_decl_6_ops).forEach(updatedCoreAST => {
-      console.log(updatedCoreAST);
-      console.log("~~~~~~~~~~~~~~~~~~~~~~~~");
-    });
+    // BiEval.backward(data, django_single_constant).forEach(updatedCoreAST => {
+    //   console.log(updatedCoreAST);
+    //   console.log("~~~~~~~~~~~~~~~~~~~~~~~~");
+    // });
     console.log(`Bwd: ${end[0]} 秒, ${end[1] / 1000000} 毫秒`);
   }).catch(err =>{
     console.error('Error reading file:', err);

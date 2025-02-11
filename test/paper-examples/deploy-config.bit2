@@ -1,0 +1,38 @@
+«var projectName="opsOpt-sdk"»
+«var appVersion="2.0.0"»
+«var packageName="opsOpt-sdk"»
+«var packageStableVersion="2.0.0"»
+«var packageDevVersion="2.1.5"»
+«var env="production"»
+  
+# Deployment Script for «projectName»
+  
+# Application Version Configuration
+«if env=="production"»
+  echo "Using version «packageStableVersion»"
+  pip install «packageName»==«packageStableVersion»
+«else»
+  echo "Using version «packageDevVersion»"
+  pip install «packageName»==«packageDevVersion»
+«endif»
+
+# Features Configuration
+«if env=="production"»
+  enable "logging"
+  enable "analytics"
+  enable "performance_monitoring"
+  enable "user_tracking"
+  disable "debug"
+«elseif env=="test"»
+  enable "debug"
+  disable "logging"
+  disable "analytics"
+  enable "performance_monitoring"
+  disable "user_tracking"
+«else»
+  enable "debug"
+  enable "logging"
+  enable "analytics"
+  enable "performance_monitoring"
+  disable "user_tracking"
+«endif»

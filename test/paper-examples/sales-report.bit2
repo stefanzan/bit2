@@ -1,0 +1,19 @@
+«var AmountOfProductALastSeason=18000»
+«var AmountOfProductBLastSeason=24000»
+«var totalOfLastSeason=42500»
+«var title="2024 Q1 Sales Report"»
+«var AmountOfProductA=20000»
+«var AmountOfProductB=30000»
+«var totalOfThisSeason=AmountOfProductA+AmountOfProductB»
+«var IncreaseRate=(totalOfThisSeason-totalOfLastSeason)/totalOfThisSeason»
+«var IncreaseRateOfA=(AmountOfProductA-AmountOfProductALastSeason)/AmountOfProductA»
+«var IncreaseRateOfB=(AmountOfProductB-AmountOfProductBLastSeason)/AmountOfProductB»
+Report Title: «title»  
+Total Sales: «totalOfThisSeason» USD  
+Growth Rate: «IncreaseRate»%  
+
+Sales Details:  
+- Product A: «AmountOfProductA» USD (Growth «IncreaseRateOfA»%)  
+- Product B: «AmountOfProductB» USD (Growth «IncreaseRateOfB»%)  
+
+Analysis Summary: Strong sales growth this quarter, with significant contribution from Product «if IncreaseRateOfA > IncreaseRateOfB»A«else»B«endif».

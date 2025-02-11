@@ -1,4 +1,4 @@
-«var lst=[{head:"Modeling", text:"UML"},{head:"Programming", text:"Java"}]»
+«var lst=[{head:"Modelin", text:"UML"},{head:"Language", text:"Java"}]»
 «for p in lst»
-<h1>«p.head»</h1>
+<p>«p.head»</p>
 «endfor»

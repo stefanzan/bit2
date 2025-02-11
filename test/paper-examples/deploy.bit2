@@ -1,0 +1,109 @@
+#!/bin/bash
+
+«var APP_NAME="my-app"»
+«var APP_ENV="production"»
+«var DB_HOST="db.production.local"»
+«var DB_PORT="5432"»
+«var API_URL="https://api.production.com"»
+
+«var NODE_VERSION="16.140"»
+«var NPM_VERSION="8.3.1"»
+«var PM2_VERSION="5.1.0"»
+«var YARN_VERSION="1.22.19"»
+
+
+# Check and install necessary tools
+echo "Checking Node.js version..."
+if ! nvm ls «NODE_VERSION» > /dev/null 2>&1; then
+  nvm install «NODE_VERSION»
+fi
+nvm use «NODE_VERSION»
+
+echo "Updating npm and yarn..."
+npm install -g npm@«NPM_VERSION»
+npm install -g yarn@«YARN_VERSION»
+
+echo "Installing pm2..."
+npm install -g pm2@«PM2_VERSION»
+«var APP_DIR="/var/www"» «APP_DIR = APP_DIR + APP_NAME» 
+«var LOG_DIR="/var/log"» «LOG_DIR= LOG_DIR + APP_NAME»
+# Create directory structure
+echo "Creating directory structure..."
+mkdir -p «APP_DIR»
+mkdir -p «LOG_DIR»
+
+# Clone code and install dependencies
+echo "Cloning code and installing dependencies..."
+cd «APP_DIR»
+git clone https://github.com/example/my-app.git .
+git checkout main
+git pull origin main
+
+echo "Installing dependencies and building the project..."
+yarn install
+yarn build
+
+# Start the application
+echo "Starting the application..."
+pm2 delete «APP_NAME» || true
+pm2 start dist/app.js --name "«APP_NAME»" --log «LOG_DIR»/output.log --error «LOG_DIR»/error.log
+
+# Configure Nginx
+echo "Configuring Nginx..."
+cat > /etc/nginx/sites-available/«APP_NAME» <<EOL
+server {
+    listen 80;
+    server_name example.com;
+
+    location / {
+        proxy_pass http://localhost:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+
+    error_log «LOG_DIR»/nginx_error.log;
+    access_log «LOG_DIR»/nginx_access.log;
+}
+EOL
+
+ln -s /etc/nginx/sites-available/«APP_NAME»/etc/nginx/sites-enabled/
+
+nginx -t && systemctl reload nginx
+
+# Set up monitoring and alerting rules
+echo "Setting up monitoring and alerting rules..."
+«var PROMETHEUS_CONFIG="/etc/prometheus/prometheus.yml"»
+«var PAGERDUTY_SERVICE_KEY="your_pagerduty_key"»
+
+cat >> «PROMETHEUS_CONFIG» <<EOL
+groups:
+  - name: alert.rules
+    rules:
+    - alert: HighCpuUsage
+      expr: node_cpu_seconds_total > 80
+      for: 5m
+      labels:
+        severity: warning
+      annotations:
+        summary: "High CPU usage"
+        description: "CPU usage exceeds 80% for 5 minutes"
+EOL
+
+systemctl restart prometheus
+
+echo "Configuring PagerDuty..."
+curl -X POST -H 'Content-Type: application/json' \
+-d '{
+      "service_key": "«PAGERDUTY_SERVICE_KEY»",
+      "event_type": "trigger",
+      "description": "Deployment completed alert test",
+      "client": "«APP_NAME»",
+      "client_url": "https://example.com"
+    }' \
+https://events.pagerduty.com/generic/2010-04-15/create_event.json
+
+# Deployment complete
+echo "Deployment complete! Visit https://example.com to check the service status."

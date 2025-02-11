@@ -70,7 +70,7 @@ export function backward(str: string, operation: UpdateOperation): string[] {
     }
   });
 
-  // console.log("solution list:", resultList);
+  console.log("solution list length:", resultList.length);
   resultList = resultList.filter(result => result != (""))
   // remove redundant/identical results
   return Array.from(new Set(resultList));

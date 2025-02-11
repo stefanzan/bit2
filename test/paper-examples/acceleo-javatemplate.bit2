@@ -1,0 +1,19 @@
+«var c={name:"Person", fields:[{name:"name", type:"String"},{name:"tel", type:"String"}], operations:[]}»
+«var fields=c.fields»
+public class «c.name» {
+  public «c.name»(«for a in fields separator ","»«a.type» «a.name»«endfor») {
+  «for a in fields»
+    this.«a.name»=«a.name»;
+  «endfor»
+  }
+  «for a in fields»
+  final private «a.type» «a.name»;
+  public «a.type» get«a.name»() {
+    return this.«a.name»;
+  }
+  «endfor»
+  «var operations=c.operations»
+  
+}
+
+

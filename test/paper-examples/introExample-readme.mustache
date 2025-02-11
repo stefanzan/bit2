@@ -1,0 +1,48 @@
+{{! Declare Variables }}
+{{var projectName="opsgenie-sdk"}}
+{{var version="2.0.0"}}
+{{var basePath="https://api.opsgenie.com"}}
+{{var infoUrl="https://www.opsgenie.com/contact-us"}}
+
+# Python SDK for Opsgenie REST API
+The Python package is automatically generated.
+- API version: {{version}}
+{{#infoUrl}}{{#infoUrl.length}}{{#infoUrl}}For more information, please visit [{{infoUrl}}]({{infoUrl}}){{/infoUrl}}{{/infoUrl}}{{/infoUrl}}
+
+## Requirements.
+Python 2.7 and 3.4+
+
+## Installation & Usage 
+{{version="2.1.5"}}
+### pip install
+If the python package is hosted on Github, you can install directly from Github
+```sh
+pip install {{projectName}}=={{version}}
+```
+{{var packageName="opsgenie-sdk"}}
+Then import the package:
+```python
+import {{packageName}} 
+```
+
+{{! Declare API Endpoints }}
+{{var endpoints=[
+{classname:"AccountApi", operationId:"get_info", operationIdLowerCase:"get_info", httpMethod:"GET", path:"/v2/account", summary:"Get Account Info"},
+{classname:"AlertApi", operationId:"acknowledge_alert", operationIdLowerCase:"acknowledge_alert", httpMethod:"POST", path:"/v2/alerts/{identifier}/acknowledge", summary:"Acknowledge Alert"},
+{classname:"AlertApi", operationId:"add_note", operationIdLowerCase:"add_note", httpMethod:"POST", path:"/v2/alerts/{identifier}/notes", summary:"Add Note"},
+{classname:"AlertApi", operationId:"add_responder", operationIdLowerCase:"add_responder", httpMethod:"POST", path:"/v2/alerts/{identifier}/responders", summary:"Add Responder"},
+{classname:"AlertApi", operationId:"add_attachment", operationIdLowerCase:"add_attachment", httpMethod:"POST", path:"/v2/alerts/{identifier}/attachments", summary:"Add Alert Attachment"},
+{classname:"AlertApi", operationId:"add_attachment", operationIdLowerCase:"add_details", httpMethod:"POST", path:"/v2/alerts/{identifier}/details", summary:"Add Details"},
+{classname:"HeartbeatApi", operationId:"create_heartbeat", operationIdLowerCase:"create_heartbeat", httpMethod:"POST", path:"/v2/heartbeats", summary:"Create Heartbeat"},
+{classname:"HeartbeatApi", operationId:"delete_heartbeat", operationIdLowerCase:"delete_heartbeat", httpMethod:"DELETE", path:"/v2/heartbeats/{name}", summary:"Delete Heartbeat"},
+{classname:"IncidentApi", operationId:"close_incident", operationIdLowerCase:"close_incident", httpMethod:"POST", path:"/v1/incidents/{identifier}/close", summary:"Close Incident"},
+{classname:"IncidentApi", operationId:"create_incident", operationIdLowerCase:"create_incident", httpMethod:"POST", path:"/v1/incidents/create", summary:"Create Incident"}
+]}}
+## Documentation for API Endpoints
+All URIs are relative to *{{basePath}}*
+{{basePath="https://github.com/opsgenie/opsgenie-python-sdk/blob/master/docs"}}
+Class | Method | HTTP request | Description
+------------ | ------------- | ------------- | -------------
+{{#endpoints}}
+*{{endpoint.classname}}* | [**{{endpoint.operationId}}**]({{basePath}}/{{endpoint.classname}}.md#{{endpoint.operationIdLowerCase}}) | **{{endpoint.httpMethod}}** {{endpoint.path}} | {{endpoint.summary}}
+{{/endpoints}}

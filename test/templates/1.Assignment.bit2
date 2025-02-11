@@ -1,4 +1,4 @@
-«VAR no = 0»
-Before: «no»
-«no = no + 1»
+«var no=1»
+Hello
+Front: «no»«no=no+2»
 After: «no»

@@ -1,0 +1,34 @@
+«var projectName="opsgenie-sdk"»
+«var version="2.0.0"»
+# Python SDK for Opsgenie REST API
+......
+- API version: «version»
+......
+## Requirements.
+Python 2.7 and 3.4+
+## Installation & Usage
+«version="2.0.0"»
+### pip install
+If the python package is hosted on Github, you can install directly from Github
+```sh
+pip install «projectName»==«version»
+```
+......
+«var endpoints=[
+{classname:"AccountApi", operationId:"get_info", operationIdLowerCase:"get_info", httpMethod:"GET", path:"/v2/account", summary:"Get Account Info"},
+......,
+{classname:"AlertApi", operationId:"add_attachment", operationIdLowerCase:"add_details", httpMethod:"POST", path:"/v2/alerts/{identifier}/details", summary:"Add Details"},
+......
+]»
+## Documentation for API Endpoints
+All URIs are relative to *«basePath»*
+«basePath="https://github.com/opsgenie/opsgenie-python-sdk/blob/master/docs"»
+Class | Method | HTTP request | Description
+------------ | ------------- | ------------- | -------------
+«for endpoint in endpoints»
+*«endpoint.classname»* | [**«endpoint.operationId»**](«basePath»/«endpoint.classname».md#«endpoint.operationIdLowerCase») | **«endpoint.httpMethod»** «endpoint.path» | «endpoint.summary»
+«endfor»
+
+
+
+
