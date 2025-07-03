@@ -9,21 +9,21 @@ import * as Parser from "../../src/surface/Parser";
 //     «no = no + 1»
 // `;
 
-// const exampleInput = `
-// «var paragraphs = ![{head:"Hello", text:"Hello!"}, {head:"Farewell", text:"Good Bye!"}] »
-// <html>
-//     <body>
-//       «var no = 0»
-//       «for p in paragraphs separator "," front "[" rear "]"»
-//           «no = no + 1»
-//           <h1>«no».«p.head.toUpperCase»</h1>
-//         <p>
-//           «p.text»
-//         </p>
-//       «endfor»
-//     </body>
-// </html>
-// `;
+const exampleInput = `
+«var paragraphs = ![{head:"Hello", text:"Hello!"}, {head:"Farewell", text:"Good Bye!"}] »
+<html>
+    <body>
+      «var no = 0»
+      «for p in paragraphs separator ", " front "[" rear "]"»
+          «no = no + 1»
+          <h1>«no».«p.head.toUpperCase»</h1>
+        <p>
+          «p.text»
+        </p>
+      «endfor»
+    </body>
+</html>
+`;
 
 // const exampleInput = 
 // `«VAR no = 0»
@@ -69,11 +69,11 @@ import * as Parser from "../../src/surface/Parser";
 // const parsedFragment = Parser.parse(exampleInput5);
 // console.log(JSON.stringify(parsedFragment, null, 2));
 
-const exampleInput6 = 
-`«var lst=[{head:"Modeling", text:"UML"},{head:"Programming", text:"Java"}]»
-«for item in lst»
-<h1>«p.head»</h1>
-<p>«p.text»</p>
-«endfor»`;
-const parsedFragment = Parser.parse(exampleInput6);
+// const exampleInput6 = 
+// `«var lst=[{head:"Modeling", text:"UML"},{head:"Programming", text:"Java"}]»
+// «for item in lst»
+// <h1>«p.head»</h1>
+// <p>«p.text»</p>
+// «endfor»`;
+const parsedFragment = Parser.parse(exampleInput);
 console.log(JSON.stringify(parsedFragment, null, 2));

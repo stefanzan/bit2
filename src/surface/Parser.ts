@@ -124,116 +124,166 @@ export function parseTokens(
           break;
 
         case "FOR":
-          // 定义正则表达式来匹配各个部分
-          // const regex = /(?:\bfor\b|\bin\b|\bseparator\b|\bfront\b|\brear\b|[\[\],])|((?:\w+(?:\.\w*)?)+)|"([^"]*)"|\[([^\]]*)\]/gi;
-          const regex =
-            /(\bfor\b|\bin\b|\bseparator\b|\bfront\b|\brear\b|[\[\],])|((?:\w+(?:\.\w*)?)+)|"([^"]*)"|\[([^\]]*)\]/gi;
-          const forMatch: string[] = [];
-          let match: RegExpExecArray | null;
-          while ((match = regex.exec(directiveContent)) !== null) {
-            // separator
-            if (match[0] === "separator") {
-              break;
-            }
-            // front
-            else if (match[0] === "front") {
-              break;
-            }
-            // rear
-            else if (match[0] === "rear") {
-              break;
-            }
-            // for
-            if (match[1]) {
-              forMatch.push(match[1]);
-            }
-            // p
-            if (match[2]) {
-              forMatch.push(match[2]);
-            }
-            // in
-            if (match[3]) {
-              forMatch.push(match[3]);
-            }
-            // paragraphs
-            if (match[4]) {
-              forMatch.push(match[4]);
-            }
-          }
+          // 在 parseTokens 中 FOR case 内
 
-          // 处理可选的 separator 部分
-          const separatorMatch = directiveContent.match(
-            /separator\s*"([^"]*)"/i
-          );
-          if (separatorMatch && separatorMatch[1]) {
-            forMatch.push("separator", separatorMatch[1]);
-          }
+          // 先用正则找出循环变量名和集合表达式
+          // 例如：for item in items separator " , " front "[" rear "]"
+          const forHeaderRegex =
+            /for\s+(\w+)\s+in\s+([^\s]+)(?:\s+separator\s+"([^"]*)")?(?:\s+front\s+"([^"]*)")?(?:\s+rear\s+"([^"]*)")?/i;
+          const headerMatch = directiveContent.match(forHeaderRegex);
+          if (!headerMatch) throw new Error("Invalid for directive syntax");
 
-          // 处理可选的 front 部分
-          const frontMatch = directiveContent.match(
-            /front\s*"([^"]*)"/i
-          );
-          if (frontMatch && frontMatch[1]) {
-            forMatch.push("front", frontMatch[1]);
-          }
+          const [
+            ,
+            name,
+            exprStr,
+            separatorVal = "",
+            frontVal = "",
+            rearVal = "",
+          ] = headerMatch;
 
-          // 处理可选的 rear 部分
-          const rearMatch = directiveContent.match(/rear\s*"([^"]*)"/i);
-          if (rearMatch && rearMatch[1]) {
-            forMatch.push("rear", rearMatch[1]);
-          }
-
-          if (forMatch) {
-            const loopTokens: (Surface.Literal | string)[] = [];
-            let nestingLevel = 1;
-            let j = i + 1;
-
-            // Iterate to collect tokens within the FOR directive
-            while (j < tokens.length && nestingLevel > 0) {
-              const nextToken = tokens[j];
-
-              // Handle nested FOR and ENDFOR
-              if (typeof nextToken === "string" && nextToken.startsWith("«")) {
-                if (
-                  nextToken.includes("ENDFOR") ||
-                  nextToken.includes("endfor")
-                ) {
-                  nestingLevel--;
-                  if (nestingLevel === 0) break; // End of current FOR block
-                } else if (
-                  nextToken.includes("FOR") ||
-                  nextToken.includes("for")
-                ) {
-                  nestingLevel++;
-                }
+          const loopTokens: (Surface.Literal | string)[] = [];
+          let nestingLevel = 1;
+          let j = i + 1;
+          while (j < tokens.length && nestingLevel > 0) {
+            const nextToken = tokens[j];
+            if (typeof nextToken === "string" && nextToken.startsWith("«")) {
+              if (nextToken.toLowerCase().includes("endfor")) {
+                nestingLevel--;
+                if (nestingLevel === 0) break;
+              } else if (nextToken.toLowerCase().includes("for")) {
+                nestingLevel++;
               }
-
-              // Add token if inside the loop
-              if (nestingLevel > 0) loopTokens.push(nextToken);
-              j++;
             }
-
-            // Parse the tokens collected within the loop
-            const fragment = parseTokens(loopTokens);
-            i = j; // Move index to the end of the FOR statement
-
-            // Build the fragment content
-            fragments.push({
-              type: "Directive",
-              content: {
-                type: "for",
-                name: forMatch[1].trim(),
-                expr: parseExpr(forMatch[3].trim()), // Parse the expression part
-                separator: {
-                  type: "separator",
-                  value: forMatch[5]?.trim() || "",
-                },
-                front: { type: "front", value: forMatch[7]?.trim() || "" },
-                rear: { type: "rear", value: forMatch[9]?.trim() || "" },
-                fragment, // Parsed tokens inside the loop
-              },
-            });
+            if (nestingLevel > 0) loopTokens.push(nextToken);
+            j++;
           }
+          const fragment = parseTokens(loopTokens);
+          i = j;
+
+          fragments.push({
+            type: "Directive",
+            content: {
+              type: "for",
+              name: name.trim(),
+              expr: parseExpr(exprStr.trim()),
+              separator: { type: "separator", value: separatorVal },
+              front: { type: "front", value: frontVal },
+              rear: { type: "rear", value: rearVal },
+              fragment,
+            },
+          });
+
+          // // 定义正则表达式来匹配各个部分
+          // // const regex = /(?:\bfor\b|\bin\b|\bseparator\b|\bfront\b|\brear\b|[\[\],])|((?:\w+(?:\.\w*)?)+)|"([^"]*)"|\[([^\]]*)\]/gi;
+          // const regex =
+          //   /(\bfor\b|\bin\b|\bseparator\b|\bfront\b|\brear\b|[\[\],])|((?:\w+(?:\.\w*)?)+)|"([^"]*)"|\[([^\]]*)\]/gi;
+          // const forMatch: string[] = [];
+          // let match: RegExpExecArray | null;
+          // while ((match = regex.exec(directiveContent)) !== null) {
+          //   // separator
+          //   if (match[0] === "separator") {
+          //     break;
+          //   }
+          //   // front
+          //   else if (match[0] === "front") {
+          //     break;
+          //   }
+          //   // rear
+          //   else if (match[0] === "rear") {
+          //     break;
+          //   }
+          //   // for
+          //   if (match[1]) {
+          //     forMatch.push(match[1]);
+          //   }
+          //   // p
+          //   if (match[2]) {
+          //     forMatch.push(match[2]);
+          //   }
+          //   // in
+          //   if (match[3]) {
+          //     forMatch.push(match[3]);
+          //   }
+          //   // paragraphs
+          //   if (match[4]) {
+          //     forMatch.push(match[4]);
+          //   }
+          // }
+
+          // // 处理可选的 separator 部分
+          // const separatorMatch = directiveContent.match(
+          //   /separator\s*"([^"]*)"/i
+          // );
+          // if (separatorMatch && separatorMatch[1]) {
+          //   forMatch.push("separator", separatorMatch[1]);
+          // }
+
+          // // 处理可选的 front 部分
+          // const frontMatch = directiveContent.match(
+          //   /front\s*"([^"]*)"/i
+          // );
+          // if (frontMatch && frontMatch[1]) {
+          //   forMatch.push("front", frontMatch[1]);
+          // }
+
+          // // 处理可选的 rear 部分
+          // const rearMatch = directiveContent.match(/rear\s*"([^"]*)"/i);
+          // if (rearMatch && rearMatch[1]) {
+          //   forMatch.push("rear", rearMatch[1]);
+          // }
+
+          // if (forMatch) {
+          //   const loopTokens: (Surface.Literal | string)[] = [];
+          //   let nestingLevel = 1;
+          //   let j = i + 1;
+
+          //   // Iterate to collect tokens within the FOR directive
+          //   while (j < tokens.length && nestingLevel > 0) {
+          //     const nextToken = tokens[j];
+
+          //     // Handle nested FOR and ENDFOR
+          //     if (typeof nextToken === "string" && nextToken.startsWith("«")) {
+          //       if (
+          //         nextToken.includes("ENDFOR") ||
+          //         nextToken.includes("endfor")
+          //       ) {
+          //         nestingLevel--;
+          //         if (nestingLevel === 0) break; // End of current FOR block
+          //       } else if (
+          //         nextToken.includes("FOR") ||
+          //         nextToken.includes("for")
+          //       ) {
+          //         nestingLevel++;
+          //       }
+          //     }
+
+          //     // Add token if inside the loop
+          //     if (nestingLevel > 0) loopTokens.push(nextToken);
+          //     j++;
+          //   }
+
+          //   // Parse the tokens collected within the loop
+          //   const fragment = parseTokens(loopTokens);
+          //   i = j; // Move index to the end of the FOR statement
+
+          //   // Build the fragment content
+          //   fragments.push({
+          //     type: "Directive",
+          //     content: {
+          //       type: "for",
+          //       name: forMatch[1].trim(),
+          //       expr: parseExpr(forMatch[3].trim()), // Parse the expression part
+          //       separator: {
+          //         type: "separator",
+          //         value: forMatch[5]?.trim() || "",
+          //       },
+          //       front: { type: "front", value: forMatch[7]?.trim() || "" },
+          //       rear: { type: "rear", value: forMatch[9]?.trim() || "" },
+          //       fragment, // Parsed tokens inside the loop
+          //     },
+          //   });
+          // }
           break;
 
         default:

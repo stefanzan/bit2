@@ -1,2 +1,0 @@
-1. 关于整体架构，也可以从core开始，先不要surface language，然后在evaluation的时候，试下一个surface language来验证实用性？
-   这样framework简单些
