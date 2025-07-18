@@ -1,0 +1,7 @@
+bit2: p
+url : https://github.com/erlnerlngga/booking/commit/563a90af444bdef8d9f5362e48a9def4c1a9b6f0#diff-89573cded7a58c5eb519525ede30b14124dc097bd2b309bed1814570b12cee18
+file: apps/bookings/templates/booking.html
+desc: refactoring from constant text to expression.
+diff: 
+-       <p class="font-medium">Jakarta</p>
++       <p class="font-medium">{{ booking.from_city }}</p>

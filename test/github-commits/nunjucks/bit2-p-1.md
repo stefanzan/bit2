@@ -1,0 +1,7 @@
+bit2: p
+url : https://github.com/companieshouse/acsp-manage-users-web/commit/2dae06210ab75cb56111917cbeedb772796b7422#diff-08d0330f4de2a3d4aa845b88df5a788ae02b92df27ea56b95146e307a73b92b9
+url : src/views/partials/cookie_consent_banner.njk
+desc: insert expression
+diff:
+- <p>{{ lang.rejected_analytics_cookies }} <a class="govuk-link" href="{{ chsUrl }}/help/cookies">{{ lang.change_cookie_settings }}</a> {{ lang.at_any_time }}</p>
++ <p>{{ lang.rejected_analytics_cookies }} {{ lang.you_can }} <a class="govuk-link" href="{{ chsUrl }}/help/cookies">{{ lang.change_cookie_settings }}</a> {{ lang.at_any_time }}</p>

@@ -1,0 +1,31 @@
+bit2:  x 
+url : https://github.com/mateusmeloxyz/django-polls/commit/7240e61d07663f557d1fd0646f8c73d01010e4fe
+file: polls/templates/polls/index.html
+desc: refactoring constant text into expression that using url function, not direct manipulation.
+diff: 
+{% if latest_question_list %}
+<ul>
+  {% for question in latest_question_list %}
+-  <li><a href="/polls/{{ question.id }}/">{{ question.question_text }}</a></li>
++  <li><a href="{% url 'detail' question.id %}">{{ question.question_text }}</a></li>
+  {% endfor %}
+</ul>
+{% else %}
+
+
+--------------------------------
+参考 polls/urls.py
+from django.urls import path
+
+from . import views
+
+urlpatterns = [
+    # ex: /polls/
+    path("", views.index, name="index"),
+    # ex: /polls/5/
+    path("<int:question_id>/", views.detail, name="detail"),
+    # ex: /polls/5/results/
+    path("<int:question_id>/results/", views.results, name="results"),
+    # ex: /polls/5/vote/
+    path("<int:question_id>/vote/", views.vote, name="vote"),
+]
