@@ -1,0 +1,14 @@
+«var customerList=[{name:"Alice"},{name:"Bob"},{name:"Mark"}]»
+«var counter=0»
+<table>
+  «for c in customerList»
+    <tr><td>«counter»</td><td>«c.name»</td></tr>
+    «counter=counter+1»
+  «endfor»
+</table>
+
+
+
+
+
+

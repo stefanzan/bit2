@@ -1,8 +1,0 @@
-«var name = "Clark"»
-«var text = name+ " is awesome."»
-«wrapped(text)»
-
-template wrapped(text)
-'''
-<b>«text»</b>
-'''

@@ -1,2 +1,2 @@
 «var lst=[1,2,3]»
-«for item in lst separator ";" front "[" rear "]"»«item»«endfor»
+«for item in lst separator "; " front "[" rear "]"»«item»«endfor»

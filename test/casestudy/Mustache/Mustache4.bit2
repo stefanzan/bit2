@@ -1,0 +1,3 @@
+«var name = "Clark"»
+«var text = name+ " is awesome."»
+<b>«text»</b>
