@@ -7,6 +7,8 @@
 «var github_login_link="sentry.io/identity/login/github/"»
 «var vsts_login_link="sentry.io/identity/login/vsts/"»
 «var server_hostname="sentry.io"»
+«var can_register=false»
+
   «if banner!=""»
     <h2 class="m-t-1 m-l-1 m-b-0">«banner»</h2>
   «endif»
@@ -17,6 +19,9 @@
       <li«if op=="login"» class="active"«endif»>
         <a href="#login" data-toggle="tab">Sign In</a>
       </li>
+        <li« if op == "register" » class="active"« endif »>
+          <a href="#register" data-toggle="tab">Register</a>
+        </li>     
      <li«if op=="sso"» class="active"«endif»>
         <a href="#sso" data-toggle="tab">Single Sign-On</a>
       </li>
@@ -30,10 +35,10 @@
            
             <input type="hidden" name="«csrfname»" value="«csrfvalue»">
             <input type="hidden" name="op" value="login" />
-            «var login_form=[{id:"div_id_username", labelFor:"id_username", label:"账户", inputType:"text", inputName:"username", inputPlaceholder:"用户名或邮箱", inputRequiredId:"id_username"},{id:"div_id_password", labelFor:"id_password", label:"密码", inputType:"password", inputName:"password", inputPlaceholder:"密码", inputRequiredId:"id_password"}]»
+            «var login_form=[{id:"div_id_username", labelTag:"id_username", label:"账户", inputType:"text", inputName:"username", inputPlaceholder:"用户名或邮箱", inputRequiredId:"id_username"},{id:"div_id_password", labelTag:"id_password", label:"密码", inputType:"password", inputName:"password", inputPlaceholder:"密码", inputRequiredId:"id_password"}]»
             «for field in login_form»
                <div id="«field.id»" class="form-group">
-                   <label for="«field.labelFor»" class="control-label  requiredField">«field.label»<span class="asteriskField">*</span></label>
+                   <label for="«field.labelTag»" class="control-label  requiredField">«field.label»<span class="asteriskField">*</span></label>
                    <div class="controls ">
                         <input type="«field.inputType»" name="«field.inputName»" placeholder="«field.inputPlaceholder»" tabindex="1" maxlength="128" class="textinput textInput form-control" required id="«field.inputRequiredId»">
                     </div> 
@@ -73,6 +78,34 @@
           </div>
       </div>
     </div>
+    <div class="tab-pane« if op == "register" » active«endif»" id="register">
+      <div class="auth-container">
+        <div class="auth-form-column">
+          <form class="form-stacked" action="" method="post" autocomplete="off">
+            <input type="hidden" name="«csrfname»" value="«csrfvalue»">
+            <input type="hidden" name="op" value="register" />
+
+            «var register_form={fields:[{id:"name-label", label:"Name", inputName:"name", inputType:"text", placeholder:"Your Name", labelledby:"name-label"},{id:"organizationName-label", label:"Organization", inputName:"organizationName", inputType:"text", placeholder:"Organization Name", labelledby:"organizationName-label"},{id:"email-label", label:"Email", inputName:"email", inputType:"email", placeholder:"you@company.com", labelledby:"email-label"},{id:"password-label", label:"Password", inputName:"password", inputType:"password", placeholder:"Password (8+ characters)", labelledby:"password-label"}],subscribes :[{id:"subscribe-label", inputName:"subscribe", labelledby:"subscribe-label", text:"I would like to receive updates via email."},{id:"iAgree-label", inputName:"iAgree", labelledby:"iAgree-label", text:"I agree to the Terms of Service and Privacy Policy."}]}»
+            «var fields = register_form.fields»
+            «for field in fields»
+              <div>
+                <label id="«field.id»">«field.label»<span class="form-required"></span>
+                  <input name="«field.inputName»" type="«field.inputType»" placeholder="«field.placeholder»" aria-labelledby="«field.labelledby»">
+                </label>
+              </div>
+            «endfor»
+
+            «var subscribes = register_form.subscribes»
+            «for subscribe in subscribes»
+              <label id="«subscribe.id»" class="checkbox-input" role="button">
+                <input name="«subscribe.inputName»" type="checkbox" aria-labelledby="«subscribe.labelledby»" tabindex="0"><span>«subscribe.text»</span>
+              </label>
+            «endfor»
+         </form>
+        </div>
+      </div>
+    </div>
+
 
     <div class="tab-pane«if op=="sso"» active«endif»" id="sso">
       <div class="auth-container">

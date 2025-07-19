@@ -1,0 +1,299 @@
+«var value={version: "2025 March", header: "SQL转Java JPA、MYBATIS实现类代码生成平台", keywords: "sql转实体类,sql转DAO,SQL转service,SQL转JPA实现,SQL转MYBATIS实现", title: "JAVA代码生成平台", slogan: "Free your hands from tedious and repetitive CRUD work", description: "<p>SpringBootCodeGenerato", author: "zhengkai.blog.csdn.net", packageName: "com.software.system", copyright: "Powered by Moshow郑锴, Might the holy light be with you !", returnUtilSuccess: "ResponseUtil.success", returnUtilFailure: "ResponseUtil.error", outputStr: "http://zhengkai.blog.csdn.net", mode: "CDN", contextPath:"/generator"}»
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>«value.title»</title>
+    <meta name="keywords" content="«value.keywords»">
+    
+    <script>
+        /*统计代码，便于统计流量，请勿移除，谢谢！*/
+        var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "https://hm.baidu.com/hm.js?97fd5ca1a4298ac8349c7e0de9029a0f";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();
+        //set base path for fixing the revertProxy forwarding path issue
+        var basePath = «value.contextPath»;
+        console.log("basePath",basePath)
+    </script>
+    
+    <!--###################################################-->
+    <!--### CDN version -->
+    <!--###################################################-->
+    
+    <!--jquery | vue | element-ui | axios-->
+    <script src="«value.contextPath»/statics/libs/jquery/jquery.min.js"></script>
+    <script src="«value.contextPath»/statics/libs/vue/vue.min.js"></script>
+    <script src="«value.contextPath»/statics/libs/axios/axios.min.js"></script>
+    <script src="«value.contextPath»/statics/libs/element-ui/index.min.js"></script>
+    <link href="«value.contextPath»/statics/libs/element-ui/index.min.css" type="text/css" rel="stylesheet" />
+    
+    <!-- bootstrap -->
+    <script src="«value.contextPath»/statics/libs/bootstrap/bootstrap.bundle.min.js" type="application/javascript"></script>
+    <link href="«value.contextPath»/statics/libs/bootstrap/bootstrap.min.css" type="text/css" rel="stylesheet" />
+    <!-- 引入 Bootstrap Icons CSS -->
+    <link href="«value.contextPath»/statics/libs/bootstrap-icons/bootstrap-icons.min.css" type="text/css" rel="stylesheet" />
+    
+    <!--common.js-->
+    <script src="«value.contextPath»/statics/js/common.js"></script>
+    <!-- <link rel="stylesheet" href="«value.contextPath»/statics/css/main.css"> -->
+    
+    <script src="«value.contextPath»/statics/libs/toastr.js/toastr.min.js"></script>
+    <!-- Toastr CSS -->
+    <link href="«value.contextPath»/statics/libs/toastr.js/toastr.min.css" rtype="text/css" rel="stylesheet" >
+    
+    <!-- import codemirror -->
+    <script src="«value.contextPath»/statics/libs/codemirror/codemirror.min.js"></script>
+    <link href="«value.contextPath»/statics/libs/codemirror/codemirror.min.css" type="text/css" rel="stylesheet" >
+    <script src="«value.contextPath»/statics/libs/codemirror/mode/clike/clike.min.js"></script>
+    <script src="«value.contextPath»/statics/libs/codemirror/mode/sql/sql.min.js"></script>
+    <link href="«value.contextPath»/statics/libs/codemirror/theme/idea.min.css" type="text/css" rel="stylesheet" >
+    <style>
+            /* .el-form-item__content{
+                line-height : 10px;
+            } */
+            /*.el-form-item--mini .el-form-item__content, .el-form-item--mini .el-form-item__label{
+                line-height : 10px;
+            }*/
+            /* .el-button-group-top {
+                padding-top: 5px;
+            } */
+            .el-button--primary.is-plain.is-disabled, .el-button--primary.is-plain.is-disabled:active, .el-button--primary.is-plain.is-disabled:focus, .el-button--primary.is-plain.is-disabled:hover {
+            color: #f9faff;
+            background-color: #91979d;
+            border-color: #d9ecff;
+            font-weight: bold;
+          }
+    </style>
+</head>
+<body>
+
+<div id="rrapp" v-cloak>
+    <div>
+        <el-form ref="form" :inline="true" :model="formData"  label-width="100px">
+            <div class="card">
+                <div class="card-header">
+                  <h5 class="card-title m-0">输入SQL</h5>
+                  <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse" title="折叠">
+                      <i class="fas fa-minus"></i>
+                    </button>
+                    <!-- <button type="button" class="btn btn-tool" data-card-widget="remove" title="移除">
+                      <i class="fas fa-times"></i>
+                    </button> -->
+                  </div>
+                </div>
+                <div class="card-body">
+                  <!-- <textarea id="inputArea" placeholder="请输入表结构信息..." style="height: 250px;line-height : 10px;" v-model="formData.tableSql"></textarea> -->
+                    <!-- input area-->
+                    <textarea id="inputArea" placeholder="请输入表结构信息..." style="height: 250px;line-height : 10px;" v-model="formData.tableSql"></textarea>
+                </div>
+              </div>
+            
+            <hr>
+            <div class="card">
+                <div class="card-header">
+                  <h5 class="card-title m-0">生成设置</h5>
+                  <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse" title="折叠">
+                      <i class="fas fa-minus"></i>
+                    </button>
+                    <!-- <button type="button" class="btn btn-tool" data-card-widget="remove" title="移除">
+                      <i class="fas fa-times"></i>
+                    </button> -->
+                  </div>
+                </div>
+                
+                <div class="card-body">
+                  <!-- setting area-->
+                <el-form-item label="作者">
+                    <el-input v-model="formData.options.authorName"></el-input>
+                </el-form-item>
+                <el-form-item label="包名">
+                    <el-input v-model="formData.options.packageName"></el-input>
+                </el-form-item>
+                <el-form-item label="返回(成功)">
+                    <el-input v-model="formData.options.returnUtilSuccess"></el-input>
+                </el-form-item>
+                <el-form-item label="返回(失败)">
+                    <el-input v-model="formData.options.returnUtilFailure"></el-input>
+                </el-form-item>
+                <el-form-item label="忽略前缀">
+                    <el-input v-model="formData.options.ignorePrefix"></el-input>
+                </el-form-item>
+                <el-form-item label="输入类型">
+                    <el-select v-model="formData.options.dataType" >
+                        <el-option label="DDL SQL" value="sql"></el-option>
+                        <el-option label="JSON" value="json"></el-option>
+                        <el-option label="INSERT SQL" value="insert-sql">
+                        <el-option label="SELECT SQL by SQL Parser" value="select-sql">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="TinyInt转换">
+                    <el-select v-model="formData.options.tinyintTransType">
+                        <el-option value="boolean" label="boolean"></el-option>
+                        <el-option value="Boolean" label="Boolean"></el-option>
+                        <el-option value="Integer" label="Integer"></el-option>
+                        <el-option value="int" label="int"></el-option>
+                        <el-option value="String" label="String"></el-option>
+                        <el-option value="Short" label="Short"></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="时间类型">
+                    <el-select v-model="formData.options.timeTransType">
+                        <el-option value="Date" label="Date"></el-option>
+                        <el-option value="DateTime" label="DateTime"></el-option>
+                        <el-option value="Time" label="Time"></el-option>
+                        <el-option value="Timestamp" label="Timestamp"></el-option>
+                        <el-option value="Calendar" label="Calendar"></el-option>
+                        <el-option value="LocalDate" label="LocalDate"></el-option>
+                        <el-option value="LocalDateTime" label="LocalDateTime"></el-option>
+                        <el-option value="LocalTime" label="LocalTime"></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="命名类型">
+                    <el-select v-model="formData.options.nameCaseType">
+                        <el-option label="驼峰" value="CamelCase"></el-option>
+                        <el-option label="下划线" value="UnderScoreCase"></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="包装类型">
+                    <el-switch v-model="formData.options.isPackageType"></el-switch>
+                </el-form-item>
+                <el-form-item label="swaggerUI">
+                    <el-switch v-model="formData.options.isSwagger"></el-switch>
+                </el-form-item>
+                <el-form-item label="字段注释">
+                    <el-switch v-model="formData.options.isComment"></el-switch>
+                </el-form-item>
+                <el-form-item label="自动引包">
+                    <el-switch v-model="formData.options.isAutoImport"></el-switch>
+                </el-form-item>
+                <el-form-item label="带包路径">
+                    <el-switch v-model="formData.options.isWithPackage"></el-switch>
+                </el-form-item>
+                <el-form-item label="Lombok">
+                    <el-switch v-model="formData.options.isLombok"></el-switch>
+                </el-form-item>
+
+                </div>
+              </div>
+            
+            <hr>
+            <div class="card">
+                <div class="card-header">
+                  <!-- <h5 class="card-title m-0">输出代码</h5> -->
+                  <el-button type="primary" icon="el-icon-caret-right" @click="generate">生成</el-button>
+                    <el-button type="primary" icon="el-icon-document-copy" @click="copy" plain>复制</el-button>
+                  <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse" title="折叠">
+                      <i class="fas fa-minus"></i>
+                    </button>
+                    <!-- <button type="button" class="btn btn-tool" data-card-widget="remove" title="移除">
+                      <i class="fas fa-times"></i>
+                    </button> -->
+                  </div>
+                </div>
+                <div class="card-body">
+                              <!--generate button-->
+                «var historicalData = []» 
+                «if historicalData.length > 0» 
+                <span>
+                    <el-button-group>
+                        <el-button type="primary" plain disabled round>历史记录</el-button>
+                        «var hisIndex = 0»
+                        «for item in historicalData»
+                            <span :key="index">
+                                <el-button @click="switchHistoricalData" >«item»</el-button>
+                            </span>
+                    </el-button-group>
+                </span>
+                «endif» 
+  
+                </div>
+            </div>
+            <hr>
+            <div class="card">
+                <div class="card-header">
+                  <h5 class="card-title m-0">模板选择</h5>
+                  <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse" title="折叠">
+                      <i class="fas fa-minus"></i>
+                    </button>
+                    <!-- <button type="button" class="btn btn-tool" data-card-widget="remove" title="移除">
+                      <i class="fas fa-times"></i>
+                    </button> -->
+                  </div>
+                </div>
+                <div class="card-body">
+                  <!--templates area-->
+                  «var templates = [{group:'ui',templates:[{id:'10',name:'swagger-ui',description:'swagger-ui'},{id:'11',name:'element-ui',description:'element-ui'},{id:'12',name:'bootstrap-ui',description:'bootstrap-ui'},{id:'13',name:'layui-edit',description:'layui-edit'},{id:'14',name:'layui-list',description:'layui-list'}]},{group:'mybatis',templates:[{id:'20',name:'controller',description:'controller'},{id:'21',name:'service',description:'service'},{id:'22',name:'service_impl',description:'service_impl'},{id:'23',name:'mapper',description:'mapper'},{id:'24',name:'mybatis',description:'mybatis'},{id:'25',name:'model',description:'model'},{id:'26',name:'mapper2',description:'mapper annotation'}]},{group:'jpa',templates:[{id:'30',name:'entity',description:'entity'},{id:'31',name:'repository',description:'repository'},{id:'32',name:'jpacontroller',description:'jpacontroller'}]},{group:'jdbc-template',templates:[{id:'40',name:'jtdao',description:'jtdao'},{id:'41',name:'jtdaoimpl',description:'jtdaoimpl'}]},{group:'beetlsql',templates:[{id:'50',name:'beetlmd',description:'beetlmd'},{id:'51',name:'beetlentity',description:'beetlentity'},{id:'52',name:'beetlcontroller',description:'beetlcontroller'}]},{group:'mybatis-plus',templates:[{id:'60',name:'pluscontroller',description:'pluscontroller'},{id:'61',name:'plusservice',description:'plusservice'},{id:'62',name:'plusmapper',description:'plusmapper'},{id:'63',name:'plusentity',description:'plusentity'}]},{group:'util',templates:[{id:'70',name:'beanutil',description:'beanutil'},{id:'71',name:'json',description:'json'},{id:'72',name:'xml',description:'xml'},{id:'73',name:'sql',description:'sql'},{id:'74',name:'swagger-yml',description:'swagger-yml'}]},{group:'common-mapper',templates:[{id:'81',name:'tkentity',description:'tkentity'},{id:'82',name:'tkmapper',description:'tkmapper'}]},{group:'renren-fast',templates:[{id:'91',name:'menu-sql',description:'menu-sql'},{id:'92',name:'vue-list',description:'vue-list'},{id:'93',name:'vue-edit',description:'vue-edit'},{id:'94',name:'rr-controller',description:'rr-controller'},{id:'95',name:'rr-dao',description:'rr-dao'},{id:'96',name:'rr-daoxml',description:'rr-daoxml'},{id:'97',name:'rr-service',description:'rr-service'}]},{group:'jpa-starp',templates:[{id:'101',name:'starp-entity',description:'entity'},{id:'102',name:'starp-repository',description:'repository'},{id:'103',name:'starp-jpa-controller',description:'jpacontroller'}]},{group:'bi',templates:[{id:'201',name:'qliksense',description:'qlik sense'}]},{group:'cloud',templates:[{id:'301',name:'bigquery',description:'GCP BigQuery'},{id:'302',name:'dataflowjjs',description:'GCP Dataflow JJS'}]},{group:'tk-mybatis',templates:[{id:'401',name:'tk-entity',description:'tk-entity'},{id:'402',name:'tk-mapper',description:'tk-mapper'},{id:'403',name:'tk-controller',description:'tk-controller'}]}]»
+                    <el-form ref="form" :inline="true" :model="formData"  label-width="100px" size="mini">
+                        «var index = 0»
+                        «for item in templates»
+                        <div key=«index»>
+                            <el-button-group >
+                                <el-button type="primary" plain disabled>«item.group»</el-button>
+                                «var innerIndex = 0»
+                                «var childTemplates = item.templates»
+                                «for childItem in childTemplates»
+                                <span key=«innerIndex» >
+                                    <el-button @click="setOutputModel">{{childItem.name}}</el-button>
+                                </span>
+                                «innerIndex = innerIndex + 1»
+                                «endfor»
+                             </el-button-group>
+                        </div>
+                        «index = index + 1»
+                        «endfor»
+                    <!-- <el-button-group>
+                            <el-button type="primary" plain disabled>MybatisPlus</el-button>
+                            <el-button @click="setOutputModel">Controller</el-button>
+                            <el-button @click="setOutputModel">Mapper</el-button>
+                        </el-button-group>-->
+                    </el-form>
+  
+                </div>
+            </div>
+            
+
+            <hr>
+            <div class="card">
+                <div class="card-header">
+                  <h5 class="card-title m-0">输出代码</h5>
+                  <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse" title="折叠">
+                      <i class="fas fa-minus"></i>
+                    </button>
+                    <!-- <button type="button" class="btn btn-tool" data-card-widget="remove" title="移除">
+                      <i class="fas fa-times"></i>
+                    </button> -->
+                  </div>
+                </div>
+                <div class="card-body">
+                  <textarea id="outputArea" placeholder="请输入表结构信息..." style="height: 250px;" v-model="outputStr"></textarea>
+  
+                </div>
+            </div>
+        </el-form>
+    </div>
+</div>
+
+<script src="«value.contextPath»/statics/js/main.js"></script>
+<script>
+    //console.log(vm);
+    vm.formData.options.authorName=«value.author»;
+    vm.formData.options.packageName=«value.packageName»;
+    vm.formData.options.returnUtilSuccess=«value.returnUtilSuccess»;
+    vm.formData.options.returnUtilFailure=«value.returnUtilFailure»;
+    vm.outputStr=«value.outputStr»;
+    loadAllCookie()
+</script>
+</body>
+</html>
