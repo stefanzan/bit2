@@ -1,0 +1,359 @@
+«var title = "Style Guide"» 
+«var designTokens = {colors:{title:"Colors",description:"Hex color codes that can be shared, cross-platform. They can be converted at point of usage, such as HSL for web or CMYK for print. neutral and vibrant colors are converted to color palettes, fixed colors are kept as they are",items:[{name:"Gray 100",value:"#f8f8f8"},{name:"Gray 200",value:"#e4e4e4"},{name:"Gray 300",value:"#aeaeae"},{name:"Gray 400",value:"#808080"},{name:"Gray 500",value:"#636363"},{name:"Gray 600",value:"#484848"},{name:"Gray 700",value:"#3a3a3a"},{name:"Gray 800",value:"#2e2e2e"},{name:"Gray 900",value:"#161616"},{name:"Pink",value:"#dd4462"},{name:"Pink Subdued",value:"#ce5769"},{name:"Blue",value:"#4467dd"},{name:"Blue Subdued",value:"#4d6cc8"},{name:"Gold",value:"#fbbe25"},{name:"Gold Subdued",value:"#f1c15b"}]},fonts:{title:"Fonts",description:"Each array of fonts creates a priority-based order. The first font in the array should be the ideal font, followed by sensible, web-safe fallbacks",items:[{name:"Display",description:"Display font stack for headings and large text. Redhat Display is made for headlines and big statements, are low contrast and spaced tightly, with a large x-height and open counters.",value:["Redhat","Segoe UI","Roboto","Helvetica Neue","Arial","sans-serif"]},{name:"Base",description:"Base font stack for body text. Atkinson Hyperlegible, named after the founder of the Braille Institute, has been developed specifically to increase legibility for readers with low vision, and to improve comprehension.",value:["Atkinson Hyperlegible","system-ui","sans-serif"]},{name:"Mono",description:"Monospace font for code and preformatted text.",value:["ui-monospace","Cascadia Code","Source Code Pro","Menlo","Consolas","DejaVu Sans Mono","monospace"]}]}, textSizes:{title:"Text Sizes",description:"A minimum and maximum text size size allows you to pick the right size from a ratio, depending on the context size. The min and max sizes are in pixels and should be converted to appropiate sizes, per context",meta:{scaleGenerator:"320"},items:[{name:"Step min 2",min:13,max:16},{name:"Step min 1",min:16,max:22},{name:"Step 0",min:19,max:28},{name:"Step 1",min:23,max:35},{name:"Step 2",min:27,max:44},{name:"Step 3",min:33,max:55},{name:"Step 4",min:40,max:68},{name:"Step 5",min:47,max:86},{name:"Step 6",min:56,max:107}]}, spacing:{title:"Spacing",description:"Consistent spacing sizes, based on a ratio, with min and max sizes. This allows you to set spacing based on the context size. For example, min for mobile and max for desktop browsers.",meta:{scaleGenerator:"320",note:"shifing the scale: XS is equal to 3XS"},items:[{name:"3XS",min:2,max:3},{name:"2XS",min:3,max:5},{name:"XS",min:5,max:7},{name:"S",min:10,max:14},{name:"M",min:14,max:21},{name:"L",min:19,max:28},{name:"XL",min:38,max:56},{name:"2XL",min:57,max:84},{name:"3XL",min:95,max:140},{name:"XS - S",min:5,max:14},{name:"S - M",min:10,max:21},{name:"M - L",min:14,max:31},{name:"L - XL",min:19,max:56},{name:"L - 2xl",min:38,max:84},{name:"XL - 2XL",min:57,max:140},{name:"2XL - 3xl",min:95,max:224}]}}» 
+«var customColors = [{property:"--color-text"}, {property: '--color-text-accent'}, {property: '--color-bg'}, {property: '--color-bg-accent'}, {property: '--color-bg-accent-2'}, {property: '--color-primary'}, {property: '--color-secondary'}, {property: '--color-tertiary'}]» 
+«var customGradients = [{property: '--gradient-rainbow'},{property: '--gradient-conic'},{property: '--gradient-stripes'}]» 
+
+---
+permalink: /styleguide/index.html
+layout: base
+eleventyExcludeFromCollections: true
+---
+
+<!-- Inspired by: https://stevenwoodson.com/blog/eleventy-style-guide-generator-step-by-step-guide-adding-to-an-existing-site/ -->
+
+<article class="styleguide | wrapper flow">
+  <header class="intro flow region">
+    <h1 class="gradient-text-linear">«title»</h1>
+
+    <p>
+      All design tokens can be found in <code>src/_data/designTokens</code>. <br />
+      This includes all baseline fonts, colors, sizes, and spacing.
+    </p>
+  </header>
+
+  <section class="flow region region-space-m">
+    <h2 class="heading-line">Buttons</h2>
+    <ul class="cluster" role="list">
+      <li>
+        <a href="#" class="button">Default button</a>
+      </li>
+      <li>
+        <a href="#" class="button" data-button-variant="primary">primary button</a>
+      </li>
+      <li>
+        <a href="#" class="button" data-button-variant="secondary">secondary button</a>
+      </li>
+      <li>
+        <a href="#" class="button" data-button-variant="tertiary">tertiary button</a>
+      </li>
+
+      <li>
+        <a href="#" class="button" data-ghost-button>Ghost button</a>
+      </li>
+      <li>
+        <a href="#" class="button" data-button-radius="hard">Hard edges</a>
+      </li>
+      <li>
+        <a href="#" class="button"> {% svg "misc/star" %} Button with icon </a>
+      </li>
+      <li>
+        <a href="#" class="button" data-small-button>small button</a>
+      </li>
+    </ul>
+  </section>
+
+  <div class="full colors | section">
+    <section class="section__inner wrapper flow region">
+      <h2 class="heading-line">Colors</h2>
+
+      «var colors = designTokens.colors» 
+      <p>«colors.description»</p>
+      «var items = colors.items» 
+      <ul role="list">
+        « for color in items »
+          <li>
+            <div style="background-color: var(--color-«color.name»)"></div>
+
+            <p>
+              <code
+                >#«color.name»<br />
+                var(--color-«color.name»)</code
+              >
+            </p>
+          </li>
+        «endfor»
+      </ul>
+
+      <h3 class="heading-line | mt-l-xl">Custom colors</h3>
+      <p>in <code>variables.css</code>. Some only change for dark theme.</p>
+
+      <ul role="list">
+        «for color in customColors »
+          <li>
+            <div style="background-color: var(«color.property»)"></div>
+            <p>
+              <code>«color.property»</code>
+            </p>
+          </li>
+        «endfor»
+      </ul>
+
+      <h3 class="heading-line | mt-l-xl">Gradients</h3>
+
+      <ul role="list">
+       «for gradient in customGradients »
+          <li>
+            <div style="background-image: var(«gradient.property»)"></div>
+
+            <p>
+              <code>«gradient.property»<</code>
+              <br />
+            </p>
+          </li>
+        «endfor»
+      </ul>
+    </section>
+  </div>
+
+  <section class="fonts | flow region">
+    <h2 class="heading-line">Fonts</h2>
+    «var fonts = designTokens.fonts»
+    «var fonrtsItems = fonts.items» 
+    <ul class="fonts flow">
+      «for font in fonrtsItems
+        <li class="font" style="font-family: var(--font-«font.name» )">
+          <h3 style="font-family: var(--font-«font.name»)">«font.name»</h3>
+          <p>«font.description»</p>
+          <p><strong>Font Families</strong>: «font.value»</p>
+          <code>var(--font-«font.name»)</code>
+        </li>
+      «endfor»
+    </ul>
+  </section>
+
+ <div class="full sizes | section">
+    <section class="section__inner wrapper flow region">
+      <h2 class="heading-line">Sizes</h2>
+      «var textSizes = designTokens.textSizes» 
+      «var textSizeMeta = textSizes.meta» 
+      «var textSizeItems = textSizes.items» 
+      <p>
+        «textSizes.description». Fluid type and space scales were
+        <a href="«textSizeMeta.scaleGenerator»">generated with Utopia</a>.
+      </p>
+
+      <table class="sizes flow">
+        «for size in textSizeItems»
+          <tr>
+            <th scope="row">
+              <h3>«size.name»</h3>
+            </th>
+            <td>
+              <span class="flow">
+                <p>«size.min»px to «size.max»px</p>
+                <code>var(--size-«size.name»)</code>
+              </span>
+            </td>
+            <td class="sizes-example">
+              <p style="font-size:var(--size-«size.name»)">«size.name»</p>
+            </td>
+          </tr>
+        «endfor»
+      </table>
+    </section>
+  </div>
+
+  <section class="spacing | flow region">
+    <h2 class="heading-line">Spacing</h2>
+    «var spacing = designTokens.spacing»
+    «var spacingMeta = spacing.meta» 
+    «var spacingItems = spacing.items» 
+
+    <p>
+      «spacing.description»<br />
+      Fluid type and space scales were
+      <a href="«spacingMeta.scaleGenerator»">generated with Utopia</a>.
+    </p>
+
+    <table class="spacing flow">
+      «for space in spacingItems»
+        <tr>
+          <th scope="row">
+            <h3>«space.name»</h3>
+          </th>
+          <td>
+            <span class="flow">
+              <p>«space.min»px to «space.max»px</p>
+              <code>var(--space-«space.name»)</code>
+            </span>
+          </td>
+          <td>
+            <div
+              class="space"
+              style="height:var(--space-«space.name»); width:var(--space-«space.name»);"
+            ></div>
+          </td>
+        </tr>
+      {%- endfor -%}
+    </table>
+  </section>
+</article>
+ 
+.styleguide {
+  --region-space-top: var(--space-xl-2xl);
+  --spot-color: color-mix(in oklab, var(--color-bg) 97%, var(--color-text));
+}
+
+.styleguide code {
+  font-size: var(--size-step-min-2);
+}
+
+.styleguide li p:has(code) {
+  line-height: var(--leading-flat);
+}
+
+.styleguide section {
+  --region-space-bottom: var(--space-l-xl);
+  --region-space-top: var(--space-l-xl);
+}
+
+.styleguide :is(h2, h3) {
+  font-size: var(--size-step-0);
+  font-family: var(--font-base);
+  text-transform: uppercase;
+}
+
+.styleguide h2 {
+  letter-spacing: var(--tracking-wide);
+}
+
+.styleguide .colors {
+  --cluster-vertical-alignment: flex-start;
+}
+
+.styleguide .colors ul {
+  --min: 10ch;
+  --gap: var(--space-s-m);
+
+  display: grid;
+  grid-gap: var(--gap);
+  /* min() with 100% prevents overflow
+		in extra narrow spaces */
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--min)), 1fr));
+}
+
+.styleguide .colors li {
+  display: grid;
+  gap: var(--space-xs);
+  grid-row: span 2;
+  grid-template-rows: subgrid;
+}
+
+.styleguide .colors li div {
+  max-inline-size: var(--max-img-width, 100%);
+  block-size: auto;
+  aspect-ratio: 16/9;
+  object-fit: cover;
+  object-position: center;
+  border: var(--stroke);
+}
+
+.styleguide .space {
+  background-color: var(--color-text);
+  display: block;
+}
+
+.styleguide .tabs {
+  align-items: center;
+  border-block-end: var(--stroke);
+  display: flex;
+  gap: var(--space-xs);
+  margin-block-end: var(--space-s);
+  padding-block-end: var(--space-s);
+}
+table {
+  border: 0;
+  inline-size: 100%;
+}
+
+table br {
+  display: none;
+}
+
+thead {
+  border: none;
+  clip: rect(0 0 0 0);
+  block-size: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  inline-size: 1px;
+}
+
+tr {
+  border: var(--stroke);
+  display: block;
+  margin-block-end: var(--space-s);
+}
+
+th,
+td {
+  padding: var(--space-xs) var(--space-s);
+  vertical-align: sub;
+}
+
+td {
+  border-block-end: var(--stroke);
+  display: block;
+  text-align: start;
+}
+
+td::before {
+  content: attr(data-label);
+  float: start;
+  font-weight: var(--font-bold);
+}
+
+td:last-child {
+  border-block-end: 0;
+}
+
+@media screen(sm) {
+  table {
+    border-collapse: collapse;
+    margin: 0;
+    padding: 0;
+    table-layout: fixed;
+  }
+
+  table br {
+    display: block;
+  }
+
+  thead {
+    position: static;
+    text-align: start;
+    display: table-header-group;
+  }
+
+  caption {
+    margin: var(--space-xs) 0 var(--space-s);
+  }
+
+  tr {
+    border: 0;
+    padding: var(--space-xs);
+    margin: 0;
+    display: table-row;
+  }
+
+  tr:not(:last-child) {
+    border-block-end: var(--stroke);
+  }
+
+  td {
+    border: none;
+  }
+
+  td::before {
+    display: none;
+  }
+
+  th,
+  td {
+    padding: var(--space-s);
+    text-align: start;
+    display: table-cell;
+  }
+}
