@@ -1,0 +1,601 @@
+[comment encoding = UTF-8 /]
+[module generateJsCode('http://www.eclipse.org/uml2/5.0.0/UML')/]
+
+[import de::urszeidler::eclipse::solidity::util::uml2service /]
+[import de::urszeidler::eclipse::solidity::templates::generateWeb3Contract /]
+[import de::urszeidler::eclipse::solidity::templates::generateHtml/]
+
+
+[template public generateJsCodePackage(p : Model)]
+[comment @main/]
+[comment the controller js /]
+[if (p.generateJsController())]
+  [file (p.name+'-main.js', false, 'UTF-8')]
+  [if (not p.getJsFileHeader().oclIsUndefined())][p.getJsFileHeader()/]
+[/if]
+
+[for (	aClass : Class | p.allContracts())]
+
+  [**
+  * Print a simple js model wrapper
+  */]
+  /**
+  * A simple bean class around the contract.
+  * The [aClass.name/]Model.
+  **/
+  function [aClass.name/]Model(contract) {
+  this.contract = contract;
+  [for (p : Property | aClass.allSubAttributes())]
+    /**
+    * Getter for [p.name/].
+    **/
+    this.get[p.name.toUpperFirst()/] = function(){
+      return contract.[p.name/](); 
+    }
+  [/for]
+  [for (p : Property | aClass.allMappingSubAttributes())]
+  [let value : Classifier = p.getStereotypeValue('Mapping', 'value').oclAsType(Classifier)]
+    /**
+    * Get the mapped value for a key.
+    */
+    this.get[p.name.toUpperFirst()/]=function(key) {
+      return contract.[p.name/](key);
+    }
+  [/let][/for]
+  [for (p : Property | aClass.allKeyMappingSubAttributes())]
+  [let value : Classifier = p.getStereotypeValue('KeyMapping', 'key').oclAsType(Classifier)]
+    /**
+    * Get the mapped value for a key.
+    */
+    this.get[p.name.toUpperFirst()/]=function(key) {
+      return contract.[p.name/](key);
+    }
+  [/let][/for]
+  [for (op : Operation | aClass.allSubFunctions()->select(isPublic()))]
+    /**
+    * Call [op.name/].
+    **/
+    this.[op.name/] = function([for (p : Parameter | op.allInParameters())separator (',')][p.name/][/for]){
+      return contract.[op.name/]([for (p : Parameter | op.allInParameters())separator (',')][p.name/][/for]); 
+    }
+  [/for]
+  [for (op : Operation | aClass.allAbstractFunctions()->select(isPublic()))separator (',')]
+    /**
+    * Call [op.name/].
+    **/
+    this.[op.name/] = function([for (p : Parameter | op.allInParameters())separator (',')][p.name/][/for]){
+      return contract.[op.name/]([for (p : Parameter | op.allInParameters())separator (',')][p.name/][/for]); 
+    }
+  [/for]
+  }// end of function [aClass.name/]Model
+
+
+  [**
+  * Print the gui factory
+  */]
+  /**
+  * Gui factory [aClass.name/]
+  **/
+  function [aClass.name/]GuiFactory() {
+    this.prefix='';
+    
+    /**
+    * Places the default gui to 'e' or an element with id='[aClass.name/]_gui'
+    */
+    this.placeDefaultGui=function(e) {
+      if(e==null)
+        e = document.getElementById(this.prefix+'[aClass.name/]_gui');
+      if(e!=null)
+        e.innerHTML = this.createDefaultGui();
+      else
+        console.log(this.prefix+'[aClass.name/]_gui not found');
+    }
+
+    /**
+    * The default generated gui with all actions and attributes.
+    */
+    this.createDefaultGui=function() {
+      return [for (it : String | printHtmlInterface(aClass).toString().tokenizeLine())separator ('+')]
+      '[it.replaceAll('id="', 'id="\'+this.prefix+\'').replaceAll('onclick="', 'onclick="\'+this.prefix+\'')/]'
+    [/for];
+    }
+
+    /**
+    * Create the gui for the attributes.
+    */
+    this.createAttributesGui=function() {
+      return [for (it : String | printContractAttributes(aClass).toString().tokenizeLine())separator ('+')]
+      '[it.replaceAll('id="', 'id="\'+this.prefix+\'').replaceAll('onclick="', 'onclick="\'+this.prefix+\'')/]'
+    [/for];
+    }
+
+    /**
+    * Create the gui.
+    */
+    this.createPlainGui=function(){
+      return this.createAttributesGui()
+  [for (op : Operation | aClass.allSubFunctions()->select(isPublic()))]
+          + this.create[op.functionName()/]Gui
+  [/for]				
+  [for (op : Operation | aClass.allAbstractFunctions()->select(isPublic()))]
+          + this.create[op.functionName(aClass)/]Gui
+  [/for]				
+          ;
+    }
+  [for (op : Operation | aClass.allSubFunctions()->select(isPublic()))]
+
+    /**
+    * Create the gui for the function [op.name/].
+    */
+    this.create[op.functionName()/]Gui=function() {
+      return [for (it : String | printOperationUi(aClass,'',op).toString().tokenizeLine())separator ('+')]
+      '[it.replaceAll('id="', 'id="\'+this.prefix+\'').replaceAll('onclick="', 'onclick="\'+this.prefix+\'')/]'
+    [/for];
+    }
+  [/for]
+  [for (op : Operation | aClass.allAbstractFunctions()->select(isPublic()))separator (',')]
+
+    /**
+    * Create the gui for the function [op.name/].
+    */
+    this.create[op.functionName(aClass)/]Gui=function() {
+      return [for (it : String | printOperationUi(aClass,'',op).toString().tokenizeLine())separator ('+')]
+      '[it.replaceAll('id="', 'id="\'+this.prefix+\'').replaceAll('onclick="', 'onclick="\'+this.prefix+\'')/]'
+    [/for];
+    }
+  [/for]
+  [for (p : Property | aClass.allMappingSubAttributes())]
+  [let value : Classifier = p.getStereotypeValue('Mapping', 'value').oclAsType(Classifier)]
+  [if (value.oclIsTypeOf(Class) and value.hasStereotype('Struct'))]
+    /**
+    * Create the gui for the [p.name/] struct element.
+    */
+    this.create[p.name/]StructGui=function() {
+      return [for (it : String | printHtmlScructInterface(aClass, p, p.type, value ).toString().tokenizeLine())separator ('+')]
+      '[it.replaceAll('id="', 'id="\'+this.prefix+\'').replaceAll('onclick="', 'onclick="\'+this.prefix+\'')/]'
+    [/for];
+    }
+  [/if][/let][/for]
+  [for (p : Property | aClass.allKeyMappingSubAttributes())]
+  [let key : Classifier = p.getStereotypeValue('KeyMapping', 'key').oclAsType(Classifier)]
+  [if (p.type.oclIsTypeOf(Class)and p.type.hasStereotype('Struct'))]
+
+    /**
+    * Create the gui for the [p.name/] struct element.
+    */
+    this.create[p.name/]StructGui=function() {
+      return [for (it : String | printHtmlScructInterface(aClass,p, key, p.type.oclAsType(Class)).toString().tokenizeLine())separator ('+')]
+      '[it.replaceAll('id="', 'id="\'+this.prefix+\'').replaceAll('onclick="', 'onclick="\'+this.prefix+\'')/]'
+    [/for];
+    }
+  [/if][/let][/for]
+
+    /**
+    * Create a div with '@inner' as inner elements.
+      * @inner - the inner text
+    */
+    this.createSeletonGui=function(inner) {
+      return 	'<!-- gui for [aClass.name/]_contract -->'
+      +	'	<div class="contract" id="'+this.prefix+'[aClass.name/]_contract">'
+      + inner
+      +'</div>';
+    }
+
+
+    //eventguis
+  [for (op : Operation | aClass.ownedOperation->select(hasStereotype('Event')))]
+
+    /**
+    * Create a gui for the [op.name/] event.
+      * @prefix - a prefix
+    * @blockHash - the bolckhash 
+    * @blockNumber - the number of the block
+    */
+    this.create[op.name/]LogDataGui = function(prefix, blockHash, blockNumber
+    [for (p : Parameter | op.ownedParameter->select(oclAsType(Parameter).direction<>ParameterDirectionKind::return) )]
+    ,[p.name/][/for]
+    ) {
+      return '<div class="eventRow">'
+    [for (p : Parameter | op.ownedParameter->select(oclAsType(Parameter).direction<>ParameterDirectionKind::return) )]
+          +'<div class="eventValue">'+[p.name/]+'</div>'
+    [/for]
+          +' </div>';
+    }
+  [/for]
+  [for (p : Property | aClass.allMappingSubAttributes())]
+  [let value : Classifier = p.getStereotypeValue('Mapping', 'value').oclAsType(Classifier)]
+  [if (value.oclIsTypeOf(Class) and value.hasStereotype('Struct'))]
+  [printJsScructInterface(aClass, p, p.type, value )/]
+  [/if]
+  [/let]
+  [/for]
+  [for (p : Property | aClass.allKeyMappingSubAttributes())]
+  [let key : Classifier = p.getStereotypeValue('KeyMapping', 'key').oclAsType(Classifier)]
+  [if (p.type.oclIsTypeOf(Class)and p.type.hasStereotype('Struct'))]
+  [printJsScructInterface(aClass,p, key, p.type.oclAsType(Class))/]
+  [/if]
+  [/let]
+  [/for]
+
+  }//end guifactory
+
+
+
+  [printJsGuiController(aClass)/]
+
+  /**
+  * Class [aClass.name/]Controller. 
+  * The controller wrap's the 'instance' contract and binds all actions to document elements.
+  * Parameters are taken from elements with self.prefix+'functionName_parameterName'
+  *
+  * self.prefix+'[aClass.name/]Controller.setAddress' - 
+  * self.prefix+'[aClass.name/]_updateAttributes'     - 
+  [for (op : Operation | aClass.allSubFunctions()->select(isPublic()))]
+  * self.prefix+'[op.functionName()/] -
+  [/for]
+  */
+  function [aClass.name/]Controller() {
+
+    this.instance = undefined;
+    this.prefix='';
+    this.contractAddress = undefined; 
+    this.eventlogPrefix = '';
+    var self = this;
+
+    /**
+    * Binds the element with the prefix-id to the corresponding element.
+    */
+    this.bindGui=function() {
+      console.log('bind gui for:'+self.prefix);
+      var btn = document.getElementById(self.prefix+'[aClass.name/]Controller.setAddress');
+      if(btn!=undefined)		
+        btn.onclick = this.setAddress;
+      else console.log('addres widget not bound');
+
+      var btn = document.getElementById(self.prefix+'[aClass.name/]_updateAttributes');
+      if(btn!=undefined)
+        btn.onclick = this._updateAttributes;
+      else console.log('_updateAttributes widget not bound');
+  [for (op : Operation | aClass.allSubFunctions()->select(isPublic()))]
+      var btn = document.getElementById(self.prefix+'[aClass.name/]Controller.[op.functionName()/]');
+      if(btn!=undefined)
+        btn.onclick = this.[op.functionName()/];
+      else console.log('[op.functionName()/] widget not bound');
+  [/for]
+  [for (op : Operation | aClass.allAbstractFunctions()->select(isPublic()))]
+      var btn = document.getElementById(self.prefix+'[aClass.name/]Controller.[op.functionName()/]');
+      if(btn!=undefined)
+        btn.onclick = this.[op.functionName()/];
+      else console.log('[op.functionName()/] widget not bound');
+
+  [/for]
+
+    }
+
+    /**
+    * Set the address.
+    */
+    this.setAddress=function() {
+      var _address = document.getElementById(self.prefix+'[aClass.name/]_address');
+      if(_address==null)return;
+
+      self.[aClass.name/]_instance = [aClass.name/]Contract.at(_address.value);
+      self.contractAddress = _address.value;
+      self._updateAttributes();
+    }
+    [printUpdateAttributeFunction(aClass)/]
+
+    [printCallFunction(aClass,aClass,'')/]
+  //delegated calls
+  [for (prop : Property | aClass.attribute->select(hasStereotype('Delegate')))]
+    [printCallFunction(prop.type.oclAsType(Class),aClass,'delegate_')/]
+  [/for]
+  }// end controller	
+
+
+  [**
+  * Print the Js glue code mananer.
+  */]
+  /**
+  * class as GlueCode [aClass.name/]Manager,
+  * uses prefix + 'GuiContainer' as target element.
+  * It combines a [aClass.name/]Controller as 'c' and a [aClass.name/]GuiFactory as 'g'.
+  **/
+  function [aClass.name/]Manager(prefix,contract,containerId) {
+    this.prefix = prefix;
+    var self = this;
+    this.c = new [aClass.name/]Controller();
+    this.c.prefix=prefix;
+    this.c.instance=contract;
+    this.c.contractAddress = contract.address;
+    this.g = new [aClass.name/]GuiFactory();
+    this.g.prefix = prefix;
+    this.containerId = containerId;
+    this.eventlogPrefix = '';
+    this.guiFunction = null;
+  [for (op : Operation | aClass.ownedOperation->select(hasStereotype('Event')))]
+    this.event[op.name/] = null;
+  [/for]	
+    
+    /**
+    * adds the gui element to the given 'e' element
+    **/
+    this.addGui = function(e) {
+      if(e==null)
+        e = document.getElementById(this.containerId);
+      if(e==null){
+      console.log(this.containerId+' not found or :'+e);
+      return;
+      }
+      var elemDiv = document.createElement('div');
+      elemDiv.id= this.prefix +'[aClass.name/]_gui';
+      e.appendChild(elemDiv);
+      if(this.guiFunction==null)
+        elemDiv.innerHTML = this.createGui(this.g);
+      else elemDiv.innerHTML = this.guiFunction(this.g);
+      
+      var e = document.getElementById(this.prefix+'[aClass.name/]_address');
+      if(e!=null)
+        e.value = this.c.contractAddress;
+      else 
+        console.log(this.prefix+'[aClass.name/]_address not found');
+      this.c.bindGui();
+    }	
+    
+    /**
+    * clears the given element 'e'.
+    **/
+    this.clearGui = function(e){
+      if(e==null)
+        e = document.getElementById(this.containerId);
+      e.innerHTML ='';
+    }
+
+    /**
+    * Create the gui with the given 'guiFactory'. Places an sceleton arount it.
+    * @return the gui txt used as innerHTML
+    **/
+    this.createGui = function(guifactory){
+      var txt ='';
+  //[protected(aClass.name+'_create_gui_js')]
+      txt = txt + guifactory.createDefaultGui();
+  //[/protected]
+      return guifactory.createSeletonGui(txt);
+
+    }
+
+    /**
+    * Create a small gui, only the attributes. Places an sceleton arount it.
+    **/	
+    this.createSmallGui = function(guifactory){
+      var txt ='';
+      txt = txt + guifactory.createAttributesGui();
+      return guifactory.createSeletonGui(txt);
+
+    }
+
+    /**
+    * Update the attributes.
+    **/
+    this.updateGui = function(){
+      this.c._updateAttributes();
+    }
+
+    /**
+    * Getter for the contract '[aClass.name/]' instance.
+    **/
+    this.getContract = function(){
+      return this.c.instance;
+    }
+
+    /**
+    * Watch for the contract events.
+    * The events are stored in an element with the id this.eventlogPrefix+'eventLog'.
+    **/
+    this.watchEvents=function(){
+    [for (op : Operation | aClass.ownedOperation->select(hasStereotype('Event')))]
+    var event_[op.name/] = this.getContract().[op.name/]({},{fromBlock: 0});
+    var elp = this.eventlogPrefix;
+    var callback = this.event[op.name/];
+    event_[op.name/].watch(function(error,result){
+    if(!error){
+      if(callback!=null)
+        callback(result);
+
+  [comment]		var e = document.getElementById(elp+'eventLog');
+      if(e==null){
+        console.log(elp+'eventLog');
+        return;
+      }
+      var elemDiv = document.createElement('div');
+      elemDiv.id= result.blockNumber +'event';
+      e.appendChild(elemDiv);
+      //console.log(result.address+ 'eventLog'+result.blockHash+' '+result.blockNumber+' '+result.args.name+' '+result.args.succesful+' ');
+      elemDiv.innerHTML = '<div class="eventRow">'
+  [for (p : Parameter | op.ownedParameter->select(oclAsType(Parameter).direction<>ParameterDirectionKind::return) )]
+          +'<div class="eventValue">'+result.args.[p.name/]+'</div>'
+  [/for]
+      + '</div>';[/comment]
+      }else
+        console.log(error);	
+    });
+  [/for]
+    }
+
+  }// end of manager
+
+
+  **
+  * Print a js guimannager, holding n managers.
+  */
+  /**
+  * Manages a list of [aClass.name/]Manager uses the guid id to place the gui which is also the eventlogPrefix
+  */
+  function [aClass.name/]GuiMananger(guiId){
+    this.prefix = guiId;
+    this.managers=new Array();	//[ '[' /][ ']' /];		
+    this.guiFunction = null;
+  [for (op : Operation | aClass.ownedOperation->select(hasStereotype('Event')))]
+    this.event[op.name/] = null;
+  [/for]	
+    this.managerMap = {};
+    
+    /**
+    * Add a contract to this manager.
+    * @contract the web3 contract instance
+    */
+    this.addManager = function(contract) {
+      var m = new [aClass.name/]Manager(contract.address,contract,this.prefix);
+      m.eventlogPrefix = this.prefix;
+  [for (op : Operation | aClass.ownedOperation->select(hasStereotype('Event')))]
+      m.event[op.name/] = this.event[op.name/];
+  [/for]	
+      m.watchEvents();
+      if(this.guiFunction!=null)
+        m.guiFunction = this.guiFunction;
+      this.managers.push(m);
+      this.managerMap[ '[' /]contract.address[ ']' /] = m;
+    }
+
+    /**
+    * Changes the gui function for all managers.
+    */
+    this.changeGuiFunction =  function(guiFunction){
+      for (i in this.managers) {
+        var manager = this.managers[ '[' /]i[ ']' /] ;
+        manager.guiFunction = guiFunction;
+      }
+    }
+    
+    /**
+    * Clears the element or the element with id 'prefix'.
+    * @e an element
+    */
+    this.clearGui = function(e){
+      if(e==null)
+        e = document.getElementById(this.prefix);
+      if(e!==undefined)
+        e.innerHTML ='';
+    }
+      
+    /**
+    * Displays all guis of the managed contracts.
+    * @e an element
+    */
+    this.displayGui = function(e){
+      if(e==null)
+        e = document.getElementById(this.prefix);
+      if(e==undefined) return;
+      for (i in this.managers) {
+        var manager = this.managers[ '[' /]i[ ']' /] ;
+        var elemDiv = document.createElement('div');
+        elemDiv.id= manager.prefix + 'GuiContainer';//'[aClass.name/]_gui';
+        e.appendChild(elemDiv);
+        if(this.guiFunction==null)
+          elemDiv.innerHTML = manager.createGui(manager.g);
+        else elemDiv.innerHTML = this.guiFunction(manager.g);
+        manager.c.bindGui();
+      }
+    }
+    /**
+    * Displays a simple gui.
+    */
+    this.displaySimpleGui = function(){
+      for (i in this.managers) {
+        var manager = this.managers[ '[' /]i[ ']' /] ;
+        manager.addGui(null);
+      }
+    }
+    /**
+    * Update the gui.
+    */
+    this.updateGui = function(){
+      for (i in this.managers) {
+        this.managers[ '[' /]i[ ']' /].updateGui();
+      }
+  //		console.log('update');
+    }
+  }// end of gui mananger
+
+  /**
+  * Deploys the contract.
+  * Each constructor is available.
+  **/
+  function [aClass.name/]Deployment(guiId){
+    this.prefix = guiId;
+  //[protected(aClass.name+'_deployment_attributes_js')]
+  //TODO: implement
+  //[/protected]
+
+  [for (op : Operation | aClass.allConstructors())]
+
+    /**
+    * Construct [aClass.name/].
+    **/
+    this.deploy[op.functionName()/] = function(account, code, providedGas[for (p : Parameter | op.allInParameters())], [p.name/][/for]){
+  //		var c = [aClass.name/].new([for (p : Parameter | op.allInParameters())separator (',')] [p.name/][/for][if(not op.allInParameters()->isEmpty())],[/if]{
+  //			from: account,
+  //			data: code,
+  //			gas:  providedGas
+  //		});
+      return c;
+    }
+  [/for]
+    
+    /**
+    * The default deployer function.
+    **/
+    this.deployDefault = function(){
+      //[protected(aClass.name+'_deployDefault')]
+      //TODO: implement
+      //[/protected]
+    }
+
+  //[protected(aClass.name+'_deployment_js')]
+  //TODO: implement
+  //[/protected]
+  }
+
+[/for]
+
+
+/**
+* A class to manage a single page dapp.
+* The [aPackage.name.toUpperFirst()/]Page object uses the managers to display the gui.
+**/
+function [aPackage.name.toUpperFirst()/]Page(prefix) {
+	this.prefix=prefix;
+	//[protected('page_'+aPackage.name+'_attributes')]
+		//TODO: implement
+	//[/protected]
+
+	
+	/**
+	* Places the default gui in the page.
+	**/
+	this.placeDefaultGui=function() {
+	this.createDefaultGui();
+	[comment]var e = document.getElementById(this.prefix);
+	if(e!=null)
+		e.innerHTML = this.createDefaultGui();
+	else
+		console.log(this.prefix+' [aPackage.name/]_gui not found');[/comment]
+	}
+/**
+* Create the default Gui.
+* Use this method to customize the gui.
+**/
+this.createDefaultGui=function() {
+	//[protected('page_'+aPackage.name.toUpperFirst()+'_create_default_gui_functions')]
+		//TODO: implement
+	//[/protected]
+}
+	//[protected('page_'+aPackage.name.toUpperFirst()+'_functions')]
+		//TODO: implement
+	//[/protected]
+
+}// end of [aPackage.name.toUpperFirst()/]Page
+
+//[protected(aPackage.name.toUpperFirst()+'_custom_functions')]
+		//TODO: implement
+//[/protected]

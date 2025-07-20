@@ -5,3 +5,9 @@
 4. Django:  https://github.com/getsentry/sentry/blob/master/src/sentry/templates/sentry/login.html
 5. Nunjuncks: https://github.com/gabriellewee/portfolio/blob/main/pages/code.njk
 6. Velocity:   
+
+
+## Generate updates combinations
+
+- command:
+ts-node test/performance/generateUpdateCombinations.ts

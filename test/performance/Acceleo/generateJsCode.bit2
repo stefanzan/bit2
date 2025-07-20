@@ -1,0 +1,464 @@
+«var p = {contracts:[{name:"Contracts", attributes:[{name:"base_Class"}, {name:"ConstroctorCode"}, {name:"ConstructorArgs"}, {name:"defaultFunction"}], mappingAttributes:[{name:"base_Property"}, {name:"Value"}], keyMappingAttributes:[{name:"key"}, {name:"base_Property"}], pubFuns:[{parameters:[{name:""}]}], pubAbsFuncs:[]}]}» 
+
+«for aClass in p.contracts» 
+  /**
+  * A simple bean class around the contract.
+  * The «aClass.name» Model.
+  **/
+  function «aClass.name»Model(contract) {
+  this.contract = contract;
+  «for attribute in aClass.attributes» 
+    /**
+    * Getter for «attribute.name».
+    **/
+    this.get«attribute.name» = function(){
+      return contract.«attribute.name»(); 
+    }
+  «endfor»
+  «for mappingAttribute in aClass.mappingAttributes» 
+    /**
+    * Get the mapped value for a key.
+    */
+    this.get«mappingAttribute.name»=function(key) {
+      return contract.«mappingAttribute.name»(key);
+    }
+  «endfor»
+  «for keyMappingAttribute in aClass.keyMappingAttributes» 
+    /**
+    * Get the mapped value for a key.
+    */
+    this.get«keyMappingAttribute.name»=function(key) {
+      return contract.«keyMappingAttribute.name»(key);
+    }
+  «endfor»
+  «for op in aClass.pubFuns» 
+    /**
+    * Call «op.name».
+    **/
+    this.«op.name» = function(«for parameter in op.parameters separator ","»«parameter.name»«endfor»){
+      return contract.«op.name»(«for parameter in op.parameters separator ","»«parameter.name»«endfor»); 
+    }
+  «endfor»
+  «for absOp in aClass.pubAbsFuncs separator ","» 
+    /**
+    * Call «absOp.name».
+    **/
+    this.«absOp.name» = function(«for absParameter in absOp.parameters separator ","»«absParameter.name»«endfor»){
+      return contract.«absOp.name»(«for absParameter in absOp.parameters separator ","»«absParameter.name»«endfor»); 
+    }
+  «endfor»
+  }// end of function «aClass.name»Model
+
+
+  /**
+  * Gui factory «aClass.name» 
+  **/
+  function «aClass.name» GuiFactory() {
+    this.prefix='';
+    
+    /**
+    * Places the default gui to 'e' or an element with id=«aClass.name»_gui'
+    */
+    this.placeDefaultGui=function(e) {
+      if(e==null)
+        e = document.getElementById(this.prefix+'«aClass.name»_gui');
+      if(e!=null)
+        e.innerHTML = this.createDefaultGui();
+      else
+        console.log(this.prefix+'«aClass.name»_gui not found');
+    }
+
+   
+    /**
+    * Create the gui.
+    */
+    this.createPlainGui=function(){
+      return this.createAttributesGui()
+      «for op2 in aClass.pubFuns» 
+          + this.create«op2.functionName»Gui
+      «endfor»
+      «for absOp2 in aClass.pubAbsFuncs» 
+          + this.create«absOp2.functionName»Gui
+      «endfor»;
+    }
+
+
+    /**
+    * Create a div with '@inner' as inner elements.
+      * @inner - the inner text
+    */
+    this.createSeletonGui=function(inner) {
+      return 	'<!-- gui for «aClass.name»_contract -->'
+      +	'	<div class="contract" id="'+this.prefix+'«aClass.name»_contract">'
+      + inner
+      +'</div>';
+    }
+
+
+    //eventguis
+  «for ownedOp in aclass.ownedEventOperations» 
+    /**
+    * Create a gui for the «ownedOp.name» event.
+      * @prefix - a prefix
+    * @blockHash - the bolckhash 
+    * @blockNumber - the number of the block
+    */
+    this.create«ownedOp.name»LogDataGui = function(prefix, blockHash, blockNumber«for parameter in ownedOp.parameters», «parameter.name»«endfor» 
+    ) {
+      return '<div class="eventRow">'
+    «for parameter in ownedOp.parameters» 
+          +'<div class="eventValue">'+«parameter.name»+'</div>'
+    «endfor»
+          +' </div>';
+    }
+  «endfor» 
+  }//end guifactory
+
+
+  /**
+  * Class «aClass.name»Controller. 
+  * The controller wrap's the 'instance' contract and binds all actions to document elements.
+  * Parameters are taken from elements with self.prefix+'functionName_parameterName'
+  *
+  * self.prefix+'«aClass.name»Controller.setAddress' - 
+  * self.prefix+'«aClass.name»_updateAttributes'     - 
+  «for pubFun in aClass.pubFuncs»
+  * self.prefix+'«pubFun.functionName»' -
+  «endfor»
+  */
+  function «aClass.name»Controller() {
+
+    this.instance = undefined;
+    this.prefix='';
+    this.contractAddress = undefined; 
+    this.eventlogPrefix = '';
+    var self = this;
+
+    /**
+    * Binds the element with the prefix-id to the corresponding element.
+    */
+    this.bindGui=function() {
+      console.log('bind gui for:'+self.prefix);
+      var btn = document.getElementById(self.prefix+'«aClass.name»Controller.setAddress');
+      if(btn!=undefined)		
+        btn.onclick = this.setAddress;
+      else console.log('addres widget not bound');
+
+      var btn = document.getElementById(self.prefix+'«aClass.name»_updateAttributes');
+      if(btn!=undefined)
+        btn.onclick = this._updateAttributes;
+      else console.log('_updateAttributes widget not bound');
+  «for pubFun in aClass.pubFuncs»
+      var btn = document.getElementById(self.prefix+'«aClass.name»Controller.«pubFun.functionName»');
+      if(btn!=undefined)
+        btn.onclick = this.«pubFun.functionName»;
+      else console.log('«pubFun.functionName» widget not bound');
+  «endfor»
+  «for pubAbsFun in aClass.pubAbsFuncs»
+      var btn = document.getElementById(self.prefix+'«aClass.name»Controller.«pubAbsFun.functionName»');
+      if(btn!=undefined)
+        btn.onclick = this.«pubAbsFun.functionName»;
+      else console.log('«pubAbsFun.functionName» widget not bound');
+  «endfor»
+    }
+
+    /**
+    * Set the address.
+    */
+    this.setAddress=function() {
+      var _address = document.getElementById(self.prefix+'«aClass.name»_address');
+      if(_address==null)return;
+
+      self.«aClass.name»_instance = «aClass.name»Contract.at(_address.value);
+      self.contractAddress = _address.value;
+      self._updateAttributes();
+    }
+ }// end controller	
+
+
+  [**
+  * Print the Js glue code mananer.
+  */]
+  /**
+  * class as GlueCode «aClass.name»Manager,
+  * uses prefix + 'GuiContainer' as target element.
+  * It combines a «aClass.name»Controller as 'c' and a «aClass.name»GuiFactory as 'g'.
+  **/
+  function «aClass.name»Manager(prefix,contract,containerId) {
+    this.prefix = prefix;
+    var self = this;
+    this.c = new «aClass.name»Controller();
+    this.c.prefix=prefix;
+    this.c.instance=contract;
+    this.c.contractAddress = contract.address;
+    this.g = new «aClass.name»GuiFactory();
+    this.g.prefix = prefix;
+    this.containerId = containerId;
+    this.eventlogPrefix = '';
+    this.guiFunction = null;
+  «for ownedOp0 in aClass.ownedEventOperations»
+    this.event«owndedOp0.name» = null;
+  «endfor»
+    
+    /**
+    * adds the gui element to the given 'e' element
+    **/
+    this.addGui = function(e) {
+      if(e==null)
+        e = document.getElementById(this.containerId);
+      if(e==null){
+      console.log(this.containerId+' not found or :'+e);
+      return;
+      }
+      var elemDiv = document.createElement('div');
+      elemDiv.id= this.prefix +'«aClass.name»_gui';
+      e.appendChild(elemDiv);
+      if(this.guiFunction==null)
+        elemDiv.innerHTML = this.createGui(this.g);
+      else elemDiv.innerHTML = this.guiFunction(this.g);
+      
+      var e = document.getElementById(this.prefix+'«aClass.name»_address');
+      if(e!=null)
+        e.value = this.c.contractAddress;
+      else 
+        console.log(this.prefix+'«aClass.name»_address not found');
+      this.c.bindGui();
+    }	
+    
+    /**
+    * clears the given element 'e'.
+    **/
+    this.clearGui = function(e){
+      if(e==null)
+        e = document.getElementById(this.containerId);
+      e.innerHTML ='';
+    }
+
+    /**
+    * Create the gui with the given 'guiFactory'. Places an sceleton arount it.
+    * @return the gui txt used as innerHTML
+    **/
+    this.createGui = function(guifactory){
+      var txt ='';
+  //[protected(aClass.name+'_create_gui_js')]
+      txt = txt + guifactory.createDefaultGui();
+  //[/protected]
+      return guifactory.createSeletonGui(txt);
+
+    }
+
+    /**
+    * Create a small gui, only the attributes. Places an sceleton arount it.
+    **/	
+    this.createSmallGui = function(guifactory){
+      var txt ='';
+      txt = txt + guifactory.createAttributesGui();
+      return guifactory.createSeletonGui(txt);
+
+    }
+
+    /**
+    * Update the attributes.
+    **/
+    this.updateGui = function(){
+      this.c._updateAttributes();
+    }
+
+    /**
+    * Getter for the contract '«aClass.name»' instance.
+    **/
+    this.getContract = function(){
+      return this.c.instance;
+    }
+
+    /**
+    * Watch for the contract events.
+    * The events are stored in an element with the id this.eventlogPrefix+'eventLog'.
+    **/
+    this.watchEvents=function(){
+    «for ownedOp1 in aClass.ownedEventOperations»
+    var event_«ownedOp1.name» = this.getContract().«ownedOp1.name»({},{fromBlock: 0});
+    var elp = this.eventlogPrefix;
+    var callback = this.event«ownedOp1.name»;
+    event_«ownedOp1.name».watch(function(error,result){
+    if(!error){
+      if(callback!=null)
+        callback(result);
+
+      var e = document.getElementById(elp+'eventLog');
+      if(e==null){
+        console.log(elp+'eventLog');
+        return;
+      }
+      var elemDiv = document.createElement('div');
+      elemDiv.id= result.blockNumber +'event';
+      e.appendChild(elemDiv);
+      //console.log(result.address+ 'eventLog'+result.blockHash+' '+result.blockNumber+' '+result.args.name+' '+result.args.succesful+' ');
+      elemDiv.innerHTML = '<div class="eventRow">'
+  «for owndedOp1Parameter in ownedOp1.parameters»
+      +'<div class="eventValue">'+result.args.«owndedOp1Parameter.name»+'</div>'
+  «endfor» 
+      + '</div>';
+      }else
+        console.log(error);	
+    });
+  «endfor» 
+    }
+
+  }// end of manager
+
+
+  **
+  * Print a js guimannager, holding n managers.
+  */
+  /**
+  * Manages a list of «aClass.name»Manager uses the guid id to place the gui which is also the eventlogPrefix
+  */
+  function «aClass.name»GuiMananger(guiId){
+    this.prefix = guiId;
+    this.managers=new Array();	//[ '[' /][ ']' /];		
+    this.guiFunction = null;
+  «for ownedOp1 in aClass.ownedEventOperations»
+    this.event«owndedOp1.name» = null;
+  «endfor»
+    this.managerMap = {};
+    
+    /**
+    * Add a contract to this manager.
+    * @contract the web3 contract instance
+    */
+    this.addManager = function(contract) {
+      var m = new «aClass.name»Manager(contract.address,contract,this.prefix);
+      m.eventlogPrefix = this.prefix;
+      «for ownedOp in aClass.ownedEventOperations»
+        m.event«owndedOp.name» = this.event«owndedOp.name»;
+      «endfor»
+      m.watchEvents();
+      if(this.guiFunction!=null)
+        m.guiFunction = this.guiFunction;
+      this.managers.push(m);
+      this.managerMap[ '[' /]contract.address[ ']' /] = m;
+    }
+
+    /**
+    * Changes the gui function for all managers.
+    */
+    this.changeGuiFunction =  function(guiFunction){
+      for (i in this.managers) {
+        var manager = this.managers[ '[' /]i[ ']' /] ;
+        manager.guiFunction = guiFunction;
+      }
+    }
+    
+    /**
+    * Clears the element or the element with id 'prefix'.
+    * @e an element
+    */
+    this.clearGui = function(e){
+      if(e==null)
+        e = document.getElementById(this.prefix);
+      if(e!==undefined)
+        e.innerHTML ='';
+    }
+      
+    /**
+    * Displays all guis of the managed contracts.
+    * @e an element
+    */
+    this.displayGui = function(e){
+      if(e==null)
+        e = document.getElementById(this.prefix);
+      if(e==undefined) return;
+      for (i in this.managers) {
+        var manager = this.managers[ '[' /]i[ ']' /] ;
+        var elemDiv = document.createElement('div');
+        elemDiv.id= manager.prefix + 'GuiContainer';//'«aClass.name»_gui';
+        e.appendChild(elemDiv);
+        if(this.guiFunction==null)
+          elemDiv.innerHTML = manager.createGui(manager.g);
+        else elemDiv.innerHTML = this.guiFunction(manager.g);
+        manager.c.bindGui();
+      }
+    }
+    /**
+    * Displays a simple gui.
+    */
+    this.displaySimpleGui = function(){
+      for (i in this.managers) {
+        var manager = this.managers[ '[' /]i[ ']' /] ;
+        manager.addGui(null);
+      }
+    }
+    /**
+    * Update the gui.
+    */
+    this.updateGui = function(){
+      for (i in this.managers) {
+        this.managers[ '[' /]i[ ']' /].updateGui();
+      }
+  //		console.log('update');
+    }
+  }// end of gui mananger
+
+  /**
+  * Deploys the contract.
+  * Each constructor is available.
+  **/
+  function «aClass.name»Deployment(guiId){
+    this.prefix = guiId;
+  
+    «for constructor in aclass.constructors»	
+    /**
+    * Construct «aClass.name».
+    **/
+    this.deploy«constructor.functionName» = function(account, code, providedGas«for parameter in constructor.parameters», «parameter.name»«endfor»){
+      return c;
+    }
+   «endfor» 
+    
+    /**
+    * The default deployer function.
+    **/
+    this.deployDefault = function(){
+      //[protected(aClass.name+'_deployDefault')]
+      //TODO: implement
+      //[/protected]
+    }
+
+  //[protected(aClass.name+'_deployment_js')]
+  //TODO: implement
+  //[/protected]
+  }
+«endfor» 
+
+
+/**
+* A class to manage a single page dapp.
+* The «aClass.name»Page object uses the managers to display the gui.
+**/
+function «aClass.name»Page(prefix) {
+	this.prefix=prefix;
+  //TODO: implement
+	
+	/**
+	* Places the default gui in the page.
+	**/
+	this.placeDefaultGui=function() {
+	this.createDefaultGui();
+	var e = document.getElementById(this.prefix);
+	if(e!=null)
+		e.innerHTML = this.createDefaultGui();
+	else
+		console.log(this.prefix+' «aClass.name»_gui not found');
+	}
+/**
+* Create the default Gui.
+* Use this method to customize the gui.
+**/
+this.createDefaultGui=function() {
+  //TODO: implement
+}
+
+}// end of «aClass.name»Page
+
+
