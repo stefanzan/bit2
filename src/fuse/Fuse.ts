@@ -1829,7 +1829,166 @@ export function printEnvironment(env: Environment): void {
   console.log("}");
 }
 
+
 export function fuseBulk(
+  env: Environment,
+  bulkOp: UpdateOperation,
+  term: TermNode
+): {
+  newEnv: Environment;
+  newTermNode: TermNode;
+  remainingOperation: UpdateOperation;
+}[] {
+  if (bulkOp.type === "id") {
+    return fuse(deepCloneEnvironment(env), bulkOp, term);
+  }
+
+  if (bulkOp.type !== "bulk" || !bulkOp.operations) {
+    throw new Error("Invalid bulk operation");
+  }
+
+  if (bulkOp.operations.length === 0) {
+    return [{
+      newEnv: deepCloneEnvironment(env),
+      newTermNode: term,
+      remainingOperation: { type: "id" },
+    }];
+  } else if (term.type === "seq" && term.nodes.length === 0) {
+    return [{
+      newEnv: deepCloneEnvironment(env),
+      newTermNode: term,
+      remainingOperation: bulkOp,
+    }];
+  }
+
+  if (term.type === "lambda") {
+    let clonedBulkOp = deepCloneOp(bulkOp);
+    return fuse(deepCloneEnvironment(env), clonedBulkOp, term);
+  }
+
+  // 非递归栈结构模拟递归调用
+  type Frame = {
+    env: Environment;
+    termNodes: TermNode[]; // 剩余待处理的 nodes
+    processedNodes: TermNode[]; // 已处理的 nodes
+    bulkOp: UpdateOperation;
+  };
+
+  if (term.type === "seq") {
+    const stack: Frame[] = [{
+      env: env,
+      termNodes: [...term.nodes],
+      processedNodes: [],
+      bulkOp: bulkOp,
+    }];
+    const results: {
+      newEnv: Environment;
+      newTermNode: TermNode;
+      remainingOperation: UpdateOperation;
+    }[] = [];
+
+    while (stack.length > 0) {
+      const frame = stack.pop()!;
+      const { env, termNodes, processedNodes, bulkOp } = frame;
+
+      if (termNodes.length === 0) {
+        results.push({
+          newEnv: env,
+          newTermNode: {
+            type: "seq",
+            nodes: processedNodes,
+          },
+          remainingOperation: bulkOp,
+        });
+        continue;
+      }
+
+      const [head, ...tail] = termNodes;
+      const fuseResults = fuseBulk(env, bulkOp, head);
+
+      for (const res of fuseResults) {
+        const nextProcessed = [...processedNodes, res.newTermNode];
+        stack.push({
+          env: res.newEnv,
+          termNodes: tail,
+          processedNodes: nextProcessed,
+          bulkOp: res.remainingOperation,
+        });
+      }
+    }
+
+    return results;
+  }
+
+  // 非seq、非lambda情形（普通TermNode）
+  const [op1, ...restOps] = bulkOp.operations;
+
+  if (
+    op1.type === "insert" ||
+    op1.type === "delete" ||
+    op1.type === "replace"
+  ) {
+    const op1Results = fuse(deepCloneEnvironment(env), op1, term);
+    let results: {
+      newEnv: Environment;
+      newTermNode: TermNode;
+      remainingOperation: UpdateOperation;
+    }[] = [];
+
+    for (const op1Result of op1Results) {
+      const op1Prime = op1Result.remainingOperation;
+
+      if (
+        op1Prime.type === "id" ||
+        op1Prime.type === "insert" ||
+        op1Prime.type === "delete" ||
+        op1Prime.type === "replace"
+      ) {
+        let termStr = evaluateTermNode(op1Result.newTermNode);
+        let deltaN = termStr.length;
+
+        const adjustedRestOps = restOps.map((op) => {
+          if (op.type === "id") {
+            return op;
+          } else if (!("position" in op)) {
+            throw new Error("All operations must have positions");
+          } else {
+            return { ...op, position: op.position - deltaN };
+          }
+        });
+
+        const remainingBulkOp: UpdateOperation = {
+          type: "bulk",
+          operations: [op1Result.remainingOperation, ...adjustedRestOps],
+        };
+
+        results.push({
+          newEnv: op1Result.newEnv,
+          newTermNode: op1Result.newTermNode,
+          remainingOperation: remainingBulkOp,
+        });
+      } else {
+        throw new Error("nested bulk currently not supported");
+      }
+    }
+
+    return results;
+  } else if (op1.type === "id") {
+    if (restOps.length === 0) {
+      return fuse(deepCloneEnvironment(env), op1, term);
+    } else {
+      return fuseBulk(env, {
+        type: "bulk",
+        operations: restOps,
+      }, term);
+    }
+  }
+
+  return [];
+}
+
+
+export function fuseBulk1(
   env: Environment,
   bulkOp: UpdateOperation,
   term: TermNode
@@ -2055,46 +2214,108 @@ function isObjectValue(value: any): value is ObjectValue {
 }
 
 // 深拷贝函数
-function deepClone(value: Value): Value {
+// function deepClone(value: Value): Value {
+//   console.log(value);
+//   if (value === null || typeof value !== "object") {
+//     return value;
+//   }
+
+//   if (Array.isArray(value)) {
+//     return value.map(deepClone);
+//   }
+
+//   if (isObjectValue(value)) {
+//     const clonedFields: { [key: string]: Value } = {};
+//     for (const key in value.fields) {
+//       if (value.fields.hasOwnProperty(key)) {
+//         clonedFields[key] = deepClone(value.fields[key]);
+//       }
+//     }
+//     return { type: "object", fields: clonedFields };
+//   }
+
+//   // 处理普通对象
+//   const clonedObj: { [key: string]: Value } = {};
+//   for (const key in value as { [key: string]: Value }) {
+//     if ((value as { [key: string]: Value }).hasOwnProperty(key)) {
+//       clonedObj[key] = deepClone((value as { [key: string]: Value })[key]);
+//     }
+//   }
+//   return clonedObj as unknown as Value;
+// }
+
+function deepClone(value: Value, seen = new WeakMap()): Value {
   if (value === null || typeof value !== "object") {
     return value;
   }
 
+  if (seen.has(value)) {
+    // 已克隆过，直接返回之前克隆结果，避免死循环
+    return seen.get(value);
+  }
+
   if (Array.isArray(value)) {
-    return value.map(deepClone);
+    const clonedArr:any[] = [];
+    seen.set(value, clonedArr);
+    for (const item of value) {
+      clonedArr.push(deepClone(item, seen));
+    }
+    return clonedArr as unknown as Value;
   }
 
   if (isObjectValue(value)) {
     const clonedFields: { [key: string]: Value } = {};
+    const clonedObj = { type: "object", fields: clonedFields };
+    seen.set(value, clonedObj);
     for (const key in value.fields) {
       if (value.fields.hasOwnProperty(key)) {
-        clonedFields[key] = deepClone(value.fields[key]);
+        clonedFields[key] = deepClone(value.fields[key], seen);
       }
     }
-    return { type: "object", fields: clonedFields };
+    //@ts-ignore
+    return clonedObj;
   }
 
   // 处理普通对象
   const clonedObj: { [key: string]: Value } = {};
+  seen.set(value, clonedObj);
   for (const key in value as { [key: string]: Value }) {
     if ((value as { [key: string]: Value }).hasOwnProperty(key)) {
-      clonedObj[key] = deepClone((value as { [key: string]: Value })[key]);
+      clonedObj[key] = deepClone((value as { [key: string]: Value })[key], seen);
     }
   }
   return clonedObj as unknown as Value;
 }
 
 // 深拷贝 Environment
-function deepCloneEnvironment(env: Environment): Environment {
+function deepCloneEnvironment(env: Environment, seen = new WeakMap()): Environment {
+  if (seen.has(env)) {
+    return seen.get(env);
+  }
+
   const clonedEnv: Environment = {};
+  seen.set(env, clonedEnv);
+
   for (const key in env) {
     if (env.hasOwnProperty(key)) {
       const [val1, valArray] = env[key];
-      clonedEnv[key] = [deepClone(val1), deepClone(valArray) as Value[]];
+      clonedEnv[key] = [deepClone(val1, seen), deepClone(valArray, seen) as Value[]];
     }
   }
+
   return clonedEnv;
 }
+
+// function deepCloneEnvironment(env: Environment): Environment {
+//   const clonedEnv: Environment = {};
+//   for (const key in env) {
+//     if (env.hasOwnProperty(key)) {
+//       const [val1, valArray] = env[key];
+//       clonedEnv[key] = [deepClone(val1), deepClone(valArray) as Value[]];
+//     }
+//   }
+//   return clonedEnv;
+// }
 
 // // Value
 // export type Value = number | boolean | string | null | ObjectValue | Value[];
