@@ -288,11 +288,11 @@
 <script src="«value.contextPath»/statics/js/main.js"></script>
 <script>
     //console.log(vm);
-    vm.formData.options.authorName=«value.author»;
-    vm.formData.options.packageName=«value.packageName»;
-    vm.formData.options.returnUtilSuccess=«value.returnUtilSuccess»;
-    vm.formData.options.returnUtilFailure=«value.returnUtilFailure»;
-    vm.outputStr=«value.outputStr»;
+    vm.formData.options.authorName="«value.author»";
+    vm.formData.options.packageName="«value.packageName»";
+    vm.formData.options.returnUtilSuccess="«value.returnUtilSuccess»";
+    vm.formData.options.returnUtilFailure="«value.returnUtilFailure»";
+    vm.outputStr="«value.outputStr»";
     loadAllCookie()
 </script>
 </body>

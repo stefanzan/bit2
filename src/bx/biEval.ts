@@ -65,7 +65,7 @@ export function backward(str: string, operation: UpdateOperation): string[] {
       return surfaceText;
     } catch (error) {
       const typedError = error as Error;
-      // console.log("biEval backward, fail:" + typedError.message);
+      console.log("biEval backward, fail:" + typedError.message);
       return "";
     }
   });

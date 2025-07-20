@@ -137,6 +137,7 @@ function unPartialEvalLambdaApp(node: PartialAST.LambdaAppNode):CoreAST.LambdaWi
 
 function unNestLambdaLoopItems(node: PartialAST.LambdaAppNode) : [CoreAST.LambdaWithExpr|PartialAST.BotNode, CoreAST.SepNode|null] {
   let firstRealLambdaAppNode = node;
+  let variableName = node.variable.name;
   let nodeBody = node.body as PartialAST.SeqNode;
   let innerLambdaAppNode = null;
   let nodesSeq = [] as PartialAST.TermNode[];
@@ -144,7 +145,7 @@ function unNestLambdaLoopItems(node: PartialAST.LambdaAppNode) : [CoreAST.Lambda
   for(let nodeItem of nodeBody.nodes){
     if(nodeItem.type === 'sep'){
       firstSepNode = nodeItem;
-    } else if (nodeItem.type === 'lambda'){
+    } else if (nodeItem.type === 'lambda' && nodeItem.variable.name === variableName) {
       innerLambdaAppNode = nodeItem;
     } else {
       nodesSeq.push(nodeItem);

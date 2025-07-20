@@ -6,7 +6,7 @@
       "request": "launch",
       "name": "Launch Program",
       "skipFiles": ["<node_internals>/**"],
-      "program": "${workspaceFolder}/test/performance/runPerformance.ts",
+      "program": "${workspaceFolder}/test/examples/3.5.NestedLoop.test.ts",
       "preLaunchTask": "tsc: build - tsconfig.json",
       "outFiles": ["${workspaceFolder}/dist/**/*.js"],
       "runtimeExecutable": "/usr/local/bin/node"
