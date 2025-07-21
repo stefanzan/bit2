@@ -66,7 +66,7 @@ fileName = './test/testcases/Velocity/Velocity4.bit2';
 // fileName = './test/testcases/Xtend/Xtend3.bit2';
 // fileName = './test/testcases/Xtend/Xtend4.bit2';
 
-fileName = './test/performance/FreeMarker/main-v2.bit2';
+fileName = './test/performance/Mustache/readme.bit2';
 
 fs.readFile(fileName, 'utf8')
   .then(data =>{
@@ -116,27 +116,33 @@ fs.readFile(fileName, 'utf8')
 
  console.log('--- 2. bulk(delete "             " at 10405) ------------------');
   BiEval.backward(data, 
-   {type:"bulk", operations:[
-    {type:"delete", str:"/generator", position:815} as UpdateOperation,
-    {type:"delete", str:"/generator", position:1098} as UpdateOperation,
-    {type:"delete", str:"/generator", position:1161} as UpdateOperation,
-    {type:"delete", str:"/generator", position:1218} as UpdateOperation,
-    {type:"delete", str:"/generator", position:1279} as UpdateOperation,
-    {type:"delete", str:"/generator", position:1344} as UpdateOperation,
-    {type:"delete", str:"/generator", position:1465} as UpdateOperation,
-    {type:"delete", str:"/generator", position:1570} as UpdateOperation,
-    {type:"delete", str:"/generator", position:1701} as UpdateOperation,
-    {type:"delete", str:"/generator", position:1835} as UpdateOperation,
-    {type:"delete", str:"/generator", position:1906} as UpdateOperation,
-    {type:"delete", str:"/generator", position:1956} as UpdateOperation,
-    {type:"delete", str:"/generator", position:2045} as UpdateOperation,
-    {type:"delete", str:"/generator", position:2174} as UpdateOperation,
-    {type:"delete", str:"/generator", position:2244} as UpdateOperation,
-    {type:"delete", str:"/generator", position:2341} as UpdateOperation,
-    {type:"delete", str:"/generator", position:2418} as UpdateOperation,
-    {type:"delete", str:"/generator", position:2490} as UpdateOperation,
-    {type:"delete", str:"/generator", position:29317} as UpdateOperation,
-  ]} as UpdateOperation,
+  {
+  "type": "bulk",
+  "operations": [
+    {
+      "type": "delete",
+      "str": ".",
+      "position": 414
+    },
+    {
+      "type": "insert",
+      "str": ".",
+      "position": 2058
+    },
+    {
+      "type": "replace",
+      "str1": "Class",
+      "str2": "Class",
+      "position": 2061
+    },
+    // {
+    //   "type": "replace",
+    //   "str1": "get_incident_request_status",
+    //   "str2": "get_request_status_of_incident",
+    //   "position": 11319
+    // }
+  ]
+}
 
 ).forEach(updatedCoreAST => {
     console.log(updatedCoreAST);

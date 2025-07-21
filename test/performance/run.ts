@@ -4,13 +4,18 @@ import { UpdateOperation } from '../../src/fuse/Update';
 
 // Django
 // import * as AllBulkUpdates from "./Django/bulkUpdates.generated";
-// const bit2File = "./test/performance/Django/login.bit2";
+// const bit2File   = "./test/performance/Django/login.bit2";
 // const outputFile = "./test/performance/Django/timings.txt";
 
 // FreeMarker
-import * as AllBulkUpdates from "./FreeMarker/bulkUpdates.generated";
-const bit2File = "./test/performance/Freemarker/main-v2.bit2";
-const outputFile = "./test/performance/Freemarker/timings.txt";
+// import * as AllBulkUpdates from "./FreeMarker/bulkUpdates.generated";
+// const bit2File   = "./test/performance/Freemarker/main-v2.bit2";
+// const outputFile = "./test/performance/Freemarker/timings.txt";
+
+// FreeMarker
+import * as AllBulkUpdates from "./Mustache/bulkUpdates.generated";
+const bit2File   = "./test/performance/Mustache/readme.bit2";
+const outputFile = "./test/performance/Mustache/timings.txt";
 
 
 const counts = [2, 4, 6, 8, 10, 12, 14, 16, 18];

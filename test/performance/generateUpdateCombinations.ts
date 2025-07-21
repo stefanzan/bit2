@@ -101,12 +101,18 @@ function generateBulkUpdate(updates: UpdateOperation[], count: number): UpdateOp
 
 async function main() {
   // Django
-  // const inputFile = './test/performance/Django/updates';
+  // const inputFile  = './test/performance/Django/updates';
   // const outputFile = './test/performance/Django/bulkUpdates.generated.ts';
 
   // FreeMarker
-  const inputFile = './test/performance/FreeMarker/updates';
-  const outputFile = './test/performance/FreeMarker/bulkUpdates.generated.ts';
+  // const inputFile  = './test/performance/FreeMarker/updates';
+  // const outputFile = './test/performance/FreeMarker/bulkUpdates.generated.ts';
+
+  // Mustache
+  const inputFile  = './test/performance/Mustache/updates.ts';
+  const outputFile = './test/performance/Mustache/bulkUpdates.generated.ts';
+
+
 
   const updates = await loadUpdates(inputFile);
   const counts = [2, 4, 6, 8, 10, 12, 14, 16, 18];
