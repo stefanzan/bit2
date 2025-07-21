@@ -110,7 +110,7 @@ eleventyExcludeFromCollections: true
     «var fonts = designTokens.fonts»
     «var fonrtsItems = fonts.items» 
     <ul class="fonts flow">
-      «for font in fonrtsItems
+      «for font in fonrtsItems»
         <li class="font" style="font-family: var(--font-«font.name» )">
           <h3 style="font-family: var(--font-«font.name»)">«font.name»</h3>
           <p>«font.description»</p>
@@ -184,7 +184,7 @@ eleventyExcludeFromCollections: true
             ></div>
           </td>
         </tr>
-      {%- endfor -%}
+      «endfor»
     </table>
   </section>
 </article>

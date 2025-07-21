@@ -13,9 +13,14 @@ import { UpdateOperation } from '../../src/fuse/Update';
 // const outputFile = "./test/performance/Freemarker/timings.txt";
 
 // FreeMarker
-import * as AllBulkUpdates from "./Mustache/bulkUpdates.generated";
-const bit2File   = "./test/performance/Mustache/readme.bit2";
-const outputFile = "./test/performance/Mustache/timings.txt";
+// import * as AllBulkUpdates from "./Mustache/bulkUpdates.generated";
+// const bit2File   = "./test/performance/Mustache/readme.bit2";
+// const outputFile = "./test/performance/Mustache/timings.txt";
+
+// Nunjucks
+import * as AllBulkUpdates from "./Nunjucks/bulkUpdates.generated";
+const bit2File   = "./test/performance/Nunjucks/styleguide.bit2";
+const outputFile = "./test/performance/Nunjucks/timings.txt";
 
 
 const counts = [2, 4, 6, 8, 10, 12, 14, 16, 18];

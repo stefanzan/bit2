@@ -6,144 +6,76 @@ import { UpdateOperation } from "../../src/fuse/Update";
 
 // Benchmarks
 // 1. Acceleo
-let fileName = './test/testcases/Acceleo/generate.bit2'
+// let fileName = './test/casestudy/Acceleo/generate.bit2'
 
 // 2. Django
-fileName = './test/testcases/Django/Django1.bit2';
-fileName = './test/testcases/Django/Django2.bit2';
-fileName = './test/testcases/Django/Django3.bit2';
-fileName = './test/testcases/Django/Django4.bit2';
+// fileName = './test/casestudy/Django/Django1.bit2';
+// fileName = './test/casestudy/Django/Django2.bit2';
+// fileName = './test/casestudy/Django/Django3.bit2';
+// fileName = './test/casestudy/Django/Django4.bit2';
 
 // 3. Freemaker
-fileName = './test/testcases/Freemaker/Freemaker1.bit2';
-fileName = './test/testcases/Freemaker/Freemaker2.bit2';
-fileName = './test/testcases/Freemaker/Freemaker3.bit2';
-fileName = './test/testcases/Freemaker/Freemaker4.bit2';
-fileName = './test/testcases/Freemaker/Freemaker5.bit2';
-fileName = './test/testcases/Freemaker/Freemaker6.bit2';
-fileName = './test/testcases/Freemaker/Freemaker7.bit2';
-fileName = './test/testcases/Freemaker/Freemaker8.bit2';
-fileName = './test/testcases/Freemaker/Freemaker9.bit2';
+// fileName = './test/casestudy/Freemaker/Freemaker1.bit2';
+// fileName = './test/casestudy/Freemaker/Freemaker2.bit2';
+// fileName = './test/casestudy/Freemaker/Freemaker3.bit2';
+// fileName = './test/casestudy/Freemaker/Freemaker4.bit2';
+// fileName = './test/casestudy/Freemaker/Freemaker5.bit2';
+// fileName = './test/casestudy/Freemaker/Freemaker6.bit2';
+// fileName = './test/casestudy/Freemaker/Freemaker7.bit2';
+// fileName = './test/casestudy/Freemaker/Freemaker8.bit2';
+// fileName = './test/casestudy/Freemaker/Freemaker9.bit2';
 
 // 4. Mustache
-fileName = './test/testcases/Mustache/Mustache1.bit2';
-fileName = './test/testcases/Mustache/Mustache2.bit2';
-fileName = './test/testcases/Mustache/Mustache3.bit2';
-// fileName = './test/testcases/Mustache/Mustache4.bit2';
-fileName = './test/testcases/Mustache/Mustache5.bit2';
-fileName = './test/testcases/Mustache/Mustache6.bit2';
-// fileName = './test/testcases/Mustache/Mustache6.bit2';
+// fileName = './test/casestudy/Mustache/Mustache1.bit2';
+// fileName = './test/casestudy/Mustache/Mustache2.bit2';
+// fileName = './test/casestudy/Mustache/Mustache3.bit2';
+// // fileName = './test/casestudy/Mustache/Mustache4.bit2';
+// fileName = './test/casestudy/Mustache/Mustache5.bit2';
+// fileName = './test/casestudy/Mustache/Mustache6.bit2';
+// fileName = './test/casestudy/Mustache/Mustache6.bit2';
 
 // 5. Nunjucks
-fileName = './test/testcases/Nunjucks/Nunjucks1.bit2';
-fileName = './test/testcases/Nunjucks/Nunjucks2.bit2';
-fileName = './test/testcases/Nunjucks/Nunjucks3.bit2';
-//fileName = './test/testcases/Nunjucks/Nunjucks4.bit2';
-fileName = './test/testcases/Nunjucks/Nunjucks5.bit2';
+// fileName = './test/casestudy/Nunjucks/Nunjucks1.bit2';
+// fileName = './test/casestudy/Nunjucks/Nunjucks2.bit2';
+// fileName = './test/casestudy/Nunjucks/Nunjucks3.bit2';
+// //fileName = './test/casestudy/Nunjucks/Nunjucks4.bit2';
+// fileName = './test/casestudy/Nunjucks/Nunjucks5.bit2';
 
 // 6. Velocity
-fileName = './test/testcases/Velocity/Velocity1.bit2';
-fileName = './test/testcases/Velocity/Velocity2.bit2';
-fileName = './test/testcases/Velocity/Velocity3.bit2';
-fileName = './test/testcases/Velocity/Velocity4.bit2';
-fileName = './test/testcases/Velocity/Velocity5.bit2';
-fileName = './test/testcases/Velocity/Velocity6.bit2';
-fileName = './test/testcases/Velocity/Velocity7.bit2';
-fileName = './test/testcases/Velocity/Velocity8.bit2';
-// fileName = './test/testcases/Velocity/Velocity9.bit2';
-// fileName = './test/testcases/Velocity/Velocity10.bit2';
-// fileName = './test/testcases/Velocity/Velocity11.bit2';
-// fileName = './test/testcases/Velocity/Velocity12.bit2';
+// fileName = './test/casestudy/Velocity/Velocity1.bit2';
+// fileName = './test/casestudy/Velocity/Velocity2.bit2';
+// fileName = './test/casestudy/Velocity/Velocity3.bit2';
+// fileName = './test/casestudy/Velocity/Velocity4.bit2';
+// fileName = './test/casestudy/Velocity/Velocity5.bit2';
+// fileName = './test/casestudy/Velocity/Velocity6.bit2';
+// fileName = './test/casestudy/Velocity/Velocity7.bit2';
+// fileName = './test/casestudy/Velocity/Velocity8.bit2';
+// fileName = './test/casestudy/Velocity/Velocity9.bit2';
+// fileName = './test/casestudy/Velocity/Velocity10.bit2';
+// fileName = './test/casestudy/Velocity/Velocity11.bit2';
+// fileName = './test/casestudy/Velocity/Velocity12.bit2';
 
 // 7. XTend 
-fileName = './test/testcases/Xtend/Xtend1.bit2';
-// fileName = './test/testcases/Xtend/Xtend2.bit2';
-fileName = './test/testcases/Xtend/Xtend3.bit2';
-fileName = './test/testcases/Xtend/Xtend4.bit2';
+// fileName = './test/casestudy/Xtend/Xtend1.bit2';
+// // fileName = './test/casestudy/Xtend/Xtend2.bit2';
+// fileName = './test/casestudy/Xtend/Xtend3.bit2';
+// fileName = './test/casestudy/Xtend/Xtend4.bit2';
 
 // Test 
-fileName = './test/testcases/Velocity/Velocity4.bit2';
-// fileName = './test/testcases/Xtend/Xtend3.bit2';
-// fileName = './test/testcases/Xtend/Xtend4.bit2';
-
-fileName = './test/performance/Mustache/readme.bit2';
+let fileName = './test/casestudy/Django/Django3.bit2';
 
 fs.readFile(fileName, 'utf8')
   .then(data =>{
      console.log("===Forward Evaluation===");
      console.log(BiEval.forward(data));
 
-
     console.log("=== Backward Evaluation===");
-
-    // console.log('--- 1. id  ------------------');
-    // BiEval.backward(data, {
-    //   type:'bulk',
-    //   operations:[
-    //     {type:'id'},
-    //   ]
-    // }).forEach(updatedCoreAST => {
-    //   console.log(updatedCoreAST);
-    //   console.log("~~~~~~~~~~~~~~~~~~~~~~~~");
-    // });
-
-  // console.log('--- 2. bulk(insert "\n" at 99, insert "  " at 100) ------------------');
-  // BiEval.backward(data, {
-  //   type:'bulk',
-  //   operations:[
-  //     {type:'insert', str:"\n", position: 99},
-  //     {type:'insert', str:"  ", position: 100},
-  //   ]
-  // }).forEach(updatedCoreAST => {
-  //   console.log(updatedCoreAST);
-  //   console.log("~~~~~~~~~~~~~~~~~~~~~~~~");
-  // });
-
-
-
-  // console.log('--- 2. bulk(replace "employee" with "member" at 4) ------------------');
-  // BiEval.backward(data, {
-  //   type:'bulk',
-  //   operations:[
-  //     {type:'replace', str1:"0", str2:"1", position: 25},
-  //     {type:'replace', str1:"1", str2:"2", position: 71},
-  //     {type:'replace', str1:"2", str2:"3", position: 115},
-  //   ]
-  // }).forEach(updatedCoreAST => {
-  //   console.log(updatedCoreAST);
-  //   console.log("~~~~~~~~~~~~~~~~~~~~~~~~");
-  // });
-
- console.log('--- 2. bulk(delete "             " at 10405) ------------------');
-  BiEval.backward(data, 
-  {
-  "type": "bulk",
-  "operations": [
+    BiEval.backward(data, 
     {
-      "type": "delete",
-      "str": ".",
-      "position": 414
-    },
-    {
-      "type": "insert",
-      "str": ".",
-      "position": 2058
-    },
-    {
-      "type": "replace",
-      "str1": "Class",
-      "str2": "Class",
-      "position": 2061
-    },
-    // {
-    //   "type": "replace",
-    //   "str1": "get_incident_request_status",
-    //   "str2": "get_request_status_of_incident",
-    //   "position": 11319
-    // }
-  ]
-}
-
+      "type": "bulk",
+      "operations": [
+        {type:"delete", str:"Bob", position:18}
+    ]}
 ).forEach(updatedCoreAST => {
     console.log(updatedCoreAST);
     console.log("~~~~~~~~~~~~~~~~~~~~~~~~");

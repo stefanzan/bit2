@@ -109,9 +109,13 @@ async function main() {
   // const outputFile = './test/performance/FreeMarker/bulkUpdates.generated.ts';
 
   // Mustache
-  const inputFile  = './test/performance/Mustache/updates.ts';
-  const outputFile = './test/performance/Mustache/bulkUpdates.generated.ts';
+  // const inputFile  = './test/performance/Mustache/updates.ts';
+  // const outputFile = './test/performance/Mustache/bulkUpdates.generated.ts';
 
+
+  // Nunjucks
+  const inputFile  = './test/performance/Nunjucks/updates.ts';
+  const outputFile = './test/performance/Nunjucks/bulkUpdates.generated.ts';
 
 
   const updates = await loadUpdates(inputFile);
