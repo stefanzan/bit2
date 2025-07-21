@@ -244,7 +244,7 @@
                                 «var childTemplates = item.templates»
                                 «for childItem in childTemplates»
                                 <span key=«innerIndex» >
-                                    <el-button @click="setOutputModel">{{childItem.name}}</el-button>
+                                    <el-button @click="setOutputModel">«childItem.name»</el-button>
                                 </span>
                                 «innerIndex = innerIndex + 1»
                                 «endfor»

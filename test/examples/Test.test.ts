@@ -2,6 +2,7 @@ import { TermNode, ConstNode, SpaceNode, DeclareNode, AssignNode, ExpNode, SeqNo
 import * as CorePretty from "../../src/core/PrettyPrint";
 import * as BiEval from "../../src/bx/biEval";
 import {promises as fs} from "fs";
+import { UpdateOperation } from "../../src/fuse/Update";
 
 // Benchmarks
 // 1. Acceleo
@@ -113,13 +114,31 @@ fs.readFile(fileName, 'utf8')
   //   console.log("~~~~~~~~~~~~~~~~~~~~~~~~");
   // });
 
- console.log('--- 2. bulk(insert ";" at 30294) ------------------');
-  BiEval.backward(data, {
-    type:'bulk',
-    operations:[
-      {type:'insert', str:";", position: 30294}
-    ]
-  }).forEach(updatedCoreAST => {
+ console.log('--- 2. bulk(delete "             " at 10405) ------------------');
+  BiEval.backward(data, 
+   {type:"bulk", operations:[
+    {type:"delete", str:"/generator", position:815} as UpdateOperation,
+    {type:"delete", str:"/generator", position:1098} as UpdateOperation,
+    {type:"delete", str:"/generator", position:1161} as UpdateOperation,
+    {type:"delete", str:"/generator", position:1218} as UpdateOperation,
+    {type:"delete", str:"/generator", position:1279} as UpdateOperation,
+    {type:"delete", str:"/generator", position:1344} as UpdateOperation,
+    {type:"delete", str:"/generator", position:1465} as UpdateOperation,
+    {type:"delete", str:"/generator", position:1570} as UpdateOperation,
+    {type:"delete", str:"/generator", position:1701} as UpdateOperation,
+    {type:"delete", str:"/generator", position:1835} as UpdateOperation,
+    {type:"delete", str:"/generator", position:1906} as UpdateOperation,
+    {type:"delete", str:"/generator", position:1956} as UpdateOperation,
+    {type:"delete", str:"/generator", position:2045} as UpdateOperation,
+    {type:"delete", str:"/generator", position:2174} as UpdateOperation,
+    {type:"delete", str:"/generator", position:2244} as UpdateOperation,
+    {type:"delete", str:"/generator", position:2341} as UpdateOperation,
+    {type:"delete", str:"/generator", position:2418} as UpdateOperation,
+    {type:"delete", str:"/generator", position:2490} as UpdateOperation,
+    {type:"delete", str:"/generator", position:29317} as UpdateOperation,
+  ]} as UpdateOperation,
+
+).forEach(updatedCoreAST => {
     console.log(updatedCoreAST);
     console.log("~~~~~~~~~~~~~~~~~~~~~~~~");
   });
