@@ -74,7 +74,7 @@ fs.readFile(fileName, 'utf8')
     {
       "type": "bulk",
       "operations": [
-        {type:"delete", str:"Bob", position:18}
+        {type:"delete", str:"Bob,", position:18}
     ]}
 ).forEach(updatedCoreAST => {
     console.log(updatedCoreAST);

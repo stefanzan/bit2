@@ -799,16 +799,18 @@ export function fuse(
                     newTermNode: { ...term, binding: [newExp, ""]},
                     remainingOperation: { type: "id" },
                   },
-                  {
+                 {
                     newEnv: deleteFromEnv(deepCloneEnvironment(env), x),
                     newTermNode: { type: "bot" },
                     remainingOperation: { type: "id" },
                   },
-                  {
-                    newEnv: deepCloneEnvironment(env),
-                    newTermNode: { type: "bot" },
-                    remainingOperation: { type: "id" },
-                  },
+                  // when delete item and separator in the loop, if we using the following code.
+                  // since the item in the loop is not deleted, and unPartialEval currently does not remove the item.
+                  // {
+                  //   newEnv: deepCloneEnvironment(env),
+                  //   newTermNode: { type: "bot" },
+                  //   remainingOperation: { type: "id" },
+                  // },
                 ];
               } else {
                 // delete exp, delete from env
