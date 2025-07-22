@@ -14,7 +14,7 @@ replace "," with ";" at 21
 # B. Update expression in template
 ## B.ins: not appliable.
 
-## B.del: Delete one item and separator √ 
+## B.del: Delete one item and separator  
 delete "BoB," at 18
 
 ## B.rep: Replace "Alice" with "Ada" in the list

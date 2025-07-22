@@ -4,6 +4,7 @@ import * as Core from "../core/AST";
 // Main translation function
 export function translate(surfaceAST: Surface.Fragment): Core.SeqNode {
   const coreNodes = translateFragment(surfaceAST);
+  coreNodes.push(Core.end()); // Ensure the sequence ends with an EndNode
   return Core.seq(...coreNodes);
 }
 

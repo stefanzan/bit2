@@ -1405,18 +1405,43 @@ export function fuse(
       // }
     });
   } else if (term.type === "end") {
-    let results: {
+    let resultList: {
       newEnv: Environment;
       newTermNode: TermNode;
       remainingOperation: UpdateOperation;
-    }[] = [
-      {
-        newEnv: deepCloneEnvironment(env),
-        newTermNode: term,
-        remainingOperation: operation,
-      },
-    ];
-    return results;
+    }[] = [];
+      // {
+      //   newEnv: deepCloneEnvironment(env),
+      //   newTermNode: term,
+      //   remainingOperation: operation,
+      // },
+    switch (operation.type) {
+     case "insert":
+        const { str, position } = operation;
+        if (position === 0) {
+          resultList.push({
+            newEnv: deepCloneEnvironment(env),
+            newTermNode: {
+              type: "seq",
+              nodes: [{ type: "const", value: str }, term],
+            },
+            remainingOperation: { type: "id" },
+          });
+          return resultList;
+        } else {
+          throw new Error(`Unhandled operation type: ${operation} for end term`);
+        }
+      case "id":
+        return [
+          {
+            newEnv: deepCloneEnvironment(env),
+            newTermNode: term,
+            remainingOperation: { type: "id" },
+          },
+        ];
+      default:
+        throw new Error(`Unhandled operation type: ${operation.type}`);
+      }
   } else {
     throw new Error(
       "Operation can only be applied to ConstNode with string value"

@@ -62,7 +62,7 @@ import { UpdateOperation } from "../../src/fuse/Update";
 // fileName = './test/casestudy/Xtend/Xtend4.bit2';
 
 // Test 
-let fileName = './test/casestudy/Django/Django3.bit2';
+let fileName = './test/casestudy/Django/Django4.bit2';
 
 fs.readFile(fileName, 'utf8')
   .then(data =>{
@@ -74,7 +74,7 @@ fs.readFile(fileName, 'utf8')
     {
       "type": "bulk",
       "operations": [
-        {type:"delete", str:"Bob,", position:18}
+        {type:"insert", str:".", position:13}
     ]}
 ).forEach(updatedCoreAST => {
     console.log(updatedCoreAST);
