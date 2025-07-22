@@ -74,7 +74,7 @@ fs.readFile(fileName, 'utf8')
     {
       "type": "bulk",
       "operations": [
-        {type:"insert", str:".", position:13}
+        {type:"replace", str1:"3", str2:"2", position:2}
     ]}
 ).forEach(updatedCoreAST => {
     console.log(updatedCoreAST);

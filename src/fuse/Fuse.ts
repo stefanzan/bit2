@@ -977,7 +977,7 @@ export function fuse(
               },
             ];
           } else {
-            throw new Error(`unsupported replacement: ${str1}; ${valStr}`);
+            throw new Error(`unsupported replacement: ${str1}; ${str2}`);
           }
         } else if (repPos < valStr.length) {
           const newValStr =
@@ -1055,7 +1055,7 @@ export function fuse(
       let varExp = term.binding[0];
       let varVal = term.binding[1];
       let env1 = deepCloneEnvironment(env);
-      env1 = initializeMarkerOfVariableInEnv(env1, varName, varVal);
+      env1 = initializeMarkerOfVariableInEnv(env1, varName, varVal, varExp);
 
       let newArrVarName = "";
       if (marker.lst as Variable) {
@@ -1220,7 +1220,7 @@ export function fuse(
 
       let env1 = deepCloneEnvironment(env);
       // 判断var类型，非基本类型，需要特殊处理
-      env1 = initializeMarkerOfVariableInEnv(env1, varName, varVal);
+      env1 = initializeMarkerOfVariableInEnv(env1, varName, varVal, varExp);
 
       // console.log("--------lambda----------");
       // console.log("operation:", operation);
@@ -1290,16 +1290,22 @@ export function fuse(
     if (term.type === "branchend") {
       let conditionExp = term.condition[0];
       let conditionVal = term.condition[1];
-      let [_, newConditionalVal] = evaluateExpr(
-        transformEnvironment(env),
-        conditionExp
-      );
-      if (newConditionalVal !== conditionVal) {
-        throw new Error(
-          "Violate BX properties: updates change if-then-else branch."
+      try {
+        let [_, newConditionalVal] = evaluateExpr(
+          transformEnvironment(env),
+          conditionExp
         );
+        if (newConditionalVal !== conditionVal) {
+          throw new Error(
+            "Violate BX properties: updates change if-then-else branch."
+          );
+        }
+      } catch (error) {
+        throw new Error(
+          `Error evaluating condition expression fail during backward: ${error}`
+        );        
       }
-    }
+   }
 
     let resultList: {
       newEnv: Environment;
@@ -2356,7 +2362,8 @@ function deepCloneEnvironment(env: Environment, seen = new WeakMap()): Environme
 function initializeMarkerOfVariableInEnv(
   env: Environment,
   variableName: string,
-  value: Value
+  value: Value,
+  varExp: Expr
 ): Environment {
   if (
     typeof value === "number" ||
@@ -2364,8 +2371,12 @@ function initializeMarkerOfVariableInEnv(
     typeof value === "string" ||
     value === null
   ) {
-    // 如果是 number, boolean, string 或 null，直接初始化为 [value, []]
-    env[variableName] = [value, []];
+    if(varExp.type == "field" && varExp.field=="length"){
+      env[variableName] = [value, [value]];
+    } else {
+      // 如果是 number, boolean, string 或 null，直接初始化为 [value, []]
+      env[variableName] = [value, []];
+    }
   } else if (Array.isArray(value)) {
     // 如果是 Value[]，简单处理为 [value, []]
     env[variableName] = [value, []];
