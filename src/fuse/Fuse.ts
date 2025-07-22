@@ -851,7 +851,7 @@ export function fuse(
                 ];
               } else {
                 throw new Error(
-                  `field has been updaeted, cannot be remvoed: ${field}$`
+                  `field has been updated, cannot be remvoed: ${field}$`
                 );
               }
             }
@@ -1229,6 +1229,9 @@ export function fuse(
       let bodyResultList = fuse(deepCloneEnvironment(env1), operation, term.body);
       let resultList = bodyResultList.map(({ newEnv, newTermNode, remainingOperation }) => {
         // console.log("newEnv:", newEnv);
+        if(!(varName in newEnv)){
+          throw new Error("valued expression of " + varName + " was deleted in the body.");
+        }
         let newVarVal = newEnv[varName][0];
         let isNewVarVal = newEnv[varName][1].length > 0;
         delete (newEnv as any)[varName];

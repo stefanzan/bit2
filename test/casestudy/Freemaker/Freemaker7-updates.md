@@ -15,8 +15,9 @@
 
 ## B.ins: not appliable.
 
-## B.del: delete price √
+## B.del: delete price
   delete "1500" at 21
+  Note: suggest using replace "1500" with "0" instead.
 
 ## B.rep: change the price for python
   replace "1500" with "2000" at 21

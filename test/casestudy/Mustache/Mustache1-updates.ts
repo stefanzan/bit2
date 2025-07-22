@@ -6,6 +6,6 @@ let updates = {
   "A.rep": [{ type: "replace", str1: "Hello", str2: "Hi", position: 4 } as UpdateOperation],
 
   "B.del": [{ type: "delete", str: "1498", position: 55 } as UpdateOperation],
-  "B.rep": [{ type: "replace", str1: "1498", str2: "1495", position: 56 } as UpdateOperation]
+  "B.rep": [{ type: "replace", str1: "1498", str2: "1495", position: 55 } as UpdateOperation]
 };
 export default updates;

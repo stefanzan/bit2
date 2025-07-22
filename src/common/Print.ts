@@ -64,6 +64,9 @@ export function printConstantValue(value: any, indent: string): void {
     const constantValue = value as Constant; // Type assertion to ensure correct indexing
     printConstantValue(constantValue.value, indent + ' '); 
   }
+  else if (typeof value == 'undefined'){
+    console.log(`${indent}undefined`);
+  }
   else {
       throw new Error(`Unhandled value type: ${typeof value}`);
   }

@@ -15,4 +15,4 @@
   delete "1498" at 55
 
 ## B.rep: wrong taxed value, fix it.
-  replace "1498" with "1495" at 56
+  replace "1498" with "1495" at 55

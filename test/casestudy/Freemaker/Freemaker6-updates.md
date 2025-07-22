@@ -16,7 +16,7 @@
 ## B.del: set "banana" to "" in the list
   delete "banana" at 24
   
-# B.del: delete "banana" item in the list √
+# B.del: delete "banana" item in the list 
   delete "\n  <li>banana</li>\nand" at 17
 
 ## B.rep: replace "mango" in the list

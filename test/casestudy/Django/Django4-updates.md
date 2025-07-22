@@ -17,7 +17,7 @@ delete "3" at 2
 
 Note: cannot, since it will break the contional expresion.
 
-## B.rep: replace 3 by 2 √
+## B.rep: replace 3 by 2 
 replace "3" with "2" at 2
 
 you cannot change from 3 to 2, since 3 is the computed result from list's length.

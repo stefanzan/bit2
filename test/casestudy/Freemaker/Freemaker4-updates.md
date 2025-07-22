@@ -21,8 +21,14 @@ replace "animals" with "python and elephant" at 12
 
 ## B.ins: not appliable.
 
-## B.del: √
+## B.del: 
 delete "python" at 59
+
+Note: we suggest using replace operaiton, it you really want to change "python" to "";
+      Even we can support using deletion to delete field to "", but for simplicity, deletion is deletion.
+
+`replace "python" with "" at 59` would be appliable.
+
 
 ## B.rep: set first character to upper case for animal's name
 replace "python" with "Python" at 59
