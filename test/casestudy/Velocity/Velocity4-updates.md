@@ -1,5 +1,5 @@
 # A. Update text in template
-## A.ins: √
+## A.ins: 
   insert "\nWe have customers listed." at 156
 
 ## A.del: delete newlines of list items
@@ -14,8 +14,8 @@
 # B. Update expression in template
 ## B.ins: not appliable.
 
-## B.del: √
-  delete "Alice" at 35
+## B.del: 
+  delete "A" at 35
 
 ## B.rep: change number from 0,1,2 to 1,2,3
   replace "0" with "1" at 25, 

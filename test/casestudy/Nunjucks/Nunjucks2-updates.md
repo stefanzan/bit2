@@ -25,8 +25,9 @@
 
 ## B.ins: not appliable.
 
-## B.del: √
-  delete "Poke5" at 9
+## B.del: 
+  delete "5" at 13
+
 
 ## B.rep: 
   replace "Phone" with "Iphone" at 27

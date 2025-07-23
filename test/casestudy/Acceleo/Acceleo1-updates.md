@@ -13,9 +13,9 @@ replace "public" with "private" at 2
 
 ## B.ins: not appliable.
 
-## B.del: Delete "Person" to
-delete "Person" at 15
-delete "Person" at 27
+## B.del: Delete "Person"'s "son"
+delete "son" at 18
+delete "son" at 30
 
 ## B.rep: Replace all `tel` with `phone`
 replace "tel" with "phone" at 59

@@ -831,6 +831,11 @@ export function fuse(
               let x = ((exp as FieldAccess).object as Variable).name;
               let field = (exp as FieldAccess).field;
               let xVal = env[x][0] as ObjectValue;
+
+              if(env[x][1].length == 0){
+                throw new Error("Fields does not existed:" + field);
+              }
+
               let xValUpdatedMark = env[x][1][0] as ObjectValue;
               if (xValUpdatedMark.fields[field].length == 0) {
                 let newXVal = deleteField(xVal, field);
@@ -1567,6 +1572,16 @@ export function fuseExp(
             };
         }
         // } else if (value as boolean) {
+      } else if (typeof value == "string") {
+        let newLeftValue = value.slice(0, left.length);
+        let newRightValue = value.slice(left.length);
+        let subResultOfLeft = fuseExp(env, newLeftValue, exp.left);
+        let subResultOfRight = fuseExp(subResultOfLeft.newEnv, newRightValue, exp.right);
+        return {
+          newEnv: subResultOfRight.newEnv,
+          newExp: {type:"binary", left:subResultOfLeft.newExp, operator:exp.operator, right: subResultOfRight.newExp} as Expr
+        }
+
       } else if (typeof value === "boolean") {
         // TODO
       }

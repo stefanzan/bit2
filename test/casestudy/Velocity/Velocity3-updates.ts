@@ -14,7 +14,7 @@ let updates = {
       { type: "replace", str1: "Value", str2: "value", position: 29 },
       { type: "replace", str1: "Value", str2: "value", position: 80 }] 
     } as UpdateOperation],
-  "B.del": [{ type: "delete", str: "Fried Chicken", position: 37 } as UpdateOperation],
+  "B.del": [{ type: "delete", str: "Fried ", position: 37 } as UpdateOperation],
   "B.rep": [{ type: "replace", str1: "meal", str2: "food", position: 21 } as UpdateOperation]
 };
 export default updates;

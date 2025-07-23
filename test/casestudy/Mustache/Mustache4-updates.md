@@ -12,8 +12,8 @@
 
 ## B.ins: not appliable.
 
-## B.del: √
+## B.del: 
   delete "." at 21
 
-## B.rep: √
-  replace "Clark" with "Mark" at 25
+## B.rep: 
+  replace "Clark" with "Mark" at 5

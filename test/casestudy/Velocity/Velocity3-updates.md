@@ -17,8 +17,9 @@
 # B. Update expression in template
 ## B.ins: not appliable.
 
-## B.del: √
-  delete "Fried Chicken" at 37
+## B.del: 
+  delete "Fried " at 37
+
 
 ## B.rep: replace "meal" with "food" 
   replace "meal" with "food"  at 21

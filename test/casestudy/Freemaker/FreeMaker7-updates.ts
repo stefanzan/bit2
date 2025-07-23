@@ -14,7 +14,7 @@ let updates = {
     { type: "replace", str1: "for", str2: "is", position: 17 } as UpdateOperation,
     { type: "replace", str1: "for", str2: "is", position: 74 } as UpdateOperation
   ]} as UpdateOperation],
-  "B.del": [{ type: "delete", str: "1500", position: 21 } as UpdateOperation],
+  "B.del": [{ type: "delete", str: "0", position: 24 } as UpdateOperation],
   "B.rep": [{ type: "replace", str1: "1500", str2: "2000", position: 21 } as UpdateOperation] 
 }
 

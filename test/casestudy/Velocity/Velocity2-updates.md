@@ -12,8 +12,10 @@
 
 ## B.ins: not appliable.
 
-## B.del: √
+## B.del: 
   delete "Velocity" at 30
+
+  Since deletion of "Velocity" means deletion of variable declaration of foo, which is a big change, not appliable.
 
 ## B.rep: replace "Velocity" with "velocity"
   replace "Velocity" with "velocity" at 30

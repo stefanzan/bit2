@@ -1,6 +1,6 @@
 # A. Update text in template
-## A.ins: inserting at the beginning √
-  insert "Questions:\n" at 2
+## A.ins: inserting at the beginning 
+  insert "Questions:\n" at 1
 
 ## A.del: delete ? mark
   delete "?" at 32

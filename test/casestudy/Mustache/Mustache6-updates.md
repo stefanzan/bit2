@@ -16,7 +16,8 @@
 
 ## B.ins: not appliable.
 
-## B.del: √
-  delete "Alice" at 6
+## B.del: 
+  delete "A" at 6
+
 ## B.rep: 
   replace "Bob" with "Clark" at 21

@@ -15,6 +15,8 @@ Replace "Number" with "Num" at 7
 ## B.del: delete expression to
 delete "2" at 27
 
+You cannot delete the compute result of xx.length.
+
 ## B.rep: replace compute results of the athlete_list, reject.
 replace "2" with "3" at 27
 

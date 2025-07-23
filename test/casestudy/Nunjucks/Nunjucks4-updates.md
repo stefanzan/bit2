@@ -8,7 +8,7 @@
 # B. Update expression in template
 ## B.ins: not appliable.
 
-## B.del: √
+## B.del:
   delete "Joe" at 8
 
 ## B.rep: replace Joe with Joey, after backward evaluation, replace Alice with Bob 

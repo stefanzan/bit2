@@ -16,8 +16,8 @@
 # B. Update expression in template
 ## B.ins: not appliable.
 
-## B.del: √ 
-  delete "Greeting" at 33
+## B.del:  
+  delete "ing" at 38
 
 ## B.rep: change "Morning" to "morning"
   replace "M" with "m" at 71

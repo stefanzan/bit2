@@ -16,8 +16,10 @@
 
 ## B.ins: not appliable.
 
-## B.del: √
+## B.del: 
   delete "Alice" at 5
+
+  Note: it is better to use replace for expression, replace "Alice" with "" at 5
 
 ## B.rep: replace "Alice" with "Adam"
   replace "Alice" with "Adam" at 10

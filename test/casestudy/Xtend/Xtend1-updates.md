@@ -12,8 +12,8 @@
 # B. Update expression in template
 ## B.ins: not appliable.
 
-## B.del: √
-  delete "Example1" at 21
+## B.del: 
+  delete "1" at 29
 
 ## B.rep: replace "Example1" with "Hello, Xtend!"
   replace "Example1" with "Hello, Xtend!" at 24

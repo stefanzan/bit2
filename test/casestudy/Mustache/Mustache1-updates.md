@@ -11,8 +11,8 @@
 # B. Update expression in template
 ## B.ins: not appliable.
 
-## B.del: √
-  delete "1498" at 55
+## B.del: 
+  delete "8" at 58
 
 ## B.rep: wrong taxed value, fix it.
   replace "1498" with "1495" at 55

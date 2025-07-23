@@ -11,7 +11,9 @@
 # B. Update expression in template
 ## B.ins: not appliable.
 
-## B.del: √
-  delete "Good Morning" at 69
+## B.del: 
+  delete "0" at 71
+
+
 ## B.rep: 
   replace "Sunny" with "Cloudy" at 148

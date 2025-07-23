@@ -4,7 +4,8 @@
   <body>
     Hello «customer.name»!
     <table>
-    «for mud in customer.purchased»
+    «var purchased = customer.purchased»
+    «for mud in purchased»
       «for special in onSpecial»
       «if mud == special»
       <tr>

@@ -10,8 +10,8 @@ let updates = {
     { type: "replace", str1: "public", str2: "private", position: 2 } as UpdateOperation
   ] as UpdateOperation[],
   "B.del": [
-    { type: "delete", str: "Person", position: 15 } as UpdateOperation,
-    { type: "delete", str: "Person", position: 27 } as UpdateOperation
+    { type: "delete", str: "son", position: 18 } as UpdateOperation,
+    { type: "delete", str: "son", position: 30 } as UpdateOperation
   ] as UpdateOperation[],
   "B.rep": [
     { type: "replace", str1: "tel", str2: "phone",  position: 59 } as UpdateOperation,

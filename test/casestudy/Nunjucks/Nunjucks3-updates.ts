@@ -1,7 +1,7 @@
 import { UpdateOperation } from "../../../src/fuse/Update";
 
 let updates = {
-  "A.ins": [{ type: "insert", str: "Questions:\n", position: 2 }],
+  "A.ins": [{ type: "insert", str: "Questions:\n", position: 1 }],
   "A.del": [{type:"bulk", operations: [
     { type: "delete", str: "?", position: 32 },
     { type: "delete", str: "?", position: 68 }
