@@ -87,24 +87,27 @@ export function fuse(
               newTermNode: { ...term, value: str + s_c },
               remainingOperation: { type: "id" },
             },
-            {
-              newEnv: deepCloneEnvironment(env),
-              newTermNode: {
-                type: "seq",
-                nodes: [{ type: "const", value: str }, term],
-              },
-              remainingOperation: { type: "id" },
-            }
+            // optimization: leave only one strategy
+            // remove U1
+            // {
+            //   newEnv: deepCloneEnvironment(env),
+            //   newTermNode: {
+            //     type: "seq",
+            //     nodes: [{ type: "const", value: str }, term],
+            //   },
+            //   remainingOperation: { type: "id" },
+            // }
           ];
-          if (s_c.length === 0 ) {
-            resultList.push( 
-              {
-                newEnv: deepCloneEnvironment(env),
-                newTermNode: term,
-                remainingOperation: operation,
-              }
-            );
-          }
+          // remove U3
+          // if (s_c.length === 0 ) {
+          //   resultList.push( 
+          //     {
+          //       newEnv: deepCloneEnvironment(env),
+          //       newTermNode: term,
+          //       remainingOperation: operation,
+          //     }
+          //   );
+          // }
           return resultList; 
         } else if (position < s_c.length) {
           const newStr = s_c.slice(0, position) + str + s_c.slice(position);
@@ -118,11 +121,13 @@ export function fuse(
         } else if (position === s_c.length) {
           // 两种策略
           return [
-            {
-              newEnv: deepCloneEnvironment(env),
-              newTermNode: { ...term, value: s_c + str },
-              remainingOperation: { type: "id" },
-            },
+            // optimization: only one strategy
+            // remove U4 == case
+            // {
+            //   newEnv: deepCloneEnvironment(env),
+            //   newTermNode: { ...term, value: s_c + str },
+            //   remainingOperation: { type: "id" },
+            // },
             {
               newEnv: deepCloneEnvironment(env),
               newTermNode: term,
@@ -157,14 +162,16 @@ export function fuse(
                 remainingOperation: { type: "id" },
               },
             ];
-            if (delStr.length === s_c.length) {
-              result.push({
-                newEnv: deepCloneEnvironment(env),
-                //@ts-ignore
-                newTermNode: { type: "bot" },
-                remainingOperation: { type: "id" },
-              });
-            }
+            // optimization: only one strategy
+            // remove U8
+            // if (delStr.length === s_c.length) {
+            //   result.push({
+            //     newEnv: deepCloneEnvironment(env),
+            //     //@ts-ignore
+            //     newTermNode: { type: "bot" },
+            //     remainingOperation: { type: "id" },
+            //   });
+            // }
             //@ts-ignore
             return result;
           } else if (delStr.startsWith(s_c) && delStr.length > s_c.length) {
@@ -179,15 +186,16 @@ export function fuse(
                   position: 0,
                 },
               },
-              {
-                newEnv: deepCloneEnvironment(env),
-                newTermNode: { ...term, value: "" },
-                remainingOperation: {
-                  type: "delete",
-                  str: remainingStr,
-                  position: 0,
-                },
-              },
+              // optimization bot equals to ""
+              // {
+              //   newEnv: deepCloneEnvironment(env),
+              //   newTermNode: { ...term, value: "" },
+              //   remainingOperation: {
+              //     type: "delete",
+              //     str: remainingStr,
+              //     position: 0,
+              //   },
+              // },
             ];
           } else {
             throw new Error(
@@ -353,14 +361,15 @@ export function fuse(
               newTermNode: term,
               remainingOperation: operation,
             },
-            {
-              newEnv: deepCloneEnvironment(env),
-              newTermNode: {
-                type: "seq",
-                nodes: [{ type: "const", value: str }, term],
-              },
-              remainingOperation: { type: "id" },
-            },
+            // optimization: 
+            // {
+            //   newEnv: deepCloneEnvironment(env),
+            //   newTermNode: {
+            //     type: "seq",
+            //     nodes: [{ type: "const", value: str }, term],
+            //   },
+            //   remainingOperation: { type: "id" },
+            // },
           ];
         } else if (position == 0) {
           // non-zero space
@@ -378,16 +387,17 @@ export function fuse(
               remainingOperation: { type: "id" },
             },
           ];
-          if (isWhitespace(str)) {
-            resultList.push({
-              newEnv: deepCloneEnvironment(env),
-              newTermNode: {
-                type: "space",
-                width: term.width + str.length,
-              } as SpaceNode,
-              remainingOperation: { type: "id" },
-            });
-          }
+          // optimization
+          // if (isWhitespace(str)) {
+          //   resultList.push({
+          //     newEnv: deepCloneEnvironment(env),
+          //     newTermNode: {
+          //       type: "space",
+          //       width: term.width + str.length,
+          //     } as SpaceNode,
+          //     remainingOperation: { type: "id" },
+          //   });
+          // }
           return resultList;
         } else if (position < term.width) {
           if (isWhitespace(str)) {
@@ -420,14 +430,15 @@ export function fuse(
               },
             },
           ];
-          if (isWhitespace(str)) {
-            // console.log("no: ", str);
-            resultList.push({
-              newEnv: deepCloneEnvironment(env),
-              newTermNode: { ...term, width: term.width + str.length },
-              remainingOperation: { type: "id" },
-            });
-          }
+          // optimization
+          // if (isWhitespace(str)) {
+          //   // console.log("no: ", str);
+          //   resultList.push({
+          //     newEnv: deepCloneEnvironment(env),
+          //     newTermNode: { ...term, width: term.width + str.length },
+          //     remainingOperation: { type: "id" },
+          //   });
+          // }
           return resultList;
         } else {
           const newPos = position - term.width;
@@ -474,15 +485,16 @@ export function fuse(
                   position: 0,
                 },
               },
-              {
-                newEnv: deepCloneEnvironment(env),
-                newTermNode: { ...term, width: 0 },
-                remainingOperation: {
-                  type: "delete",
-                  str: remainingStr,
-                  position: 0,
-                },
-              },
+              // optimization
+              // {
+              //   newEnv: deepCloneEnvironment(env),
+              //   newTermNode: { ...term, width: 0 },
+              //   remainingOperation: {
+              //     type: "delete",
+              //     str: remainingStr,
+              //     position: 0,
+              //   },
+              // },
             ];
           }
         } else if (
