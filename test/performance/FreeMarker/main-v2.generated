@@ -1,0 +1,638 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>JAVA代码生成平台</title>
+    <meta name="keywords" content="sql转实体类,sql转DAO,SQL转service,SQL转JPA实现,SQL转MYBATIS实现">
+    
+    <script>
+        /*统计代码，便于统计流量，请勿移除，谢谢！*/
+        var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "https://hm.baidu.com/hm.js?97fd5ca1a4298ac8349c7e0de9029a0f";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();
+        //set base path for fixing the revertProxy forwarding path issue
+        var basePath = /generator;
+        console.log("basePath",basePath)
+    </script>
+    
+    <!--###################################################-->
+    <!--### CDN version -->
+    <!--###################################################-->
+    
+    <!--jquery | vue | element-ui | axios-->
+    <script src="/generator/statics/libs/jquery/jquery.min.js"></script>
+    <script src="/generator/statics/libs/vue/vue.min.js"></script>
+    <script src="/generator/statics/libs/axios/axios.min.js"></script>
+    <script src="/generator/statics/libs/element-ui/index.min.js"></script>
+    <link href="/generator/statics/libs/element-ui/index.min.css" type="text/css" rel="stylesheet" />
+    
+    <!-- bootstrap -->
+    <script src="/generator/statics/libs/bootstrap/bootstrap.bundle.min.js" type="application/javascript"></script>
+    <link href="/generator/statics/libs/bootstrap/bootstrap.min.css" type="text/css" rel="stylesheet" />
+    <!-- 引入 Bootstrap Icons CSS -->
+    <link href="/generator/statics/libs/bootstrap-icons/bootstrap-icons.min.css" type="text/css" rel="stylesheet" />
+    
+    <!--common.js-->
+    <script src="/generator/statics/js/common.js"></script>
+    <!-- <link rel="stylesheet" href="/generator/statics/css/main.css"> -->
+    
+    <script src="/generator/statics/libs/toastr.js/toastr.min.js"></script>
+    <!-- Toastr CSS -->
+    <link href="/generator/statics/libs/toastr.js/toastr.min.css" rtype="text/css" rel="stylesheet" >
+    
+    <!-- import codemirror -->
+    <script src="/generator/statics/libs/codemirror/codemirror.min.js"></script>
+    <link href="/generator/statics/libs/codemirror/codemirror.min.css" type="text/css" rel="stylesheet" >
+    <script src="/generator/statics/libs/codemirror/mode/clike/clike.min.js"></script>
+    <script src="/generator/statics/libs/codemirror/mode/sql/sql.min.js"></script>
+    <link href="/generator/statics/libs/codemirror/theme/idea.min.css" type="text/css" rel="stylesheet" >
+    <style>
+            /* .el-form-item__content{
+                line-height : 10px;
+            } */
+            /*.el-form-item--mini .el-form-item__content, .el-form-item--mini .el-form-item__label{
+                line-height : 10px;
+            }*/
+            /* .el-button-group-top {
+                padding-top: 5px;
+            } */
+            .el-button--primary.is-plain.is-disabled, .el-button--primary.is-plain.is-disabled:active, .el-button--primary.is-plain.is-disabled:focus, .el-button--primary.is-plain.is-disabled:hover {
+            color: #f9faff;
+            background-color: #91979d;
+            border-color: #d9ecff;
+            font-weight: bold;
+          }
+    </style>
+</head>
+<body>
+
+<div id="rrapp" v-cloak>
+    <div>
+        <el-form ref="form" :inline="true" :model="formData"  label-width="100px">
+            <div class="card">
+                <div class="card-header">
+                  <h5 class="card-title m-0">输入SQL</h5>
+                  <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse" title="折叠">
+                      <i class="fas fa-minus"></i>
+                    </button>
+                    <!-- <button type="button" class="btn btn-tool" data-card-widget="remove" title="移除">
+                      <i class="fas fa-times"></i>
+                    </button> -->
+                  </div>
+                </div>
+                <div class="card-body">
+                  <!-- <textarea id="inputArea" placeholder="请输入表结构信息..." style="height: 250px;line-height : 10px;" v-model="formData.tableSql"></textarea> -->
+                    <!-- input area-->
+                    <textarea id="inputArea" placeholder="请输入表结构信息..." style="height: 250px;line-height : 10px;" v-model="formData.tableSql"></textarea>
+                </div>
+              </div>
+            
+            <hr>
+            <div class="card">
+                <div class="card-header">
+                  <h5 class="card-title m-0">生成设置</h5>
+                  <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse" title="折叠">
+                      <i class="fas fa-minus"></i>
+                    </button>
+                    <!-- <button type="button" class="btn btn-tool" data-card-widget="remove" title="移除">
+                      <i class="fas fa-times"></i>
+                    </button> -->
+                  </div>
+                </div>
+                
+                <div class="card-body">
+                  <!-- setting area-->
+                <el-form-item label="作者">
+                    <el-input v-model="formData.options.authorName"></el-input>
+                </el-form-item>
+                <el-form-item label="包名">
+                    <el-input v-model="formData.options.packageName"></el-input>
+                </el-form-item>
+                <el-form-item label="返回(成功)">
+                    <el-input v-model="formData.options.returnUtilSuccess"></el-input>
+                </el-form-item>
+                <el-form-item label="返回(失败)">
+                    <el-input v-model="formData.options.returnUtilFailure"></el-input>
+                </el-form-item>
+                <el-form-item label="忽略前缀">
+                    <el-input v-model="formData.options.ignorePrefix"></el-input>
+                </el-form-item>
+                <el-form-item label="输入类型">
+                    <el-select v-model="formData.options.dataType" >
+                        <el-option label="DDL SQL" value="sql"></el-option>
+                        <el-option label="JSON" value="json"></el-option>
+                        <el-option label="INSERT SQL" value="insert-sql">
+                        <el-option label="SELECT SQL by SQL Parser" value="select-sql">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="TinyInt转换">
+                    <el-select v-model="formData.options.tinyintTransType">
+                        <el-option value="boolean" label="boolean"></el-option>
+                        <el-option value="Boolean" label="Boolean"></el-option>
+                        <el-option value="Integer" label="Integer"></el-option>
+                        <el-option value="int" label="int"></el-option>
+                        <el-option value="String" label="String"></el-option>
+                        <el-option value="Short" label="Short"></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="时间类型">
+                    <el-select v-model="formData.options.timeTransType">
+                        <el-option value="Date" label="Date"></el-option>
+                        <el-option value="DateTime" label="DateTime"></el-option>
+                        <el-option value="Time" label="Time"></el-option>
+                        <el-option value="Timestamp" label="Timestamp"></el-option>
+                        <el-option value="Calendar" label="Calendar"></el-option>
+                        <el-option value="LocalDate" label="LocalDate"></el-option>
+                        <el-option value="LocalDateTime" label="LocalDateTime"></el-option>
+                        <el-option value="LocalTime" label="LocalTime"></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="命名类型">
+                    <el-select v-model="formData.options.nameCaseType">
+                        <el-option label="驼峰" value="CamelCase"></el-option>
+                        <el-option label="下划线" value="UnderScoreCase"></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="包装类型">
+                    <el-switch v-model="formData.options.isPackageType"></el-switch>
+                </el-form-item>
+                <el-form-item label="swaggerUI">
+                    <el-switch v-model="formData.options.isSwagger"></el-switch>
+                </el-form-item>
+                <el-form-item label="字段注释">
+                    <el-switch v-model="formData.options.isComment"></el-switch>
+                </el-form-item>
+                <el-form-item label="自动引包">
+                    <el-switch v-model="formData.options.isAutoImport"></el-switch>
+                </el-form-item>
+                <el-form-item label="带包路径">
+                    <el-switch v-model="formData.options.isWithPackage"></el-switch>
+                </el-form-item>
+                <el-form-item label="Lombok">
+                    <el-switch v-model="formData.options.isLombok"></el-switch>
+                </el-form-item>
+
+                </div>
+              </div>
+            
+            <hr>
+            <div class="card">
+                <div class="card-header">
+                  <!-- <h5 class="card-title m-0">输出代码</h5> -->
+                  <el-button type="primary" icon="el-icon-caret-right" @click="generate">生成</el-button>
+                    <el-button type="primary" icon="el-icon-document-copy" @click="copy" plain>复制</el-button>
+                  <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse" title="折叠">
+                      <i class="fas fa-minus"></i>
+                    </button>
+                    <!-- <button type="button" class="btn btn-tool" data-card-widget="remove" title="移除">
+                      <i class="fas fa-times"></i>
+                    </button> -->
+                  </div>
+                </div>
+                <div class="card-body">
+                              <!--generate button-->
+                 
+                 
+  
+                </div>
+            </div>
+            <hr>
+            <div class="card">
+                <div class="card-header">
+                  <h5 class="card-title m-0">模板选择</h5>
+                  <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse" title="折叠">
+                      <i class="fas fa-minus"></i>
+                    </button>
+                    <!-- <button type="button" class="btn btn-tool" data-card-widget="remove" title="移除">
+                      <i class="fas fa-times"></i>
+                    </button> -->
+                  </div>
+                </div>
+                <div class="card-body">
+                  <!--templates area-->
+                  
+                    <el-form ref="form" :inline="true" :model="formData"  label-width="100px" size="mini">
+                        
+                        
+                        <div key=0>
+                            <el-button-group >
+                                <el-button type="primary" plain disabled>ui</el-button>
+                                
+                                
+                                
+                                <span key=0 >
+                                    <el-button @click="setOutputModel">swagger-ui</el-button>
+                                </span>
+                                
+                                
+                                <span key=1 >
+                                    <el-button @click="setOutputModel">element-ui</el-button>
+                                </span>
+                                
+                                
+                                <span key=2 >
+                                    <el-button @click="setOutputModel">bootstrap-ui</el-button>
+                                </span>
+                                
+                                
+                                <span key=3 >
+                                    <el-button @click="setOutputModel">layui-edit</el-button>
+                                </span>
+                                
+                                
+                                <span key=4 >
+                                    <el-button @click="setOutputModel">layui-list</el-button>
+                                </span>
+                                
+                                
+                             </el-button-group>
+                        </div>
+                        
+                        
+                        <div key=1>
+                            <el-button-group >
+                                <el-button type="primary" plain disabled>mybatis</el-button>
+                                
+                                
+                                
+                                <span key=0 >
+                                    <el-button @click="setOutputModel">controller</el-button>
+                                </span>
+                                
+                                
+                                <span key=1 >
+                                    <el-button @click="setOutputModel">service</el-button>
+                                </span>
+                                
+                                
+                                <span key=2 >
+                                    <el-button @click="setOutputModel">service_impl</el-button>
+                                </span>
+                                
+                                
+                                <span key=3 >
+                                    <el-button @click="setOutputModel">mapper</el-button>
+                                </span>
+                                
+                                
+                                <span key=4 >
+                                    <el-button @click="setOutputModel">mybatis</el-button>
+                                </span>
+                                
+                                
+                                <span key=5 >
+                                    <el-button @click="setOutputModel">model</el-button>
+                                </span>
+                                
+                                
+                                <span key=6 >
+                                    <el-button @click="setOutputModel">mapper2</el-button>
+                                </span>
+                                
+                                
+                             </el-button-group>
+                        </div>
+                        
+                        
+                        <div key=2>
+                            <el-button-group >
+                                <el-button type="primary" plain disabled>jpa</el-button>
+                                
+                                
+                                
+                                <span key=0 >
+                                    <el-button @click="setOutputModel">entity</el-button>
+                                </span>
+                                
+                                
+                                <span key=1 >
+                                    <el-button @click="setOutputModel">repository</el-button>
+                                </span>
+                                
+                                
+                                <span key=2 >
+                                    <el-button @click="setOutputModel">jpacontroller</el-button>
+                                </span>
+                                
+                                
+                             </el-button-group>
+                        </div>
+                        
+                        
+                        <div key=3>
+                            <el-button-group >
+                                <el-button type="primary" plain disabled>jdbc-template</el-button>
+                                
+                                
+                                
+                                <span key=0 >
+                                    <el-button @click="setOutputModel">jtdao</el-button>
+                                </span>
+                                
+                                
+                                <span key=1 >
+                                    <el-button @click="setOutputModel">jtdaoimpl</el-button>
+                                </span>
+                                
+                                
+                             </el-button-group>
+                        </div>
+                        
+                        
+                        <div key=4>
+                            <el-button-group >
+                                <el-button type="primary" plain disabled>beetlsql</el-button>
+                                
+                                
+                                
+                                <span key=0 >
+                                    <el-button @click="setOutputModel">beetlmd</el-button>
+                                </span>
+                                
+                                
+                                <span key=1 >
+                                    <el-button @click="setOutputModel">beetlentity</el-button>
+                                </span>
+                                
+                                
+                                <span key=2 >
+                                    <el-button @click="setOutputModel">beetlcontroller</el-button>
+                                </span>
+                                
+                                
+                             </el-button-group>
+                        </div>
+                        
+                        
+                        <div key=5>
+                            <el-button-group >
+                                <el-button type="primary" plain disabled>mybatis-plus</el-button>
+                                
+                                
+                                
+                                <span key=0 >
+                                    <el-button @click="setOutputModel">pluscontroller</el-button>
+                                </span>
+                                
+                                
+                                <span key=1 >
+                                    <el-button @click="setOutputModel">plusservice</el-button>
+                                </span>
+                                
+                                
+                                <span key=2 >
+                                    <el-button @click="setOutputModel">plusmapper</el-button>
+                                </span>
+                                
+                                
+                                <span key=3 >
+                                    <el-button @click="setOutputModel">plusentity</el-button>
+                                </span>
+                                
+                                
+                             </el-button-group>
+                        </div>
+                        
+                        
+                        <div key=6>
+                            <el-button-group >
+                                <el-button type="primary" plain disabled>util</el-button>
+                                
+                                
+                                
+                                <span key=0 >
+                                    <el-button @click="setOutputModel">beanutil</el-button>
+                                </span>
+                                
+                                
+                                <span key=1 >
+                                    <el-button @click="setOutputModel">json</el-button>
+                                </span>
+                                
+                                
+                                <span key=2 >
+                                    <el-button @click="setOutputModel">xml</el-button>
+                                </span>
+                                
+                                
+                                <span key=3 >
+                                    <el-button @click="setOutputModel">sql</el-button>
+                                </span>
+                                
+                                
+                                <span key=4 >
+                                    <el-button @click="setOutputModel">swagger-yml</el-button>
+                                </span>
+                                
+                                
+                             </el-button-group>
+                        </div>
+                        
+                        
+                        <div key=7>
+                            <el-button-group >
+                                <el-button type="primary" plain disabled>common-mapper</el-button>
+                                
+                                
+                                
+                                <span key=0 >
+                                    <el-button @click="setOutputModel">tkentity</el-button>
+                                </span>
+                                
+                                
+                                <span key=1 >
+                                    <el-button @click="setOutputModel">tkmapper</el-button>
+                                </span>
+                                
+                                
+                             </el-button-group>
+                        </div>
+                        
+                        
+                        <div key=8>
+                            <el-button-group >
+                                <el-button type="primary" plain disabled>renren-fast</el-button>
+                                
+                                
+                                
+                                <span key=0 >
+                                    <el-button @click="setOutputModel">menu-sql</el-button>
+                                </span>
+                                
+                                
+                                <span key=1 >
+                                    <el-button @click="setOutputModel">vue-list</el-button>
+                                </span>
+                                
+                                
+                                <span key=2 >
+                                    <el-button @click="setOutputModel">vue-edit</el-button>
+                                </span>
+                                
+                                
+                                <span key=3 >
+                                    <el-button @click="setOutputModel">rr-controller</el-button>
+                                </span>
+                                
+                                
+                                <span key=4 >
+                                    <el-button @click="setOutputModel">rr-dao</el-button>
+                                </span>
+                                
+                                
+                                <span key=5 >
+                                    <el-button @click="setOutputModel">rr-daoxml</el-button>
+                                </span>
+                                
+                                
+                                <span key=6 >
+                                    <el-button @click="setOutputModel">rr-service</el-button>
+                                </span>
+                                
+                                
+                             </el-button-group>
+                        </div>
+                        
+                        
+                        <div key=9>
+                            <el-button-group >
+                                <el-button type="primary" plain disabled>jpa-starp</el-button>
+                                
+                                
+                                
+                                <span key=0 >
+                                    <el-button @click="setOutputModel">starp-entity</el-button>
+                                </span>
+                                
+                                
+                                <span key=1 >
+                                    <el-button @click="setOutputModel">starp-repository</el-button>
+                                </span>
+                                
+                                
+                                <span key=2 >
+                                    <el-button @click="setOutputModel">starp-jpa-controller</el-button>
+                                </span>
+                                
+                                
+                             </el-button-group>
+                        </div>
+                        
+                        
+                        <div key=10>
+                            <el-button-group >
+                                <el-button type="primary" plain disabled>bi</el-button>
+                                
+                                
+                                
+                                <span key=0 >
+                                    <el-button @click="setOutputModel">qliksense</el-button>
+                                </span>
+                                
+                                
+                             </el-button-group>
+                        </div>
+                        
+                        
+                        <div key=11>
+                            <el-button-group >
+                                <el-button type="primary" plain disabled>cloud</el-button>
+                                
+                                
+                                
+                                <span key=0 >
+                                    <el-button @click="setOutputModel">bigquery</el-button>
+                                </span>
+                                
+                                
+                                <span key=1 >
+                                    <el-button @click="setOutputModel">dataflowjjs</el-button>
+                                </span>
+                                
+                                
+                             </el-button-group>
+                        </div>
+                        
+                        
+                        <div key=12>
+                            <el-button-group >
+                                <el-button type="primary" plain disabled>tk-mybatis</el-button>
+                                
+                                
+                                
+                                <span key=0 >
+                                    <el-button @click="setOutputModel">tk-entity</el-button>
+                                </span>
+                                
+                                
+                                <span key=1 >
+                                    <el-button @click="setOutputModel">tk-mapper</el-button>
+                                </span>
+                                
+                                
+                                <span key=2 >
+                                    <el-button @click="setOutputModel">tk-controller</el-button>
+                                </span>
+                                
+                                
+                             </el-button-group>
+                        </div>
+                        
+                        
+                    <!-- <el-button-group>
+                            <el-button type="primary" plain disabled>MybatisPlus</el-button>
+                            <el-button @click="setOutputModel">Controller</el-button>
+                            <el-button @click="setOutputModel">Mapper</el-button>
+                        </el-button-group>-->
+                    </el-form>
+  
+                </div>
+            </div>
+            
+
+            <hr>
+            <div class="card">
+                <div class="card-header">
+                  <h5 class="card-title m-0">输出代码</h5>
+                  <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse" title="折叠">
+                      <i class="fas fa-minus"></i>
+                    </button>
+                    <!-- <button type="button" class="btn btn-tool" data-card-widget="remove" title="移除">
+                      <i class="fas fa-times"></i>
+                    </button> -->
+                  </div>
+                </div>
+                <div class="card-body">
+                  <textarea id="outputArea" placeholder="请输入表结构信息..." style="height: 250px;" v-model="outputStr"></textarea>
+  
+                </div>
+            </div>
+        </el-form>
+    </div>
+</div>
+
+<script src="/generator/statics/js/main.js"></script>
+<script>
+    //console.log(vm);
+    vm.formData.options.authorName="zhengkai.blog.csdn.net";
+    vm.formData.options.packageName="com.software.system";
+    vm.formData.options.returnUtilSuccess="ResponseUtil.success";
+    vm.formData.options.returnUtilFailure="ResponseUtil.error";
+    vm.outputStr="http://zhengkai.blog.csdn.net";
+    loadAllCookie()
+</script>
+</body>
+</html>

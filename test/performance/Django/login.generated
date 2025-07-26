@@ -1,0 +1,160 @@
+
+
+
+
+
+
+
+
+
+
+
+  
+    <h2 class="m-t-1 m-l-1 m-b-0">Join our workshop to for a live demo of Sentry's new AI tools on Dec. 10.</h2>
+  
+
+  <div class="auth-container p-t-1 border-bottom">
+    <h3>Sign in to continue</h3>
+    <ul class="nav nav-tabs auth-toggle m-b-0">
+      <li class="active">
+        <a href="#login" data-toggle="tab">Sign In</a>
+      </li>
+        <li>
+          <a href="#register" data-toggle="tab">Register</a>
+        </li>     
+     <li>
+        <a href="#sso" data-toggle="tab">Single Sign-On</a>
+      </li>
+    </ul>
+  </div>
+  <div class="tab-content">
+    <div class="tab-pane active" id="login">
+      <div class="auth-container">
+        <div class="auth-form-column">
+          <form class="form-stacked" action="" method="post" autocomplete="off">
+           
+            <input type="hidden" name="csrfmiddlewaretoken" value="CDVB1MtXu2wQ1Bn148ApzF9GQp3N035WyVAX6kr6ZeqJzgfvF3YENePnVKgxgurJ">
+            <input type="hidden" name="op" value="login" />
+            
+            
+               <div id="div_id_username" class="form-group">
+                   <label for="id_username" class="control-label  requiredField">账户<span class="asteriskField">*</span></label>
+                   <div class="controls ">
+                        <input type="text" name="username" placeholder="用户名或邮箱" tabindex="1" maxlength="128" class="textinput textInput form-control" required id="id_username">
+                    </div> 
+                </div>
+            
+               <div id="div_id_password" class="form-group">
+                   <label for="id_password" class="control-label  requiredField">密码<span class="asteriskField">*</span></label>
+                   <div class="controls ">
+                        <input type="password" name="password" placeholder="密码" tabindex="1" maxlength="128" class="textinput textInput form-control" required id="id_password">
+                    </div> 
+                </div>
+            
+
+            <div class="auth-footer m-t-1">
+              <button type="submit" class="btn btn-primary">Continue</button>
+              <a class="secondary" href="/account/recover/">Lost your password?</a>
+            </div>
+          </form>
+        </div>
+          <div class="auth-provider-column">
+            
+              <p>
+                <a class="btn btn-default btn-login-google" href="sentry.io/identity/login/google/" style="display: block">
+                  <span class="provider-logo google"></span> Sign in with Google
+                </a>
+              </p>
+            
+
+            
+              <p>
+                <a class="btn btn-default btn-login-github" href="sentry.io/identity/login/github/" style="display: block">
+                  <span class="provider-logo github"></span> Sign in with GitHub
+                </a>
+              </p>
+            
+
+            
+              <p>
+                <a class="btn btn-default btn-login-vsts" href="sentry.io/identity/login/vsts/" style="display: block">
+                  <span class="provider-logo vsts"></span> Sign in with Azure DevOps
+                </a>
+              </p>
+            
+          </div>
+      </div>
+    </div>
+    <div class="tab-pane" id="register">
+      <div class="auth-container">
+        <div class="auth-form-column">
+          <form class="form-stacked" action="" method="post" autocomplete="off">
+            <input type="hidden" name="csrfmiddlewaretoken" value="CDVB1MtXu2wQ1Bn148ApzF9GQp3N035WyVAX6kr6ZeqJzgfvF3YENePnVKgxgurJ">
+            <input type="hidden" name="op" value="register" />
+
+            
+            
+            
+              <div>
+                <label id="name-label">Name<span class="form-required"></span>
+                  <input name="name" type="text" placeholder="Your Name" aria-labelledby="name-label">
+                </label>
+              </div>
+            
+              <div>
+                <label id="organizationName-label">Organization<span class="form-required"></span>
+                  <input name="organizationName" type="text" placeholder="Organization Name" aria-labelledby="organizationName-label">
+                </label>
+              </div>
+            
+              <div>
+                <label id="email-label">Email<span class="form-required"></span>
+                  <input name="email" type="email" placeholder="you@company.com" aria-labelledby="email-label">
+                </label>
+              </div>
+            
+              <div>
+                <label id="password-label">Password<span class="form-required"></span>
+                  <input name="password" type="password" placeholder="Password (8+ characters)" aria-labelledby="password-label">
+                </label>
+              </div>
+            
+
+            
+            
+              <label id="subscribe-label" class="checkbox-input" role="button">
+                <input name="subscribe" type="checkbox" aria-labelledby="subscribe-label" tabindex="0"><span>I would like to receive updates via email.</span>
+              </label>
+            
+              <label id="iAgree-label" class="checkbox-input" role="button">
+                <input name="iAgree" type="checkbox" aria-labelledby="iAgree-label" tabindex="0"><span>I agree to the Terms of Service and Privacy Policy.</span>
+              </label>
+            
+         </form>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="tab-pane" id="sso">
+      <div class="auth-container">
+        <div class="auth-form-column">
+          <form class="form-stacked" method="post">
+          <input type="hidden" name="csrfmiddlewaretoken" value="CDVB1MtXu2wQ1Bn148ApzF9GQp3N035WyVAX6kr6ZeqJzgfvF3YENePnVKgxgurJ">
+            <input type="hidden" name="op" value="sso" />
+
+            <div class="control-group required">
+              <div class="controls">
+                <label class="control-label">Organization ID</label>
+                <input type="text" class="form-control" name="organization" placeholder="acme" required>
+                <p class="help-block">Your ID is the slug either before or after the hostname. For example, <code><strong>acme</strong></code> is the slug in either <code>sentry.io/<strong>acme</strong>/</code> or <code><strong>acme</strong>.sentry.io/</code>.</p>
+              </div>
+            </div>
+            <div class="auth-footer m-t-1">
+              <button class="btn btn-primary">Continue</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>

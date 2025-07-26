@@ -1,6 +1,6 @@
 {
   "name": "bit2",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "main": "dist/bit2.js",
   "types": "dist/bit2.d.ts",
   "dependencies": {

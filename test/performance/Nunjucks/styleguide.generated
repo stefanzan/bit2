@@ -1,0 +1,984 @@
+ 
+ 
+ 
+ 
+
+---
+permalink: /styleguide/index.html
+layout: base
+eleventyExcludeFromCollections: true
+---
+
+<!-- Inspired by: https://stevenwoodson.com/blog/eleventy-style-guide-generator-step-by-step-guide-adding-to-an-existing-site/ -->
+
+<article class="styleguide | wrapper flow">
+  <header class="intro flow region">
+    <h1 class="gradient-text-linear">Style Guide</h1>
+
+    <p>
+      All design tokens can be found in <code>src/_data/designTokens</code>. <br />
+      This includes all baseline fonts, colors, sizes, and spacing.
+    </p>
+  </header>
+
+  <section class="flow region region-space-m">
+    <h2 class="heading-line">Buttons</h2>
+    <ul class="cluster" role="list">
+      <li>
+        <a href="#" class="button">Default button</a>
+      </li>
+      <li>
+        <a href="#" class="button" data-button-variant="primary">primary button</a>
+      </li>
+      <li>
+        <a href="#" class="button" data-button-variant="secondary">secondary button</a>
+      </li>
+      <li>
+        <a href="#" class="button" data-button-variant="tertiary">tertiary button</a>
+      </li>
+
+      <li>
+        <a href="#" class="button" data-ghost-button>Ghost button</a>
+      </li>
+      <li>
+        <a href="#" class="button" data-button-radius="hard">Hard edges</a>
+      </li>
+      <li>
+        <a href="#" class="button"> {% svg "misc/star" %} Button with icon </a>
+      </li>
+      <li>
+        <a href="#" class="button" data-small-button>small button</a>
+      </li>
+    </ul>
+  </section>
+
+  <div class="full colors | section">
+    <section class="section__inner wrapper flow region">
+      <h2 class="heading-line">Colors</h2>
+
+       
+      <p>Hex color codes that can be shared, cross-platform. They can be converted at point of usage, such as HSL for web or CMYK for print. neutral and vibrant colors are converted to color palettes, fixed colors are kept as they are</p>
+       
+      <ul role="list">
+        
+          <li>
+            <div style="background-color: var(--color-Gray 100)"></div>
+
+            <p>
+              <code
+                >#Gray 100<br />
+                var(--color-Gray 100)</code
+              >
+            </p>
+          </li>
+        
+          <li>
+            <div style="background-color: var(--color-Gray 200)"></div>
+
+            <p>
+              <code
+                >#Gray 200<br />
+                var(--color-Gray 200)</code
+              >
+            </p>
+          </li>
+        
+          <li>
+            <div style="background-color: var(--color-Gray 300)"></div>
+
+            <p>
+              <code
+                >#Gray 300<br />
+                var(--color-Gray 300)</code
+              >
+            </p>
+          </li>
+        
+          <li>
+            <div style="background-color: var(--color-Gray 400)"></div>
+
+            <p>
+              <code
+                >#Gray 400<br />
+                var(--color-Gray 400)</code
+              >
+            </p>
+          </li>
+        
+          <li>
+            <div style="background-color: var(--color-Gray 500)"></div>
+
+            <p>
+              <code
+                >#Gray 500<br />
+                var(--color-Gray 500)</code
+              >
+            </p>
+          </li>
+        
+          <li>
+            <div style="background-color: var(--color-Gray 600)"></div>
+
+            <p>
+              <code
+                >#Gray 600<br />
+                var(--color-Gray 600)</code
+              >
+            </p>
+          </li>
+        
+          <li>
+            <div style="background-color: var(--color-Gray 700)"></div>
+
+            <p>
+              <code
+                >#Gray 700<br />
+                var(--color-Gray 700)</code
+              >
+            </p>
+          </li>
+        
+          <li>
+            <div style="background-color: var(--color-Gray 800)"></div>
+
+            <p>
+              <code
+                >#Gray 800<br />
+                var(--color-Gray 800)</code
+              >
+            </p>
+          </li>
+        
+          <li>
+            <div style="background-color: var(--color-Gray 900)"></div>
+
+            <p>
+              <code
+                >#Gray 900<br />
+                var(--color-Gray 900)</code
+              >
+            </p>
+          </li>
+        
+          <li>
+            <div style="background-color: var(--color-Pink)"></div>
+
+            <p>
+              <code
+                >#Pink<br />
+                var(--color-Pink)</code
+              >
+            </p>
+          </li>
+        
+          <li>
+            <div style="background-color: var(--color-Pink Subdued)"></div>
+
+            <p>
+              <code
+                >#Pink Subdued<br />
+                var(--color-Pink Subdued)</code
+              >
+            </p>
+          </li>
+        
+          <li>
+            <div style="background-color: var(--color-Blue)"></div>
+
+            <p>
+              <code
+                >#Blue<br />
+                var(--color-Blue)</code
+              >
+            </p>
+          </li>
+        
+          <li>
+            <div style="background-color: var(--color-Blue Subdued)"></div>
+
+            <p>
+              <code
+                >#Blue Subdued<br />
+                var(--color-Blue Subdued)</code
+              >
+            </p>
+          </li>
+        
+          <li>
+            <div style="background-color: var(--color-Gold)"></div>
+
+            <p>
+              <code
+                >#Gold<br />
+                var(--color-Gold)</code
+              >
+            </p>
+          </li>
+        
+          <li>
+            <div style="background-color: var(--color-Gold Subdued)"></div>
+
+            <p>
+              <code
+                >#Gold Subdued<br />
+                var(--color-Gold Subdued)</code
+              >
+            </p>
+          </li>
+        
+      </ul>
+
+      <h3 class="heading-line | mt-l-xl">Custom colors</h3>
+      <p>in <code>variables.css</code>. Some only change for dark theme.</p>
+
+      <ul role="list">
+        
+          <li>
+            <div style="background-color: var(--color-text)"></div>
+            <p>
+              <code>--color-text</code>
+            </p>
+          </li>
+        
+          <li>
+            <div style="background-color: var(--color-text-accent)"></div>
+            <p>
+              <code>--color-text-accent</code>
+            </p>
+          </li>
+        
+          <li>
+            <div style="background-color: var(--color-bg)"></div>
+            <p>
+              <code>--color-bg</code>
+            </p>
+          </li>
+        
+          <li>
+            <div style="background-color: var(--color-bg-accent)"></div>
+            <p>
+              <code>--color-bg-accent</code>
+            </p>
+          </li>
+        
+          <li>
+            <div style="background-color: var(--color-bg-accent-2)"></div>
+            <p>
+              <code>--color-bg-accent-2</code>
+            </p>
+          </li>
+        
+          <li>
+            <div style="background-color: var(--color-primary)"></div>
+            <p>
+              <code>--color-primary</code>
+            </p>
+          </li>
+        
+          <li>
+            <div style="background-color: var(--color-secondary)"></div>
+            <p>
+              <code>--color-secondary</code>
+            </p>
+          </li>
+        
+          <li>
+            <div style="background-color: var(--color-tertiary)"></div>
+            <p>
+              <code>--color-tertiary</code>
+            </p>
+          </li>
+        
+      </ul>
+
+      <h3 class="heading-line | mt-l-xl">Gradients</h3>
+
+      <ul role="list">
+       
+          <li>
+            <div style="background-image: var(--gradient-rainbow)"></div>
+
+            <p>
+              <code>--gradient-rainbow<</code>
+              <br />
+            </p>
+          </li>
+        
+          <li>
+            <div style="background-image: var(--gradient-conic)"></div>
+
+            <p>
+              <code>--gradient-conic<</code>
+              <br />
+            </p>
+          </li>
+        
+          <li>
+            <div style="background-image: var(--gradient-stripes)"></div>
+
+            <p>
+              <code>--gradient-stripes<</code>
+              <br />
+            </p>
+          </li>
+        
+      </ul>
+    </section>
+  </div>
+
+  <section class="fonts | flow region">
+    <h2 class="heading-line">Fonts</h2>
+    
+     
+    <ul class="fonts flow">
+      
+        <li class="font" style="font-family: var(--font-Display )">
+          <h3 style="font-family: var(--font-Display)">Display</h3>
+          <p>Display font stack for headings and large text. Redhat Display is made for headlines and big statements, are low contrast and spaced tightly, with a large x-height and open counters.</p>
+          <p><strong>Font Families</strong>: [Redhat, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif]</p>
+          <code>var(--font-Display)</code>
+        </li>
+      
+        <li class="font" style="font-family: var(--font-Base )">
+          <h3 style="font-family: var(--font-Base)">Base</h3>
+          <p>Base font stack for body text. Atkinson Hyperlegible, named after the founder of the Braille Institute, has been developed specifically to increase legibility for readers with low vision, and to improve comprehension.</p>
+          <p><strong>Font Families</strong>: [Atkinson Hyperlegible, system-ui, sans-serif]</p>
+          <code>var(--font-Base)</code>
+        </li>
+      
+        <li class="font" style="font-family: var(--font-Mono )">
+          <h3 style="font-family: var(--font-Mono)">Mono</h3>
+          <p>Monospace font for code and preformatted text.</p>
+          <p><strong>Font Families</strong>: [ui-monospace, Cascadia Code, Source Code Pro, Menlo, Consolas, DejaVu Sans Mono, monospace]</p>
+          <code>var(--font-Mono)</code>
+        </li>
+      
+    </ul>
+  </section>
+
+ <div class="full sizes | section">
+    <section class="section__inner wrapper flow region">
+      <h2 class="heading-line">Sizes</h2>
+       
+       
+       
+      <p>
+        A minimum and maximum text size size allows you to pick the right size from a ratio, depending on the context size. The min and max sizes are in pixels and should be converted to appropiate sizes, per context. Fluid type and space scales were
+        <a href="320">generated with Utopia</a>.
+      </p>
+
+      <table class="sizes flow">
+        
+          <tr>
+            <th scope="row">
+              <h3>Step min 2</h3>
+            </th>
+            <td>
+              <span class="flow">
+                <p>13px to 16px</p>
+                <code>var(--size-Step min 2)</code>
+              </span>
+            </td>
+            <td class="sizes-example">
+              <p style="font-size:var(--size-Step min 2)">Step min 2</p>
+            </td>
+          </tr>
+        
+          <tr>
+            <th scope="row">
+              <h3>Step min 1</h3>
+            </th>
+            <td>
+              <span class="flow">
+                <p>16px to 22px</p>
+                <code>var(--size-Step min 1)</code>
+              </span>
+            </td>
+            <td class="sizes-example">
+              <p style="font-size:var(--size-Step min 1)">Step min 1</p>
+            </td>
+          </tr>
+        
+          <tr>
+            <th scope="row">
+              <h3>Step 0</h3>
+            </th>
+            <td>
+              <span class="flow">
+                <p>19px to 28px</p>
+                <code>var(--size-Step 0)</code>
+              </span>
+            </td>
+            <td class="sizes-example">
+              <p style="font-size:var(--size-Step 0)">Step 0</p>
+            </td>
+          </tr>
+        
+          <tr>
+            <th scope="row">
+              <h3>Step 1</h3>
+            </th>
+            <td>
+              <span class="flow">
+                <p>23px to 35px</p>
+                <code>var(--size-Step 1)</code>
+              </span>
+            </td>
+            <td class="sizes-example">
+              <p style="font-size:var(--size-Step 1)">Step 1</p>
+            </td>
+          </tr>
+        
+          <tr>
+            <th scope="row">
+              <h3>Step 2</h3>
+            </th>
+            <td>
+              <span class="flow">
+                <p>27px to 44px</p>
+                <code>var(--size-Step 2)</code>
+              </span>
+            </td>
+            <td class="sizes-example">
+              <p style="font-size:var(--size-Step 2)">Step 2</p>
+            </td>
+          </tr>
+        
+          <tr>
+            <th scope="row">
+              <h3>Step 3</h3>
+            </th>
+            <td>
+              <span class="flow">
+                <p>33px to 55px</p>
+                <code>var(--size-Step 3)</code>
+              </span>
+            </td>
+            <td class="sizes-example">
+              <p style="font-size:var(--size-Step 3)">Step 3</p>
+            </td>
+          </tr>
+        
+          <tr>
+            <th scope="row">
+              <h3>Step 4</h3>
+            </th>
+            <td>
+              <span class="flow">
+                <p>40px to 68px</p>
+                <code>var(--size-Step 4)</code>
+              </span>
+            </td>
+            <td class="sizes-example">
+              <p style="font-size:var(--size-Step 4)">Step 4</p>
+            </td>
+          </tr>
+        
+          <tr>
+            <th scope="row">
+              <h3>Step 5</h3>
+            </th>
+            <td>
+              <span class="flow">
+                <p>47px to 86px</p>
+                <code>var(--size-Step 5)</code>
+              </span>
+            </td>
+            <td class="sizes-example">
+              <p style="font-size:var(--size-Step 5)">Step 5</p>
+            </td>
+          </tr>
+        
+          <tr>
+            <th scope="row">
+              <h3>Step 6</h3>
+            </th>
+            <td>
+              <span class="flow">
+                <p>56px to 107px</p>
+                <code>var(--size-Step 6)</code>
+              </span>
+            </td>
+            <td class="sizes-example">
+              <p style="font-size:var(--size-Step 6)">Step 6</p>
+            </td>
+          </tr>
+        
+      </table>
+    </section>
+  </div>
+
+  <section class="spacing | flow region">
+    <h2 class="heading-line">Spacing</h2>
+    
+     
+     
+
+    <p>
+      Consistent spacing sizes, based on a ratio, with min and max sizes. This allows you to set spacing based on the context size. For example, min for mobile and max for desktop browsers.<br />
+      Fluid type and space scales were
+      <a href="320">generated with Utopia</a>.
+    </p>
+
+    <table class="spacing flow">
+      
+        <tr>
+          <th scope="row">
+            <h3>3XS</h3>
+          </th>
+          <td>
+            <span class="flow">
+              <p>2px to 3px</p>
+              <code>var(--space-3XS)</code>
+            </span>
+          </td>
+          <td>
+            <div
+              class="space"
+              style="height:var(--space-3XS); width:var(--space-3XS);"
+            ></div>
+          </td>
+        </tr>
+      
+        <tr>
+          <th scope="row">
+            <h3>2XS</h3>
+          </th>
+          <td>
+            <span class="flow">
+              <p>3px to 5px</p>
+              <code>var(--space-2XS)</code>
+            </span>
+          </td>
+          <td>
+            <div
+              class="space"
+              style="height:var(--space-2XS); width:var(--space-2XS);"
+            ></div>
+          </td>
+        </tr>
+      
+        <tr>
+          <th scope="row">
+            <h3>XS</h3>
+          </th>
+          <td>
+            <span class="flow">
+              <p>5px to 7px</p>
+              <code>var(--space-XS)</code>
+            </span>
+          </td>
+          <td>
+            <div
+              class="space"
+              style="height:var(--space-XS); width:var(--space-XS);"
+            ></div>
+          </td>
+        </tr>
+      
+        <tr>
+          <th scope="row">
+            <h3>S</h3>
+          </th>
+          <td>
+            <span class="flow">
+              <p>10px to 14px</p>
+              <code>var(--space-S)</code>
+            </span>
+          </td>
+          <td>
+            <div
+              class="space"
+              style="height:var(--space-S); width:var(--space-S);"
+            ></div>
+          </td>
+        </tr>
+      
+        <tr>
+          <th scope="row">
+            <h3>M</h3>
+          </th>
+          <td>
+            <span class="flow">
+              <p>14px to 21px</p>
+              <code>var(--space-M)</code>
+            </span>
+          </td>
+          <td>
+            <div
+              class="space"
+              style="height:var(--space-M); width:var(--space-M);"
+            ></div>
+          </td>
+        </tr>
+      
+        <tr>
+          <th scope="row">
+            <h3>L</h3>
+          </th>
+          <td>
+            <span class="flow">
+              <p>19px to 28px</p>
+              <code>var(--space-L)</code>
+            </span>
+          </td>
+          <td>
+            <div
+              class="space"
+              style="height:var(--space-L); width:var(--space-L);"
+            ></div>
+          </td>
+        </tr>
+      
+        <tr>
+          <th scope="row">
+            <h3>XL</h3>
+          </th>
+          <td>
+            <span class="flow">
+              <p>38px to 56px</p>
+              <code>var(--space-XL)</code>
+            </span>
+          </td>
+          <td>
+            <div
+              class="space"
+              style="height:var(--space-XL); width:var(--space-XL);"
+            ></div>
+          </td>
+        </tr>
+      
+        <tr>
+          <th scope="row">
+            <h3>2XL</h3>
+          </th>
+          <td>
+            <span class="flow">
+              <p>57px to 84px</p>
+              <code>var(--space-2XL)</code>
+            </span>
+          </td>
+          <td>
+            <div
+              class="space"
+              style="height:var(--space-2XL); width:var(--space-2XL);"
+            ></div>
+          </td>
+        </tr>
+      
+        <tr>
+          <th scope="row">
+            <h3>3XL</h3>
+          </th>
+          <td>
+            <span class="flow">
+              <p>95px to 140px</p>
+              <code>var(--space-3XL)</code>
+            </span>
+          </td>
+          <td>
+            <div
+              class="space"
+              style="height:var(--space-3XL); width:var(--space-3XL);"
+            ></div>
+          </td>
+        </tr>
+      
+        <tr>
+          <th scope="row">
+            <h3>XS - S</h3>
+          </th>
+          <td>
+            <span class="flow">
+              <p>5px to 14px</p>
+              <code>var(--space-XS - S)</code>
+            </span>
+          </td>
+          <td>
+            <div
+              class="space"
+              style="height:var(--space-XS - S); width:var(--space-XS - S);"
+            ></div>
+          </td>
+        </tr>
+      
+        <tr>
+          <th scope="row">
+            <h3>S - M</h3>
+          </th>
+          <td>
+            <span class="flow">
+              <p>10px to 21px</p>
+              <code>var(--space-S - M)</code>
+            </span>
+          </td>
+          <td>
+            <div
+              class="space"
+              style="height:var(--space-S - M); width:var(--space-S - M);"
+            ></div>
+          </td>
+        </tr>
+      
+        <tr>
+          <th scope="row">
+            <h3>M - L</h3>
+          </th>
+          <td>
+            <span class="flow">
+              <p>14px to 31px</p>
+              <code>var(--space-M - L)</code>
+            </span>
+          </td>
+          <td>
+            <div
+              class="space"
+              style="height:var(--space-M - L); width:var(--space-M - L);"
+            ></div>
+          </td>
+        </tr>
+      
+        <tr>
+          <th scope="row">
+            <h3>L - XL</h3>
+          </th>
+          <td>
+            <span class="flow">
+              <p>19px to 56px</p>
+              <code>var(--space-L - XL)</code>
+            </span>
+          </td>
+          <td>
+            <div
+              class="space"
+              style="height:var(--space-L - XL); width:var(--space-L - XL);"
+            ></div>
+          </td>
+        </tr>
+      
+        <tr>
+          <th scope="row">
+            <h3>L - 2xl</h3>
+          </th>
+          <td>
+            <span class="flow">
+              <p>38px to 84px</p>
+              <code>var(--space-L - 2xl)</code>
+            </span>
+          </td>
+          <td>
+            <div
+              class="space"
+              style="height:var(--space-L - 2xl); width:var(--space-L - 2xl);"
+            ></div>
+          </td>
+        </tr>
+      
+        <tr>
+          <th scope="row">
+            <h3>XL - 2XL</h3>
+          </th>
+          <td>
+            <span class="flow">
+              <p>57px to 140px</p>
+              <code>var(--space-XL - 2XL)</code>
+            </span>
+          </td>
+          <td>
+            <div
+              class="space"
+              style="height:var(--space-XL - 2XL); width:var(--space-XL - 2XL);"
+            ></div>
+          </td>
+        </tr>
+      
+        <tr>
+          <th scope="row">
+            <h3>2XL - 3xl</h3>
+          </th>
+          <td>
+            <span class="flow">
+              <p>95px to 224px</p>
+              <code>var(--space-2XL - 3xl)</code>
+            </span>
+          </td>
+          <td>
+            <div
+              class="space"
+              style="height:var(--space-2XL - 3xl); width:var(--space-2XL - 3xl);"
+            ></div>
+          </td>
+        </tr>
+      
+    </table>
+  </section>
+</article>
+ 
+.styleguide {
+  --region-space-top: var(--space-xl-2xl);
+  --spot-color: color-mix(in oklab, var(--color-bg) 97%, var(--color-text));
+}
+
+.styleguide code {
+  font-size: var(--size-step-min-2);
+}
+
+.styleguide li p:has(code) {
+  line-height: var(--leading-flat);
+}
+
+.styleguide section {
+  --region-space-bottom: var(--space-l-xl);
+  --region-space-top: var(--space-l-xl);
+}
+
+.styleguide :is(h2, h3) {
+  font-size: var(--size-step-0);
+  font-family: var(--font-base);
+  text-transform: uppercase;
+}
+
+.styleguide h2 {
+  letter-spacing: var(--tracking-wide);
+}
+
+.styleguide .colors {
+  --cluster-vertical-alignment: flex-start;
+}
+
+.styleguide .colors ul {
+  --min: 10ch;
+  --gap: var(--space-s-m);
+
+  display: grid;
+  grid-gap: var(--gap);
+  /* min() with 100% prevents overflow
+		in extra narrow spaces */
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--min)), 1fr));
+}
+
+.styleguide .colors li {
+  display: grid;
+  gap: var(--space-xs);
+  grid-row: span 2;
+  grid-template-rows: subgrid;
+}
+
+.styleguide .colors li div {
+  max-inline-size: var(--max-img-width, 100%);
+  block-size: auto;
+  aspect-ratio: 16/9;
+  object-fit: cover;
+  object-position: center;
+  border: var(--stroke);
+}
+
+.styleguide .space {
+  background-color: var(--color-text);
+  display: block;
+}
+
+.styleguide .tabs {
+  align-items: center;
+  border-block-end: var(--stroke);
+  display: flex;
+  gap: var(--space-xs);
+  margin-block-end: var(--space-s);
+  padding-block-end: var(--space-s);
+}
+table {
+  border: 0;
+  inline-size: 100%;
+}
+
+table br {
+  display: none;
+}
+
+thead {
+  border: none;
+  clip: rect(0 0 0 0);
+  block-size: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  inline-size: 1px;
+}
+
+tr {
+  border: var(--stroke);
+  display: block;
+  margin-block-end: var(--space-s);
+}
+
+th,
+td {
+  padding: var(--space-xs) var(--space-s);
+  vertical-align: sub;
+}
+
+td {
+  border-block-end: var(--stroke);
+  display: block;
+  text-align: start;
+}
+
+td::before {
+  content: attr(data-label);
+  float: start;
+  font-weight: var(--font-bold);
+}
+
+td:last-child {
+  border-block-end: 0;
+}
+
+@media screen(sm) {
+  table {
+    border-collapse: collapse;
+    margin: 0;
+    padding: 0;
+    table-layout: fixed;
+  }
+
+  table br {
+    display: block;
+  }
+
+  thead {
+    position: static;
+    text-align: start;
+    display: table-header-group;
+  }
+
+  caption {
+    margin: var(--space-xs) 0 var(--space-s);
+  }
+
+  tr {
+    border: 0;
+    padding: var(--space-xs);
+    margin: 0;
+    display: table-row;
+  }
+
+  tr:not(:last-child) {
+    border-block-end: var(--stroke);
+  }
+
+  td {
+    border: none;
+  }
+
+  td::before {
+    display: none;
+  }
+
+  th,
+  td {
+    padding: var(--space-s);
+    text-align: start;
+    display: table-cell;
+  }
+}

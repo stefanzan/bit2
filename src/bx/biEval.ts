@@ -53,15 +53,15 @@ export function backward(str: string, operation: UpdateOperation): string[] {
   let resultList = fuse(env, operation, lambdaAST)
   .map(({newTermNode: newTerm, remainingOperation: newOp}) => {
     let partialAST = flatten(unLambdalize(newTerm));
-    console.log("--------updatedPartialAST------------");
-    PartialPrint.printNode(partialAST);
+    // console.log("--------updatedPartialAST------------");
+    // PartialPrint.printNode(partialAST);
     try {
       let updatedCoreASTRedundant = UnEvaluation.unPartialEval(partialAST)
       let updatedCoreAST = UnEvaluation.flatten(updatedCoreASTRedundant);
-      console.log("--------updatedCoreAST------------");
-      CorePrint.printAST(updatedCoreAST);
+      // console.log("--------updatedCoreAST------------");
+      // CorePrint.printAST(updatedCoreAST);
       let surfaceText = CorePretty.printToSurface(updatedCoreAST);
-      console.log("biEval backward, success:\n", surfaceText);
+      // console.log("biEval backward, success:\n", surfaceText);
       return surfaceText;
     } catch (error) {
       const typedError = error as Error;
@@ -70,8 +70,9 @@ export function backward(str: string, operation: UpdateOperation): string[] {
     }
   });
 
-  console.log("solution list length:", resultList.length);
-  resultList = resultList.filter(result => result != (""))
+  // console.log("solution list length:", resultList.length);
+  return resultList;
+  // resultList = resultList.filter(result => result != (""))
   // remove redundant/identical results
-  return Array.from(new Set(resultList));
+  // return Array.from(new Set(resultList));
 }

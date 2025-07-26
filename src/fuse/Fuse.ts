@@ -1432,7 +1432,7 @@ export function fuse(
     switch (operation.type) {
      case "insert":
         const { str, position } = operation;
-        if (position === 0) {
+        if (position >= 0) {
           resultList.push({
             newEnv: deepCloneEnvironment(env),
             newTermNode: {
@@ -1443,7 +1443,7 @@ export function fuse(
           });
           return resultList;
         } else {
-          throw new Error(`Unhandled operation type: ${operation} for end term`);
+          throw new Error(`Unhandled operation type: ${operation.type}, ${operation.position}, ${operation.str} for end term`);
         }
       case "id":
         return [

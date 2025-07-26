@@ -20,7 +20,7 @@ import { UpdateOperation } from '../../src/fuse/Update';
 // Nunjucks
 import * as AllBulkUpdates from "./Nunjucks/bulkUpdates.generated";
 const bit2File   = "./test/performance/Nunjucks/styleguide.bit2";
-const outputFile = "./test/performance/Nunjucks/timings.txt";
+const outputFile = "./test/performance/Nunjucks/timingsAndCount.txt";
 
 
 const counts = [2, 4, 6, 8, 10, 12, 14, 16, 18];
@@ -73,17 +73,21 @@ fs.readFile(bit2File, "utf8")
       console.log(`== 操作数: ${count} ==`);
 
       let backwardLine = "";
+      let countLine = "";
       for (let j = 0; j < group.length; j++) {
         const bulkUpdate = group[j];
         const start = process.hrtime();
-        BiEval.backward(data, bulkUpdate);
+        let resultList = BiEval.backward(data, bulkUpdate);
         const end = process.hrtime(start);
         const durationMs = end[0] * 1e3 + end[1] / 1e6;
         backwardLine += `${durationMs.toFixed(3)}  `;
+        countLine += `${resultList.length}  `;
         //@ts-ignore
         console.log(`Bwd count=${count}, Real count=${bulkUpdate.operations.length}, version=${j + 1}: ${durationMs.toFixed(3)} ms`);
       }
         outputLines.push(`bulkUpdate${count}: ${backwardLine}`);
+        outputLines.push(`bulkUpdate${count}: ${countLine}`);
+
     }
 
     await fs.writeFile(outputFile, outputLines.join("\n"), "utf8");
