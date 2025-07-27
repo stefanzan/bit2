@@ -1,6 +1,6 @@
 {
   "name": "bit2",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "main": "dist/bit2.js",
   "types": "dist/bit2.d.ts",
   "dependencies": {
@@ -57,7 +57,8 @@
     "example.test": "node dist/test/examples/Test.test.js",
     "example.simple": "node dist/test/examples/Test.simple.test.js",
     "runPerformance": "node dist/test/performance/runPerformance.js",
-    "runPerformance2": "node dist/test/performance/run.js"
+    "runPerformance2": "node dist/test/performance/run.js",
+    "runCaseStudy": "node dist/test/casestudy/run.js"
   },
   "files": [
     "dist/bit2.js",
