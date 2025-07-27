@@ -123,11 +123,11 @@ export function fuse(
           return [
             // optimization: only one strategy
             // remove U4 == case
-            // {
-            //   newEnv: deepCloneEnvironment(env),
-            //   newTermNode: { ...term, value: s_c + str },
-            //   remainingOperation: { type: "id" },
-            // },
+            {
+              newEnv: deepCloneEnvironment(env),
+              newTermNode: { ...term, value: s_c + str },
+              remainingOperation: { type: "id" },
+            },
             {
               newEnv: deepCloneEnvironment(env),
               newTermNode: term,

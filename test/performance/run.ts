@@ -12,7 +12,7 @@ import { UpdateOperation } from '../../src/fuse/Update';
 // const bit2File   = "./test/performance/Freemarker/main-v2.bit2";
 // const outputFile = "./test/performance/Freemarker/timings.txt";
 
-// FreeMarker
+// Mustache
 // import * as AllBulkUpdates from "./Mustache/bulkUpdates.generated";
 // const bit2File   = "./test/performance/Mustache/readme.bit2";
 // const outputFile = "./test/performance/Mustache/timings.txt";
@@ -20,7 +20,8 @@ import { UpdateOperation } from '../../src/fuse/Update';
 // Nunjucks
 import * as AllBulkUpdates from "./Nunjucks/bulkUpdates.generated";
 const bit2File   = "./test/performance/Nunjucks/styleguide.bit2";
-const outputFile = "./test/performance/Nunjucks/timingsAndCount.txt";
+const outputFile = "./test/performance/Nunjucks/timings.txt";
+// const outputFile = "./test/performance/Nunjucks/timingsAndCount.txt";
 
 
 const counts = [2, 4, 6, 8, 10, 12, 14, 16, 18];
