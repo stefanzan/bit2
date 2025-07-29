@@ -217,7 +217,7 @@ export function fuse(
           ];
         } else if (delPos < s_c.length && delPos + delStr.length > s_c.length) {
           const remainingS_c = s_c.substring(0, delPos); // 保留s_c删除位置之前的部分
-          const remainingDelStr = delStr.substring(s_c.length - delPos); // 剩余需要删除的字符串
+          const remainingDelStr = delStr.substring(s_c.length -1 - delPos); // 剩余需要删除的字符串
           return [
             {
               newEnv: deepCloneEnvironment(env),
@@ -511,7 +511,7 @@ export function fuse(
           ];
         } else if (delPos < term.width && delPos + delStr.length > term.width) {
           const remainingWidth = delPos;
-          const remainingDelStr = delStr.substring(term.width - delPos); // 剩余需要删除的字符串
+          const remainingDelStr = delStr.substring(term.width - delPos-1); // 剩余需要删除的字符串
           return [
             {
               newEnv: deepCloneEnvironment(env),
@@ -908,7 +908,7 @@ export function fuse(
           delPos + delStr.length > valStr.length
         ) {
           const newStr = valStr.slice(0, delPos);
-          const remainingDelStr = delStr.slice(valStr.length - delPos);
+          const remainingDelStr = delStr.slice(valStr.length - delPos-1);
           const newVal = strToVal(newStr, val);
           let { newEnv, newExp } = fuseExp(env, newVal, exp);
           return [

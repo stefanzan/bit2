@@ -19,7 +19,7 @@
       <li«if op=="login"» class="active"«endif»>
         <a href="#login" data-toggle="tab">Sign In</a>
       </li>
-        <li« if op == "register" » class="active"« endif »>
+        <li«if op=="register"» class="active"«endif»>
           <a href="#register" data-toggle="tab">Register</a>
         </li>     
      <li«if op=="sso"» class="active"«endif»>
@@ -78,15 +78,15 @@
           </div>
       </div>
     </div>
-    <div class="tab-pane« if op == "register" » active«endif»" id="register">
+    <div class="tab-pane«if op=="register"» active«endif»" id="register">
       <div class="auth-container">
         <div class="auth-form-column">
           <form class="form-stacked" action="" method="post" autocomplete="off">
             <input type="hidden" name="«csrfname»" value="«csrfvalue»">
             <input type="hidden" name="op" value="register" />
 
-            «var register_form={fields:[{id:"name-label", label:"Name", inputName:"name", inputType:"text", placeholder:"Your Name", labelledby:"name-label"},{id:"organizationName-label", label:"Organization", inputName:"organizationName", inputType:"text", placeholder:"Organization Name", labelledby:"organizationName-label"},{id:"email-label", label:"Email", inputName:"email", inputType:"email", placeholder:"you@company.com", labelledby:"email-label"},{id:"password-label", label:"Password", inputName:"password", inputType:"password", placeholder:"Password (8+ characters)", labelledby:"password-label"}],subscribes :[{id:"subscribe-label", inputName:"subscribe", labelledby:"subscribe-label", text:"I would like to receive updates via email."},{id:"iAgree-label", inputName:"iAgree", labelledby:"iAgree-label", text:"I agree to the Terms of Service and Privacy Policy."}]}»
-            «var fields = register_form.fields»
+            «var register_form={fields:[{id:"name-label", label:"Name", inputName:"name", inputType:"text", placeholder:"Your Name", labelledby:"name-label"},{id:"organizationName-label", label:"Organization", inputName:"organizationName", inputType:"text", placeholder:"Organization Name", labelledby:"organizationName-label"},{id:"email-label", label:"Email", inputName:"email", inputType:"email", placeholder:"you@company.com", labelledby:"email-label"},{id:"-label", label:"Password", inputName:"password", inputType:"password", placeholder:"Password (8+ characters)", labelledby:"password-label"}], subscribes:[{id:"subscribe-label", inputName:"subscribe", labelledby:"subscribe-label", text:"I would like to receive updates via email."},{id:"iAgree-label", inputName:"iAgree", labelledby:"iAgree-label", text:"I agree to the Terms of Service and Privacy Policy."}]}»
+            «var fields=register_form.fields»
             «for field in fields»
               <div>
                 <label id="«field.id»">«field.label»<span class="form-required"></span>
@@ -95,7 +95,7 @@
               </div>
             «endfor»
 
-            «var subscribes = register_form.subscribes»
+            «var subscribes=register_form.subscribes»
             «for subscribe in subscribes»
               <label id="«subscribe.id»" class="checkbox-input" role="button">
                 <input name="«subscribe.inputName»" type="checkbox" aria-labelledby="«subscribe.labelledby»" tabindex="0"><span>«subscribe.text»</span>
