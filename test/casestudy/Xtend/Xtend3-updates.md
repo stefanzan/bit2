@@ -9,7 +9,9 @@
   replace "</html>" at 182
 
 # B. Update expression in template
-## B.ins: not appliable.
+## B.ins: update Greeting in h1 tag in the first item, and update Sunny in p tag in the second item
+  insert "s" at 46
+  insert "Day" at 154
 
 ## B.del: 
   delete "0" at 71

@@ -9,7 +9,8 @@ delete "\n" at 111
 replace "Welcome" with "Hello" at 25
 
 # B. Update expression in template
-## B.ins: not appliable.
+## B.ins: change http to https
+insert "s" at 127
 
 ## B.del: delete the "e" in word "livet"
 delete "e" at 13

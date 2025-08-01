@@ -13,6 +13,11 @@ let updates = {
     { type: "replace", str1: "table", str2: "tb", position: 3 },
     { type: "replace", str1: "table", str2: "tb", position: 147 }
   ] } as UpdateOperation],
+  "B.ins":[{type:"bulk", operations:[
+    {type:"insert", str:"r", position:40},
+    {type:"insert", str:"er", position:85},
+    {type:"insert", str:"er", position:132}
+   ]}],
   "B.del": [{ type: "delete", str: "A", position: 35 } as UpdateOperation],
   "B.rep": [{ type: "bulk", operations: [
     { type: "replace", str1: "0", str2: "1", position: 25 },

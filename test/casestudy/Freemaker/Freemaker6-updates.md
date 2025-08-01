@@ -11,7 +11,10 @@
 
 # B. Update expression in template
 
-## B.ins: not appliable.
+## B.ins: add "s", "es" to items
+  insert "s" at 19 
+  insert "s" at 38 
+  insert "s" at 57
 
 ## B.del: set "banana" to "" in the list
   delete "banana" at 24

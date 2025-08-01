@@ -2,8 +2,8 @@ import * as BiEval from "../../src/bx/biEval";
 import { promises as fs } from "fs";
 
 // Freemarker
-import * as updates from "./Freemaker/FreeMaker4-updates";
-const bit2File   = "./test/casestudy/Freemaker/Freemaker4.bit2";
+import * as updates from "./Acceleo/Acceleo1-updates";
+const bit2File   = "./test/casestudy/Acceleo/Acceleo1.bit2";
 
 
 fs.readFile(bit2File, "utf8")
@@ -12,7 +12,7 @@ fs.readFile(bit2File, "utf8")
     let output = BiEval.forward(data);
     console.log(output);
     console.log("=== Backward Evaluation ===");
-    let ops = updates.default["B.ins"];
+    let ops = updates.default["A.ins"];
     ops.forEach(function(op){
        //@ts-ignore
         let resultList = BiEval.backward(data, op);

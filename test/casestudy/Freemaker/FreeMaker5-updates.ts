@@ -43,7 +43,12 @@ let updates = {
       ],
     },
   ],
-  "B.ins":[{type:"insert", str:"na", position:17}],
+  "B.ins":[{type:"bulk", operations:[
+    {type:"insert", str:"s", position:19},
+    {type:"insert", str:"s", position:38},
+    {type:"insert", str:"es", position:57}
+  ]} as UpdateOperation
+  ],
   "B.del": [
     {
       type: "delete",

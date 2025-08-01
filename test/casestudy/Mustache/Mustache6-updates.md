@@ -14,7 +14,8 @@
 
 # B. Update expression in template
 
-## B.ins: not appliable.
+## B.ins: change Bob to Booob
+  insert "oo" at 24
 
 ## B.del: 
   delete "A" at 6

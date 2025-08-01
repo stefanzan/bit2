@@ -12,7 +12,10 @@
   replace "table" with "tb" at 147
 
 # B. Update expression in template
-## B.ins: not appliable.
+## B.ins: add "er"
+  insert "r" at 40
+  insert "er" at 85
+  insert "er" at 132
 
 ## B.del: 
   delete "A" at 35

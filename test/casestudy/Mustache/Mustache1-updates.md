@@ -9,7 +9,8 @@
   replace "Hello" with "Hi" at 4
 
 # B. Update expression in template
-## B.ins: not appliable.
+## B.ins: insert "Girl" after "Alice"
+ insert "Girl" at 15
 
 ## B.del: 
   delete "8" at 58

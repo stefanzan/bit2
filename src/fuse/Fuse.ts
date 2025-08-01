@@ -850,22 +850,32 @@ export function fuse(
 
               let xValUpdatedMark = env[x][1][0] as ObjectValue;
               if (xValUpdatedMark.fields[field].length == 0) {
+                let resultList: {
+                  newEnv: Environment;
+                  newTermNode: TermNode;
+                  remainingOperation: UpdateOperation;
+                }[] = [];
+
+                if(typeof xVal.fields[field] == "string"){
+                  // two choice: update exp to "", or delete exp
+                  let { newEnv, newExp } = fuseExp(env, "", exp);
+                  resultList.push({
+                    newEnv: deepCloneEnvironment(newEnv),
+                    newTermNode: { ...term, binding: [newExp, ""]},
+                    remainingOperation: { type: "id" },
+                  });
+                }
+                          
                 let newXVal = deleteField(xVal, field);
                 let newXValUpdatedMark = deleteField(xValUpdatedMark, field);
                 let newEnv = deleteFromEnv(deepCloneEnvironment(env), x);
                 newEnv[x] = [newXVal, [newXValUpdatedMark]];
-                return [
-                  {
+                resultList.push({
                     newEnv: deepCloneEnvironment(newEnv),
                     newTermNode: { type: "bot" },
                     remainingOperation: { type: "id" },
-                  },
-                  // {
-                  //   newEnv: deepCloneEnvironment(env), // object 不动, because of for, cannot
-                  //   newTermNode: { type: "bot" },
-                  //   remainingOperation: { type: "id" },
-                  // }
-                ];
+                  });
+                return resultList;
               } else {
                 throw new Error(
                   `field has been updated, cannot be remvoed: ${field}$`

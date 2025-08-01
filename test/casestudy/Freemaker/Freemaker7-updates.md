@@ -13,7 +13,8 @@
 
 # B. Update expression in template
 
-## B.ins: not appliable.
+## B.ins: 
+  insert "0" at 83
 
 ## B.del: delete price
   delete "0" at 24

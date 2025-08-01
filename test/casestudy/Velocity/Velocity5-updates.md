@@ -12,9 +12,11 @@
   replace "customer" with "customers" at 12
 
 # B. Update expression in template
-## B.ins: not appliable.
+## B.ins:
+  insert "le" at 31
 
-## B.del: 
+## B.del: √
+  delete "Bob" at 28
 
 ## B.rep: 
   replace "Mark" with "Clark" at 32

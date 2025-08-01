@@ -23,7 +23,8 @@
 
 # B. Update expression in template
 
-## B.ins: not appliable.
+## B.ins: change poke to poket
+  insert "t" at 13
 
 ## B.del: 
   delete "5" at 13

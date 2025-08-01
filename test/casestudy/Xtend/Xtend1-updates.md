@@ -10,7 +10,8 @@
   replace "html" with "HTML" at 2
 
 # B. Update expression in template
-## B.ins: not appliable.
+## B.ins: insert space between Example and 1
+  insert " " at 28
 
 ## B.del: 
   delete "1" at 29

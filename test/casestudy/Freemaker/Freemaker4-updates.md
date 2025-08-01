@@ -14,12 +14,12 @@ delete "/n" at 128
 ## A.del: delte newline after '<table border=1>'
 delete "/n" at 43
 
-#A A.rep: replace "animals" with "python and elephant"
+## A.rep: replace "animals" with "python and elephant"
 replace "animals" with "python and elephant" at 12
 
 # B. Update expression in template
 
-## B.ins: √
+## B.ins: 
 insert "us" at 103
 
 ## B.del: 

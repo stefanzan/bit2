@@ -15,7 +15,10 @@
   replace "Vaue" with "value" at 80
 
 # B. Update expression in template
-## B.ins: not appliable.
+## B.ins: change Fried Chicken to Fried Nice Chicken, change Soda to Sorda
+  insert " Nice" at 42
+  insert "r" at 95
+
 
 ## B.del: 
   delete "Fried " at 37

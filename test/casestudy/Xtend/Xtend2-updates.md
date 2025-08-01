@@ -14,7 +14,11 @@
   replace "h1" with "h2" at 111
 
 # B. Update expression in template
-## B.ins: not appliable.
+## B.ins: insert after Greeting and Weather with "s",
+   insert "s" at 41
+   insert "s" at 110
+
+ Two possible results
 
 ## B.del:  
   delete "ing" at 38

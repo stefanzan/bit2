@@ -13,7 +13,7 @@ replace "," with ";" at 21
 
 # B. Update expression in template
 ## B.ins:
-insert "n" at 25
+insert "c" at 26
 
 ## B.del: Delete one item and separator  
 delete "BoB," at 18

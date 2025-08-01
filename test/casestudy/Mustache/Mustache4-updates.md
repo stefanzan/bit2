@@ -10,7 +10,14 @@
 
 # B. Update expression in template
 
-## B.ins: not appliable.
+## B.ins: insert "i", to change "Clark" to "Clarik"
+  insert "i" at 9 
+
+The updated result is :
+«var name="Clari"»
+«var text=name+"k is awesome."»
+<b>«text»</b>
+
 
 ## B.del: 
   delete "." at 21

@@ -21,6 +21,10 @@ let updates = {
       { type: "replace", str1: "h1", str2: "h2", position: 111 }
     ] } as UpdateOperation
   ],
+  "B.ins": [{type:"bulk", operations: [
+    {type:"insert", str:"s", position:41},
+    {type:"insert", str:"s", position:110}
+  ]}],
   "B.del": [{ type: "delete", str: "ting", position: 38 } as UpdateOperation],
   "B.rep": [{ type: "replace", str1: "M", str2: "m", position: 71 } as UpdateOperation]
 };

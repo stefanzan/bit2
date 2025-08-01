@@ -12,7 +12,9 @@
 
 # B. Update expression in template
 
-## B.ins: not appliable.
+## B.ins: change red to reed, change yellow to yeellow.
+  insert "e" at 31
+  insert "e" at 66
 
 ## B.del: 
   delete "apple" at 20

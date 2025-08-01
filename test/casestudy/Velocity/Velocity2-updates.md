@@ -10,7 +10,9 @@
 
 # B. Update expression in template
 
-## B.ins: not appliable.
+## B.ins: change Velocity to Veloscity 
+  insert "s" at 34
+
 
 ## B.del: 
   delete "Velocity" at 30

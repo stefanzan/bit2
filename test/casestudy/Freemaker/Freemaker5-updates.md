@@ -15,7 +15,10 @@
 
 # B. Update expression in template
 
-## B.ins: not appliable.
+## B.ins:  add "s", "es" to each item, bulk op
+insert "s" at 19
+insert "s" at 38
+insert "us" at 57
 
 ## B.del: delte the middle item exactly
 delte "\n  <li><b>apple</b></li>\n" at 25 

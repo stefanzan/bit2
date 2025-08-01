@@ -10,7 +10,8 @@
 
 # B. Update expression in template
 
-## B.ins: not appliable.
+## B.ins: change Alice to Alince by inserting n
+  insert "n" at 8
 
 ## B.del: delete "Alice" in the output will result in deleting "Alice" in object person.
   delete "Alice" at 5

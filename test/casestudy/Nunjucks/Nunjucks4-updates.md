@@ -6,7 +6,9 @@
 ## A.rep: 
 
 # B. Update expression in template
-## B.ins: not appliable.
+## B.ins: change Alice to Aliice, change Joe to Joye 
+  inert "i" at 4
+  insert "y" at 11
 
 ## B.del:
   delete "Joe" at 8

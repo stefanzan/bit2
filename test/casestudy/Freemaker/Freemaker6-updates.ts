@@ -7,6 +7,11 @@ let updates = {
     {type:"delete", str:"and", position:54} as UpdateOperation
   ]} as UpdateOperation],
   "A.rep":[{type:"replace", str1:"Fruits:", str2:"List of Fruits:", position:5} as UpdateOperation],  
+  "B.ins": [{type:"bulk", operations:[
+     {type:"insert", str:"s", position:19},
+     {type:"insert", str:"s", position:38},
+     {type:"insert", str:"es", position:57}
+  ]}],
   "B.del":[{type:"bulk", operations:[
     {type:"delete", str:"banana", position:24} as UpdateOperation, 
     {type:"delete", str:"\n  <li>banana</li>\nand", position:17} as UpdateOperation

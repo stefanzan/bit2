@@ -11,7 +11,7 @@ let updates = {
     { type: "replace", str1: "public", str2: "private", position: 2 } as UpdateOperation
   ] as UpdateOperation[],
   "B.ins": [
-    { type: "insert", str: "i", position: 16 } as UpdateOperation
+    { type: "insert", str: "s", position: 21 } as UpdateOperation
   ], 
   "B.del": [
     {type:"bulk", operations:[{ type: "delete", str: "son", position: 18 } as UpdateOperation,

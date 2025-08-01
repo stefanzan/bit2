@@ -10,6 +10,10 @@ let updates = {
     { type: "replace", str1: "did", str2: "do", position: 2 },
     { type: "replace", str1: "did", str2: "do", position: 34 }
   ]}],
+  "B.ins": [{type:"Bulk", operations: [
+    {type:"insert", str:"e", position:31},
+    {type:"insert", str:"e", position:66}
+  ]}],
   "B.del": [{ type: "delete", str: "apple", position: 20 }],
   "B.rep": [{ type: "replace", str1: "yellow", str2: "green", position: 63 }]
 };
