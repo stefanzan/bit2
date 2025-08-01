@@ -10,7 +10,8 @@
 
 # B. Update expression in template
 
-## B.ins: not appliable.
+## B.ins: 
+insert "f" at 38
 
 ## B.del: 
   cannot, since mouse is used in the if condition.

@@ -7,6 +7,7 @@ let updates = {
     { type: "replace", str1: "ul", str2: "ui", position: 3 } as UpdateOperation,
     { type: "replace", str1: "ul", str2: "ui", position: 89 } as UpdateOperation
   ] as UpdateOperation[],
+  "B.ins": [ {type:"insert", str:"really ", position:67}],
   "B.del": [{ type: "delete", str: "?", position: 75 } as UpdateOperation],
   "B.rep": [{ type: "replace", str1: "1", str2: "0", position: 30 } as UpdateOperation]
 };  

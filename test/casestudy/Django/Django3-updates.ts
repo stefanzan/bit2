@@ -10,6 +10,7 @@ let updates = {
   "A.rep":[{type:"bulk", operations:[
     {type:"replace", str1:",", str2:";", position:17} as UpdateOperation,
     {type:"replace", str1:",", str2:";", position:21} as UpdateOperation]} as UpdateOperation],
+  "B.ins": [{type:"insert", str:"n", position:25}],
   "B.del":[{type:"bulk", operations:[
     {type:"delete", str:"BoB,", position:18} as UpdateOperation
   ]} as UpdateOperation],

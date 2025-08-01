@@ -1325,6 +1325,7 @@ export function fuse(
           `Error evaluating condition expression fail during backward: ${error}`
         );        
       }
+      // TODO: update environment since all occured variable in the condition, the value are fixed.
    }
 
     let resultList: {
@@ -2232,14 +2233,16 @@ function prependStr(
 }
 
 function appendStr(str1: string, str2: string, val: Value): string | undefined {
+  return str1 + str2;
   // 尝试将str2转换为Value类型
   try {
-    const parsedValue: Value = JSON.parse(str2);
+    const newStr = str1 + str2;
+    // const parsedValue: Value = JSON.parse(str2);
 
     // 如果转换成功且类型匹配，则返回合并后的字符串
-    if (isValidValue(parsedValue)) {
-      return str1 + str2;
-    }
+    // if (isValidValue(parsedValue)) {
+      // return str1 + str2;
+    // }
   } catch (e) {
     // 如果转换失败，则返回undefined
     return undefined;

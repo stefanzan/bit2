@@ -19,7 +19,8 @@ replace "animals" with "python and elephant" at 12
 
 # B. Update expression in template
 
-## B.ins: not appliable.
+## B.ins: √
+insert "us" at 103
 
 ## B.del: 
 delete "python" at 59

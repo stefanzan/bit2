@@ -9,6 +9,7 @@ let updates = {
             {type:"delete", str:"\n", position:128} as UpdateOperation]} as UpdateOperation,{type: "bulk", operations:[
             {type:"delete", str:"\n", position:43} as UpdateOperation]} as UpdateOperation],
   "A.rep": [{type:"replace", str1:"animals", str2:"python and elephant", position:12} as UpdateOperation],
+  "B.ins":[ {type:"insert", str:"us", position:103} as UpdateOperation],
   "B.del": [{type:"delete", str:"python", position:59} as UpdateOperation],
   "B.rep": [{type:"bulk", operations:[
     {type:"replace", str1:"python", str2:"Python", position:59} as UpdateOperation,

@@ -1,4 +1,4 @@
-«var fruits=["banana","apple","mango"]»
+«var fruits=["bananana","apple","mango"]»
 <ul>
 «for fruit in fruits»
   <li>«fruit»</li>

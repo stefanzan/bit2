@@ -43,6 +43,7 @@ let updates = {
       ],
     },
   ],
+  "B.ins":[{type:"insert", str:"na", position:17}],
   "B.del": [
     {
       type: "delete",

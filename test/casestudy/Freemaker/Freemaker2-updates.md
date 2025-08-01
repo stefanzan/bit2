@@ -11,7 +11,8 @@ replace "beloved" with "great" at 89
 
 # B. Update expression in template
 
-## B.ins: not appliable.
+## B.ins: 
+insert "s" at 127
 
 ## B.del: delete "Big Joe"
 delete "Big Joe" at 75

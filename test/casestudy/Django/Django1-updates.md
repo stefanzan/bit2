@@ -11,7 +11,8 @@ replace "ul" with "ui" at 89
 
 
 # B. Update expression in template
-## B.ins: not appliable.
+## B.ins: 
+insert "really " at 67
 
 ## B.del: Delete "?" mark in "Is bidirectional live programming awesome?"
 delete "?" at 75

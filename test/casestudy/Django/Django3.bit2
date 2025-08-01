@@ -1,4 +1,4 @@
-«var athlete_list=["Alice","Bob","Clark"]»
+«var athlete_list=["Alice","Bob","Clanrk"]»
 «if athlete_list.length>1»
     Team: «for a in athlete_list separator ","»«a»«endfor» 
 «else»

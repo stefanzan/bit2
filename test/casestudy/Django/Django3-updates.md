@@ -12,7 +12,8 @@ replace "," with ";" at 17
 replace "," with ";" at 21
 
 # B. Update expression in template
-## B.ins: not appliable.
+## B.ins:
+insert "n" at 25
 
 ## B.del: Delete one item and separator  
 delete "BoB," at 18

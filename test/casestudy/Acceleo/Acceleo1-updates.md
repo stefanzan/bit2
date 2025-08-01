@@ -11,7 +11,8 @@ replace "public" with "private" at 2
 
 # B. Update expression in template
 
-## B.ins: not appliable.
+## B.ins: 
+insert "i" at 16
 
 ## B.del: Delete "Person"'s "son"
 delete "son" at 18
