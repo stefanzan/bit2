@@ -7,7 +7,7 @@
 
 # B. Update expression in template
 
-## B.ins: not appliable.
+## B.ins: 
 
 ## B.del: 
 

@@ -71,8 +71,8 @@ export function backward(str: string, operation: UpdateOperation): string[] {
   });
 
   // console.log("solution list length:", resultList.length);
-  return resultList;
-  // resultList = resultList.filter(result => result != (""))
+  // return resultList;
+  resultList = resultList.filter(result => result != (""))
   // remove redundant/identical results
-  // return Array.from(new Set(resultList));
+  return Array.from(new Set(resultList));
 }
